@@ -9,7 +9,6 @@ Tasky is a lite version of Google Calendar that allows users to create, view, ed
 ## Gradle Module Dependency Graph
 
 This graph represents the general dependencies between modules of the app.
-<iframe width="768" height="432" src="https://miro.com/app/live-embed/uXjVKAumJ6s=/?moveToViewport=-466,-502,1686,1195&embedId=257921481840" frameborder="0" scrolling="no" allow="fullscreen; clipboard-read; clipboard-write" allowfullscreen></iframe>
 
 ## Branch Naming Conventions
 
