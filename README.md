@@ -4,6 +4,7 @@ Tasky is a lite version of Google Calendar that allows users to create, view, ed
 
 ## Build Status
 
+[![Build Status](https://app.bitrise.io/app/9d0e7ce1-df31-499b-9a23-7bcfb7c7d688/status.svg?token=qDqFmwjMOhEluPAexsnASw&branch=master)](https://app.bitrise.io/app/9d0e7ce1-df31-499b-9a23-7bcfb7c7d688)
 
 ## Gradle Module Dependency Graph
 
@@ -39,3 +40,4 @@ This implementation of Tasky will make use of the following technologies and lib
 * Hilt
 * KSP
 * Timber
+* Ktlint
