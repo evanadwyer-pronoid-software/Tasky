@@ -90,9 +90,4 @@ dependencies {
     implementation(projects.auth.presentation)
     implementation(projects.auth.domain)
     implementation(projects.auth.data)
-
-    implementation(projects.agenda.presentation)
-    implementation(projects.agenda.domain)
-    implementation(projects.agenda.data)
-    implementation(projects.agenda.network)
 }
