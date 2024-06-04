@@ -79,4 +79,11 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    // Modules
+    implementation(projects.core.presentation.designsystem)
+    implementation(projects.core.presentation.ui)
+    implementation(projects.core.domain)
+    implementation(projects.core.data)
+    implementation(projects.core.database)
 }
