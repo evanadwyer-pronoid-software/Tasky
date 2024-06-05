@@ -18,7 +18,9 @@ internal fun Project.configureBuildTypes(
         }
 
         val apiKey = gradleLocalProperties(rootDir, rootProject.providers).getProperty("API_KEY")
+            ?: "API_KEY"
         val baseUrl = gradleLocalProperties(rootDir, rootProject.providers).getProperty("BASE_URL")
+            ?: "BASE_URL"
         when (extensionType) {
             ExtensionType.APPLICATION -> {
                 extensions.configure<ApplicationExtension> {
