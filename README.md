@@ -3,6 +3,7 @@ Tasky is a lite version of Google Calendar that allows users to create, view, ed
 
 ## Build Status
 [![Build Status](https://app.bitrise.io/app/9d0e7ce1-df31-499b-9a23-7bcfb7c7d688/status.svg?token=qDqFmwjMOhEluPAexsnASw)](https://app.bitrise.io/app/9d0e7ce1-df31-499b-9a23-7bcfb7c7d688)
+[![CodeQL](https://github.com/evanadwyer-pronoid-software/Tasky/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/evanadwyer-pronoid-software/Tasky/actions/workflows/github-code-scanning/codeql)
 
 ## Gradle Module Dependency Graph
 This graph represents the general dependencies between modules of the app.
@@ -11,7 +12,7 @@ This graph represents the general dependencies between modules of the app.
 ## Branch Naming Conventions
 Branches will be named in the following format:
 
-[MAJOR_RELEASE].[WEEK_NUMBER].[BRANCH_NUMBER]-[TOPIC]
+[MAJOR_RELEASE].[WEEK_NUMBER].[BRANCH_NUMBER]_[TOPIC]
 * Major Release -> stable version of app (will be 0 until end of MVP)
 * Week Number -> The week of the mentorship program when the branch is created, with weeks starting on Fridays
 * Branch Number -> The number of that branch for the week
