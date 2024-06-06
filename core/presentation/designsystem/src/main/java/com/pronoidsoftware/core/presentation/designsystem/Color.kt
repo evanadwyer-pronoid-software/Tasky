@@ -7,6 +7,7 @@ val TaskyLightGreen = Color(202, 239, 69) // Events
 val TaskyBlack = Color(22, 22, 28) // Status bar, Action Bar, Buttons, Headings, Text on white
 val TaskyWhite = Color(255, 255, 255) // Background, text on black
 val TaskyLightGray = Color(242, 243, 247) // Form field background
+val TaskyLightBlue = Color(190, 190, 190) // Form field icons
 val TaskyGray = Color(169, 180, 190) // Profile icon
 val TaskyDarkGray = Color(92, 93, 90) // Agenda top dates
 val TaskyOrange = Color(253, 239, 168) // Agenda selected date
