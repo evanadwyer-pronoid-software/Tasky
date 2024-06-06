@@ -11,6 +11,7 @@ val TaskyLightBlue = Color(190, 190, 190) // Form field icons
 val TaskyGray = Color(169, 180, 190) // Profile icon
 val TaskyDarkGray = Color(92, 93, 90) // Agenda top dates
 val TaskyOrange = Color(253, 239, 168) // Agenda selected date
+val TaskyError = Color(255, 114, 114) // Agenda selected date
 
 // Unsure on usage...
 val TaskyDarkGreen = Color(6, 87, 42, 255)

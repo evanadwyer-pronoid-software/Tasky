@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.Tasky" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.Tasky" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">#16161C</item>
+        <!--        Note: The status bar will not be visible with edge-to-edge enabled-->
+    </style>
 </resources>
