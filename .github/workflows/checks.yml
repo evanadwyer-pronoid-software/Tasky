@@ -10,19 +10,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: sparkfabrik/android-build-action@v1.5.0
+      - name: "Build Android project"
+        uses: vgaidarji/android-github-actions-build@v1.0.1
         with:
-          project-path: .
+          args: "./gradlew assembleDebug"
       
       - name: Run Checks App Compliance analysis async
         uses: google-checks/checks-app-scan-github-action@v1.0.1
         with:
           account_id: ${{ secrets.CHECKS_ACCOUNT_ID }}
           app_id: ${{ secrets.CHECKS_APP_ID }}
-          binary_path: "./output.apk"
+          binary_path: "./app/build/intermediates/apk/debug/app-debug.apk"
           wait_for_report: true
         env:
           CHECKS_CREDENTIALS: ${{ secrets.CHECKS_CREDENTIALS }}
 
       - name: Clean build
-        run: rm ./output.apk
+        run: rm ./app/build/intermediates/apk/debug/app-debug.apk
