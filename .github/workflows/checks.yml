@@ -1,4 +1,4 @@
-name: "run Google Checks"
+name: "Google Checks"
 
 on:
   pull_request:
@@ -19,6 +19,11 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3.2.1
 
+      - name: Create temp local.properties
+        run: |
+          echo "API_KEY=${{ secrets.API_KEY }}" >> local.properties
+          echo "BASE_URL=${{ secrets.BASE_URL }}" >> local.properties
+
       - name: Build Debug APK
         run: ./gradlew assembleDebug
       
@@ -33,4 +38,6 @@ jobs:
           CHECKS_CREDENTIALS: ${{ secrets.CHECKS_CREDENTIALS }}
 
       - name: Clean build
-        run: rm ./app/build/intermediates/apk/debug/app-debug.apk
+        run: |
+          rm ./app/build/intermediates/apk/debug/app-debug.apk
+          rm local.properties
