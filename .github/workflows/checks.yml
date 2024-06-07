@@ -26,7 +26,7 @@ jobs:
 
       - name: Create temp Checks Credentials
         run: |
-          echo "${{ secrets.CHECKS_CREDENTIALS }}" >> checks-credentials.json
+          echo "${{ secrets.SERVICE_ACCOUNT_JSON_BASE64 }}" >> checks-credentials.json
 
       - name: Build Debug APK
         run: ./gradlew --no-daemon assembleDebug
