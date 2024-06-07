@@ -25,19 +25,23 @@ jobs:
           echo "BASE_URL=${{ secrets.BASE_URL }}" >> local.properties
 
       - name: Build Debug APK
-        run: ./gradlew assembleDebug
+        run: ./gradlew --no-daemon assembleDebug
+
+      - name: Get debug file apk path
+        id: debugApk
+        run: echo "apkfile=$(find app/build/outputs/apk/debug/*.apk)" > $GITHUB_OUTPUT
       
       - name: Run Checks App Compliance analysis async
         uses: google-checks/checks-app-scan-github-action@v1.0.1
         with:
           account_id: ${{ secrets.CHECKS_ACCOUNT_ID }}
           app_id: ${{ secrets.CHECKS_APP_ID }}
-          binary_path: "./app/build/intermediates/apk/debug/app-debug.apk"
+          binary_path: ${{ steps.debugApk.outputs.apkfile }}
           wait_for_report: true
         env:
           CHECKS_CREDENTIALS: ${{ secrets.CHECKS_CREDENTIALS }}
 
       - name: Clean build
         run: |
-          rm ./app/build/intermediates/apk/debug/app-debug.apk
+          rm ${{ steps.releaseApk.outputs.apkfile }}
           rm local.properties
