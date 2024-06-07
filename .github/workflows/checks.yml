@@ -10,10 +10,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: "Build Android project"
-        uses: vgaidarji/android-github-actions-build@v1.0.1
+      - name: Setup Java
+        uses: actions/setup-java@v4.2.1
         with:
-          args: "./gradlew assembleDebug"
+          distribution: 'oracle'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3.2.1
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug
       
       - name: Run Checks App Compliance analysis async
         uses: google-checks/checks-app-scan-github-action@v1.0.1
