@@ -26,7 +26,12 @@ jobs:
 
       - name: Create temp Checks Credentials
         run: |
-          echo "${{ secrets.CHECKS_CREDENTIALS }}" >> checks-credentials.json
+          echo ${{ secrets.SERVICE_ACCOUNT_JSON_BASE64 }} | base64 --decode > checks-credentials.json
+#          if [ ! -x "$(command -v jq)" ]; then
+#            echo "jq not found, installing..."
+#            sudo apt-get update
+#            sudo apt-get install -y jq
+#          fi
 
       - name: Build Debug APK
         run: ./gradlew --no-daemon assembleDebug
