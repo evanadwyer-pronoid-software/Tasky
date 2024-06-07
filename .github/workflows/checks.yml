@@ -8,9 +8,9 @@ jobs:
   checks:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@4
+      - uses: actions/checkout@v4
       - name: Run Checks App Compliance analysis async
-        uses: google-checks/checks-app-scan-github-action@latest
+        uses: google-checks/checks-app-scan-github-action@v1.0.1
         with:
           account_id: ${{ secrets.CHECKS_ACCOUNT_ID }}
           app_id: ${{ secrets.CHECKS_APP_ID }}
