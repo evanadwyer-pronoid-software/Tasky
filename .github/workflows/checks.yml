@@ -1,0 +1,20 @@
+name: "run Google Checks"
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@4
+      - name: Run Checks App Compliance analysis async
+        uses: google-checks/checks-app-scan-github-action@latest
+        with:
+          account_id: ${{ secrets.CHECKS_ACCOUNT_ID }}
+          app_id: ${{ secrets.CHECKS_APP_ID }}
+          binary_path: "./app/build/outputs/bundle/debug/app-debug.aab"
+          wait_for_report: true
+        env:
+          CHECKS_CREDENTIALS: ${{ secrets.CHECKS_CREDENTIALS }}
