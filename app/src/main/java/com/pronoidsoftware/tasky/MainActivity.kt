@@ -18,7 +18,7 @@ class MainActivity : ComponentActivity() {
             TaskyTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
                 ) {
                 }
             }
