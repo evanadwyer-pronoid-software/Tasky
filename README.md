@@ -35,3 +35,6 @@ This implementation of Tasky will make use of the following technologies and lib
 * KSP
 * Timber
 * Ktlint
+
+## Contributing
+When cloning this project, please run `./gradlew addKtlintFormatGitPreCommitHook` so that KtLint can automatically format your commits :)
