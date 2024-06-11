@@ -3,6 +3,7 @@ package com.pronoidsoftware.core.presentation.designsystem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 
 val LightColorScheme = lightColorScheme(
     primary = TaskyGreen,
@@ -11,6 +12,7 @@ val LightColorScheme = lightColorScheme(
     surfaceVariant = TaskyLightGray,
     secondary = TaskyLightGreen,
     primaryContainer = TaskyBlack,
+    onPrimaryContainer = TaskyButtonWhite,
     onPrimary = TaskyWhite,
     onBackground = TaskyBlack,
     onSurface = TaskyBlack,
@@ -20,10 +22,11 @@ val LightColorScheme = lightColorScheme(
 
 @Composable
 fun TaskyTheme(content: @Composable () -> Unit) {
-    val colorScheme = LightColorScheme
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content,
-    )
+    CompositionLocalProvider(LocalSpacing provides Dimensions()) {
+        MaterialTheme(
+            colorScheme = LightColorScheme,
+            typography = Typography,
+            content = content,
+        )
+    }
 }

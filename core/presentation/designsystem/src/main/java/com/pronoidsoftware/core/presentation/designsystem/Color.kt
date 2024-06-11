@@ -6,6 +6,7 @@ val TaskyGreen = Color(39, 159, 112) // Primary, Tasks, Save button, Validation 
 val TaskyLightGreen = Color(202, 239, 69) // Events
 val TaskyBlack = Color(22, 22, 28) // Status bar, Action Bar, Buttons, Headings, Text on white
 val TaskyWhite = Color(255, 255, 255) // Background, text on black
+val TaskyButtonWhite = Color(238, 246, 255) // text on black button
 val TaskyLightGray = Color(242, 243, 247) // Form field background
 val TaskyLightBlue = Color(190, 190, 190) // Form field icons
 val TaskyGray = Color(169, 180, 190) // Profile icon
