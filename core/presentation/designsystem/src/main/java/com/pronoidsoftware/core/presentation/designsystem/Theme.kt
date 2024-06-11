@@ -12,11 +12,11 @@ val LightColorScheme = lightColorScheme(
     surfaceVariant = TaskyLightGray,
     secondary = TaskyLightGreen,
     primaryContainer = TaskyBlack,
-    onPrimaryContainer = TaskyButtonWhite,
+    onPrimaryContainer = TaskyWhite2,
     onPrimary = TaskyWhite,
     onBackground = TaskyBlack,
     onSurface = TaskyBlack,
-    onSurfaceVariant = TaskyGray,
+    onSurfaceVariant = TaskyDarkGray,
     error = TaskyError,
 )
 

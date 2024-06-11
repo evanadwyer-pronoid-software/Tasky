@@ -57,7 +57,7 @@ fun TaskyActionButton(
                 modifier = Modifier
                     .size(15.dp)
                     .alpha(if (isLoading) 1f else 0f),
-                strokeWidth = 1.5.dp,
+                strokeWidth = spacing.strokeBold,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
             )
             Text(
