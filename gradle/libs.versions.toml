@@ -16,6 +16,10 @@ ktorClientLogging = "2.3.8"
 desugar_jdk_libs = "2.0.4"
 kotlinx-serialization = "1.6.3"
 
+# Hilt
+hilt = "2.51.1"
+androidxHilt = "1.2.0"
+
 # Testing versions
 junit = "4.13.2"
 junitVersion = "1.1.5"
@@ -50,6 +54,14 @@ material = { group = "com.google.android.material", name = "material", version.r
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 desugar-jdk-libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
+
+# Hilt Libraries
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
+hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
+androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "androidxHilt" }
+androidx-hilt-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "androidxHilt" }
+androidx-hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "androidxHilt" }
 
 # Testing Libraries
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -95,6 +107,7 @@ android-tools-common = { group = "com.android.tools", name = "common", version.r
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 room-gradlePlugin = { group = "androidx.room", name = "room-gradle-plugin", version.ref = "room" }
+hilt-gradlePlugin = { group = "com.google.dagger", name = "hilt-android-gradle-plugin", version.ref = "hilt" }
 
 
 [plugins]
@@ -108,6 +121,7 @@ jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrai
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 room = { id = "androidx.room", version.ref = "room" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 
 # Convention Plugins
 tasky-android-application = { id = "tasky.android.application", version = "unspecified" }
@@ -116,6 +130,8 @@ tasky-android-library = { id = "tasky.android.library", version = "unspecified" 
 tasky-android-library-compose = { id = "tasky.android.library.compose", version = "unspecified" }
 tasky-android-feature-ui = { id = "tasky.android.feature.ui", version = "unspecified" }
 tasky-android-room = { id = "tasky.android.room", version = "unspecified" }
+tasky-android-hilt = { id = "tasky.android.hilt", version = "unspecified" }
+tasky-android-hilt-compose = { id = "tasky.android.hilt.compose", version = "unspecified" }
 tasky-jvm-library = { id = "tasky.jvm.library", version = "unspecified" }
 tasky-jvm-ktor = { id = "tasky.jvm.ktor", version = "unspecified" }
 
