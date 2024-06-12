@@ -114,9 +114,9 @@ fun TaskyPasswordTextField(
                             EyeClosedIcon
                         },
                         contentDescription = if (isPasswordVisible) {
-                            stringResource(id = R.string.show_password)
-                        } else {
                             stringResource(id = R.string.hide_password)
+                        } else {
+                            stringResource(id = R.string.show_password)
                         },
                         tint = TaskyGray,
                     )
