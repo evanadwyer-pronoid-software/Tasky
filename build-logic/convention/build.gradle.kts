@@ -10,6 +10,7 @@ dependencies {
     compileOnly(libs.kotlin.gradlePlugin)
     compileOnly(libs.ksp.gradlePlugin)
     compileOnly(libs.room.gradlePlugin)
+    compileOnly(libs.hilt.gradlePlugin)
 }
 
 gradlePlugin {
@@ -37,6 +38,14 @@ gradlePlugin {
         register("androidRoom") {
             id = "tasky.android.room"
             implementationClass = "AndroidRoomConventionPlugin"
+        }
+        register("androidHilt") {
+            id = "tasky.android.hilt"
+            implementationClass = "AndroidHiltConventionPlugin"
+        }
+        register("androidHiltCompose") {
+            id = "tasky.android.hilt.compose"
+            implementationClass = "AndroidHiltComposeConventionPlugin"
         }
         register("jvmLibrary") {
             id = "tasky.jvm.library"
