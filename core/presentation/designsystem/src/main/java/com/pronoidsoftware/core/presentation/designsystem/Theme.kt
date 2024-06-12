@@ -15,7 +15,7 @@ val LightColorScheme = lightColorScheme(
     onBackground = TaskyBlack,
     onSurface = TaskyBlack,
     onSurfaceVariant = TaskyGray,
-    error = TaskyError
+    error = TaskyError,
 )
 
 @Composable
@@ -24,6 +24,6 @@ fun TaskyTheme(content: @Composable () -> Unit) {
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
-        content = content
+        content = content,
     )
 }
