@@ -42,7 +42,7 @@ jobs:
         run: echo "apkfile=$(find app/build/outputs/apk/debug/*.apk)" > $GITHUB_OUTPUT
       
       - name: Run Checks App Compliance analysis async
-        uses: google-checks/checks-app-scan-github-action@v1.0.1
+        uses: google-checks/checks-app-scan-github-action@v1.0.3
         with:
           account_id: ${{ secrets.CHECKS_ACCOUNT_ID }}
           app_id: ${{ secrets.CHECKS_APP_ID }}
