@@ -70,7 +70,6 @@ suspend inline fun <reified Response : Any> HttpClient.postMultipart(
     }
 }
 
-
 suspend inline fun <reified Request, reified Response : Any> HttpClient.put(
     route: String,
     body: Request,
@@ -113,7 +112,9 @@ suspend inline fun <reified T> safeCAll(execute: () -> HttpResponse): Result<T, 
     return responseToResult(response)
 }
 
-suspend inline fun <reified T> responseToResult(response: HttpResponse): Result<T, DataError.Network> {
+suspend inline fun <reified T> responseToResult(
+    response: HttpResponse,
+): Result<T, DataError.Network> {
     return when (response.status.value) {
         in 200..299 -> Result.Success(response.body<T>())
         401 -> Result.Error(DataError.Network.UNAUTHORIZED)
