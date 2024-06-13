@@ -54,6 +54,6 @@ jobs:
 
       - name: Clean build
         run: |
-          rm ${{ steps.releaseApk.outputs.apkfile }}
+          rm ${{ steps.debugApk.outputs.apkfile }}
           rm local.properties
           rm checks-credentials.json
