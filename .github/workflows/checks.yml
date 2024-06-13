@@ -1,0 +1,58 @@
+name: "Google Checks"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4.2.1
+        with:
+          distribution: 'oracle'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3.2.1
+
+      - name: Create temp local.properties
+        run: |
+          echo "API_KEY=${{ secrets.API_KEY }}" >> local.properties
+          echo "BASE_URL=${{ secrets.BASE_URL }}" >> local.properties
+
+      - name: Create temp Checks Credentials
+        run: |
+          if [ ! -x "$(command -v jq)" ]; then
+            echo "jq not found, installing..."
+            sudo apt-get update
+            sudo apt-get install -y jq
+          fi
+          echo "${{ secrets.SERVICE_ACCOUNT_JSON_BASE64 }}" | base64 --decode | jq '.' > checks-credentials.json
+
+
+      - name: Build Debug APK
+        run: ./gradlew --no-daemon assembleDebug
+
+      - name: Get debug file apk path
+        id: debugApk
+        run: echo "apkfile=$(find app/build/outputs/apk/debug/*.apk)" > $GITHUB_OUTPUT
+      
+      - name: Run Checks App Compliance analysis async
+        uses: google-checks/checks-app-scan-github-action@v1.0.3
+        with:
+          account_id: ${{ secrets.CHECKS_ACCOUNT_ID }}
+          app_id: ${{ secrets.CHECKS_APP_ID }}
+          binary_path: ${{ steps.debugApk.outputs.apkfile }}
+          service_account_base64: ${{ secrets.SERVICE_ACCOUNT_JSON_BASE64 }}
+          wait_for_report: true
+        env:
+          CHECKS_CREDENTIALS: checks-credentials.json
+
+      - name: Clean build
+        run: |
+          rm ${{ steps.debugApk.outputs.apkfile }}
+          rm local.properties
+          rm checks-credentials.json
