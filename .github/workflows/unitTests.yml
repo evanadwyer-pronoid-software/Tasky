@@ -1,0 +1,32 @@
+name: "Unit Tests"
+
+on: 
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Create temp local.properties
+      run: |
+        echo "API_KEY=${{ secrets.API_KEY }}" >> local.properties
+        echo "BASE_URL=${{ secrets.BASE_URL }}" >> local.properties
+
+    - name: Setup Java
+      uses: actions/setup-java@v4.2.1
+      with:
+        distribution: 'oracle'
+        java-version: '17'
+
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3.2.1
+
+    - run: ./gradlew test
+
+    - name: Delete local.properties
+      run: rm local.properties
