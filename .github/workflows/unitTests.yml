@@ -12,6 +12,11 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Create temp local.properties
+      run: |
+        echo "API_KEY=${{ secrets.API_KEY }}" >> local.properties
+        echo "BASE_URL=${{ secrets.BASE_URL }}" >> local.properties
+
     - name: Setup Java
       uses: actions/setup-java@v4.2.1
       with:
@@ -22,3 +27,6 @@ jobs:
       uses: android-actions/setup-android@v3.2.1
 
     - run: ./gradlew test
+
+    - name: Delete local.properties
+      run: rm local.properties
