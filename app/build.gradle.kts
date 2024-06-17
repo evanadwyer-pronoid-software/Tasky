@@ -2,6 +2,7 @@ import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 
 plugins {
     alias(libs.plugins.tasky.android.application.compose)
+    alias(libs.plugins.tasky.android.hilt.compose)
     alias(libs.plugins.tasky.jvm.ktor)
 }
 
