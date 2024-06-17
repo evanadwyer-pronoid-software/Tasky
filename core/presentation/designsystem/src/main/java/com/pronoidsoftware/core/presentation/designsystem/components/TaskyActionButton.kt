@@ -1,10 +1,9 @@
 package com.pronoidsoftware.core.presentation.designsystem.components
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,10 +13,10 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.pronoidsoftware.core.presentation.designsystem.LocalSpacing
 import com.pronoidsoftware.core.presentation.designsystem.TaskyDarkGray
@@ -45,38 +44,44 @@ fun TaskyActionButton(
         shape = RoundedCornerShape(100f),
         modifier = modifier
             .widthIn(max = spacing.maxButtonWidth)
+            .fillMaxWidth()
             .height(IntrinsicSize.Min),
+        contentPadding = PaddingValues(
+            start = spacing.spaceLargeMedium,
+            end = spacing.spaceLargeMedium,
+            top = spacing.spaceMediumSmall,
+            bottom = spacing.spaceMediumSmall,
+        ),
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = spacing.spaceMediumSmall),
-            contentAlignment = Alignment.Center,
-        ) {
+        if (isLoading) {
             CircularProgressIndicator(
                 modifier = Modifier
-                    .size(15.dp)
-                    .alpha(if (isLoading) 1f else 0f),
+                    .size(15.dp),
                 strokeWidth = spacing.strokeBold,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
             )
+        } else {
             Text(
                 text = text,
-                modifier = Modifier
-                    .alpha(if (isLoading) 0f else 1f),
                 style = MaterialTheme.typography.labelLarge,
             )
         }
     }
 }
 
+class IsLoadingPreviewParameterProvider : PreviewParameterProvider<Boolean> {
+    override val values: Sequence<Boolean> = sequenceOf(true, false)
+}
+
 @Preview
 @Composable
-private fun TaskyActionButtonPreview() {
+private fun TaskyActionButtonPreview(
+    @PreviewParameter(IsLoadingPreviewParameterProvider::class) isLoading: Boolean,
+) {
     TaskyTheme {
         TaskyActionButton(
             text = "GET STARTED",
-            isLoading = false,
+            isLoading = isLoading,
             onClick = {},
             enabled = true,
         )
