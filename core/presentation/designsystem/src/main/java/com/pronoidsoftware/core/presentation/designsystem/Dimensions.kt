@@ -16,9 +16,15 @@ data class Dimensions(
     val spaceMediumLarge: Dp = 20.dp,
     val spaceLargeMedium: Dp = 24.dp,
     val spaceLarge: Dp = 32.dp,
-    val spaceExtraLarge: Dp = 64.dp,
+    val spaceExtraLarge: Dp = 42.dp,
     val maxButtonWidth: Dp = 320.dp,
     val maxTextFieldWidth: Dp = 488.dp,
+
+    // auth feature
+    val authPaddingTop: Dp = 30.dp,
+    val authContainerRadius: Dp = 30.dp,
+    val authPaddingInterior: Dp = 15.dp,
+    val registerActionButtonSpacingTop: Dp = 70.dp,
 )
 
 val LocalSpacing = compositionLocalOf { Dimensions() }
