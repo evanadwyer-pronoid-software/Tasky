@@ -81,8 +81,8 @@ val Typography = Typography(
     ),
     headlineLarge = TextStyle(
         fontFamily = Inter,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 32.sp,
-        color = TaskyBlack,
+        fontWeight = FontWeight.Bold,
+        fontSize = 28.sp,
+        lineHeight = 30.sp,
     ),
 )

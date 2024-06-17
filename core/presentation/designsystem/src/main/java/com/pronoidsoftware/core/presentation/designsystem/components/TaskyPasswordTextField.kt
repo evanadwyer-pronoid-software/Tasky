@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text2.BasicSecureTextField
@@ -33,6 +34,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.pronoidsoftware.core.presentation.designsystem.EyeClosedIcon
 import com.pronoidsoftware.core.presentation.designsystem.EyeOpenedIcon
 import com.pronoidsoftware.core.presentation.designsystem.LocalSpacing
@@ -106,7 +108,10 @@ fun TaskyPasswordTextField(
                     innerBox()
                 }
                 Spacer(modifier = Modifier.width(spacing.spaceMedium))
-                IconButton(onClick = onTogglePasswordVisibility) {
+                IconButton(
+                    onClick = onTogglePasswordVisibility,
+                    modifier = Modifier.size(24.dp),
+                ) {
                     Icon(
                         imageVector = if (isPasswordVisible) {
                             EyeOpenedIcon
