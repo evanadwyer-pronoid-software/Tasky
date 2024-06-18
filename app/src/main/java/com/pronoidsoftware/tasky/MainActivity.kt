@@ -4,10 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.ui.Modifier
+import com.pronoidsoftware.auth.presentation.register.RegisterScreenRoot
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
@@ -22,11 +19,10 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TaskyTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.primary,
-                ) {
-                }
+                RegisterScreenRoot(
+                    onLogInClick = { Timber.wtf("trying to login...") },
+                    onSuccessfulRegistration = { },
+                )
             }
         }
     }
