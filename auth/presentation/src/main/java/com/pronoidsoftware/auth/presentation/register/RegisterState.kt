@@ -17,4 +17,44 @@ data class RegisterState(
     val isRegistering: Boolean = false,
     val canRegister: Boolean = !isRegistering && isNameValid && isEmailValid &&
         passwordValidationState.isPasswordValid,
-)
+) {
+    private infix fun TextFieldState.equals(other: TextFieldState): Boolean {
+        if (this === other) return true
+        if (javaClass != other.javaClass) return false
+        if (text != other.text) return false
+
+        return true
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as RegisterState
+
+        if (!(name equals other.name)) return false
+        if (isNameValid != other.isNameValid) return false
+        if (!(email equals other.email)) return false
+        if (isEmailValid != other.isEmailValid) return false
+        if (!(password equals other.password)) return false
+        if (isPasswordVisible != other.isPasswordVisible) return false
+        if (passwordValidationState != other.passwordValidationState) return false
+        if (isRegistering != other.isRegistering) return false
+        if (canRegister != other.canRegister) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + isNameValid.hashCode()
+        result = 31 * result + email.hashCode()
+        result = 31 * result + isEmailValid.hashCode()
+        result = 31 * result + password.hashCode()
+        result = 31 * result + isPasswordVisible.hashCode()
+        result = 31 * result + passwordValidationState.hashCode()
+        result = 31 * result + isRegistering.hashCode()
+        result = 31 * result + canRegister.hashCode()
+        return result
+    }
+}
