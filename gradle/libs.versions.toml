@@ -21,9 +21,12 @@ hilt = "2.51.1"
 androidxHilt = "1.2.0"
 
 # Testing versions
-junit = "4.13.2"
+junit4 = "4.13.2"
+junitBom = "5.10.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
+assertk = "0.28.1"
+androidJunit5 = "1.10.0.0"
 
 # Compose versions
 activityCompose = "1.9.0"
@@ -64,7 +67,13 @@ androidx-hilt-compiler = { group = "androidx.hilt", name = "hilt-compiler", vers
 androidx-hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "androidxHilt" }
 
 # Testing Libraries
-junit = { group = "junit", name = "junit", version.ref = "junit" }
+junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
+junit-bom = { group = "org.junit", name = "junit-bom", version.ref = "junitBom" }
+junit-jupiter-api = { group = "org.junit.jupiter", name = "junit-jupiter-api" }
+junit-jupiter-params = { group = "org.junit.jupiter", name = "junit-jupiter-params" }
+junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine" }
+junit-vintage-engine = { group = "org.junit.vintage", name = "junit-vintage-engine" }
+assertk = { group = "com.willowtreeapps.assertk", name = "assertk", version.ref = "assertk" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 
@@ -122,6 +131,7 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 room = { id = "androidx.room", version.ref = "room" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+android-junit5 = { id = "de.mannodermaus.android-junit5", version.ref = "androidJunit5" }
 
 # Convention Plugins
 tasky-android-application = { id = "tasky.android.application", version = "unspecified" }
@@ -134,6 +144,7 @@ tasky-android-hilt = { id = "tasky.android.hilt", version = "unspecified" }
 tasky-android-hilt-compose = { id = "tasky.android.hilt.compose", version = "unspecified" }
 tasky-jvm-library = { id = "tasky.jvm.library", version = "unspecified" }
 tasky-jvm-ktor = { id = "tasky.jvm.ktor", version = "unspecified" }
+tasky-junit = { id = "tasky.junit", version = "unspecified" }
 
 
 [bundles]
@@ -162,4 +173,12 @@ ktor = [
     "ktor-client-core",
     "ktor-client-logging",
     "ktor-serialization-kotlinx-json",
+]
+
+# Testing Bundle
+test = [
+    "junit4",
+    "junit-jupiter-api",
+    "junit-jupiter-params",
+    "assertk"
 ]
