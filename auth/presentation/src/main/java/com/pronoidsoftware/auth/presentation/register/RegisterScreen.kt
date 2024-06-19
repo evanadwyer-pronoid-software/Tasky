@@ -134,6 +134,11 @@ private fun RegisterScreen(state: RegisterState, onAction: (RegisterAction) -> U
                 } else {
                     null
                 },
+                endIconContentDescription = if (state.isNameValid) {
+                    stringResource(id = R.string.name_is_valid)
+                } else {
+                    null
+                },
                 error = state.name.text.isNotBlank() && !state.isNameValid,
                 modifier = Modifier.fillMaxWidth(),
             )
@@ -143,6 +148,11 @@ private fun RegisterScreen(state: RegisterState, onAction: (RegisterAction) -> U
                 hint = stringResource(id = R.string.email),
                 endIcon = if (state.isEmailValid) {
                     CheckIcon
+                } else {
+                    null
+                },
+                endIconContentDescription = if (state.isEmailValid) {
+                    stringResource(id = R.string.email_is_valid)
                 } else {
                     null
                 },
@@ -158,6 +168,11 @@ private fun RegisterScreen(state: RegisterState, onAction: (RegisterAction) -> U
                     onAction(RegisterAction.OnTogglePasswordVisibilityClick)
                 },
                 hint = stringResource(id = R.string.password),
+                passwordContentDescription = if (state.passwordValidationState.isPasswordValid) {
+                    stringResource(id = R.string.password_is_valid)
+                } else {
+                    null
+                },
                 error = state.password.text.isNotBlank() &&
                     !state.passwordValidationState.isPasswordValid,
                 modifier = Modifier.fillMaxWidth(),

@@ -25,7 +25,8 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 )
 
                 defaultConfig {
-                    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+                    testInstrumentationRunner =
+                        "com.pronoidsoftware.core.presentation.ui.HiltTestRunner"
                     consumerProguardFiles("consumer-rules.pro")
                 }
             }

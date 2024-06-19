@@ -14,4 +14,7 @@
     <string name="contains_lowercase_character">Contains a lowercase character</string>
     <string name="contains_uppercase_character">Contains an uppercase character</string>
     <string name="get_started">GET STARTED</string>
+    <string name="name_is_valid">Name is valid</string>
+    <string name="email_is_valid">Email is valid</string>
+    <string name="password_is_valid">Password is valid</string>
 </resources>
