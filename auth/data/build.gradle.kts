@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.tasky.android.library)
     alias(libs.plugins.tasky.jvm.ktor)
+    alias(libs.plugins.tasky.android.hilt)
 }
 
 android {
