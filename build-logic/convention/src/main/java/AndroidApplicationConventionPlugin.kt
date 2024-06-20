@@ -13,6 +13,8 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
             pluginManager.run {
                 apply("com.android.application")
                 apply("org.jetbrains.kotlin.android")
+                apply("de.mannodermaus.android-junit5")
+                apply("tasky.junit")
             }
 
             extensions.configure<ApplicationExtension> {
