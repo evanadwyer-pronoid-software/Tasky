@@ -55,5 +55,9 @@ gradlePlugin {
             id = "tasky.jvm.ktor"
             implementationClass = "JvmKtorConventionPlugin"
         }
+        register("junit") {
+            id = "tasky.junit"
+            implementationClass = "JunitConventionPlugin"
+        }
     }
 }
