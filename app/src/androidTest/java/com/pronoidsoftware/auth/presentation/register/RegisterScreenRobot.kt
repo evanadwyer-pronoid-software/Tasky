@@ -12,81 +12,91 @@ import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import com.pronoidsoftware.TaskyComposeRule
 
-class RegisterScreenIntegrationRobot(
+class RegisterScreenRobot(
     private val composeRule: TaskyComposeRule,
 ) {
-    fun navigateTo(): RegisterScreenIntegrationRobot {
+    fun navigateTo(): RegisterScreenRobot {
         // Replace this with using the navHostController
         return this
     }
 
-    fun clickName(): RegisterScreenIntegrationRobot {
+    fun clickName(): RegisterScreenRobot {
         composeRule.onNodeWithText("Name").performClick()
         return this
     }
 
-    fun inputText(value: String): RegisterScreenIntegrationRobot {
+    fun inputText(value: String): RegisterScreenRobot {
         composeRule.onNode(isFocused()).performTextClearance()
         composeRule.onNode(isFocused()).performTextInput(value)
         return this
     }
 
-    fun assertNameIsInvalid(): RegisterScreenIntegrationRobot {
+    fun assertNameIsInvalid(): RegisterScreenRobot {
         composeRule.onNodeWithContentDescription("Name is valid").assertIsNotDisplayed()
         return this
     }
 
-    fun assertNameIsValid(): RegisterScreenIntegrationRobot {
+    fun assertNameIsValid(): RegisterScreenRobot {
         composeRule.onNodeWithContentDescription("Name is valid").assertIsDisplayed()
         return this
     }
 
-    fun clickEmail(): RegisterScreenIntegrationRobot {
+    fun clickEmail(): RegisterScreenRobot {
         composeRule.onNodeWithText("Email address").performClick()
         return this
     }
 
-    fun assertEmailIsInvalid(): RegisterScreenIntegrationRobot {
+    fun assertEmailIsInvalid(): RegisterScreenRobot {
         composeRule.onNodeWithContentDescription("Email is valid").assertIsNotDisplayed()
         return this
     }
 
-    fun assertEmailIsValid(): RegisterScreenIntegrationRobot {
+    fun assertEmailIsValid(): RegisterScreenRobot {
         composeRule.onNodeWithContentDescription("Email is valid").assertIsDisplayed()
         return this
     }
 
-    fun clickPassword(): RegisterScreenIntegrationRobot {
+    fun clickPassword(): RegisterScreenRobot {
         composeRule.onNodeWithText("Password").performClick()
         return this
     }
 
-    fun assertPasswordIsInvalid(): RegisterScreenIntegrationRobot {
+    fun hidePassword(): RegisterScreenRobot {
+        composeRule.onNodeWithContentDescription("Hide password").performClick()
+        return this
+    }
+
+    fun showPassword(): RegisterScreenRobot {
+        composeRule.onNodeWithContentDescription("Show password").performClick()
+        return this
+    }
+
+    fun assertPasswordIsInvalid(): RegisterScreenRobot {
         composeRule.onNodeWithContentDescription("Password is valid").assertIsNotDisplayed()
         return this
     }
 
-    fun assertPasswordIsValid(): RegisterScreenIntegrationRobot {
+    fun assertPasswordIsValid(): RegisterScreenRobot {
         composeRule.onNodeWithContentDescription("Password is valid").assertIsDisplayed()
         return this
     }
 
-    fun assertRegisterButtonIsDisabled(): RegisterScreenIntegrationRobot {
+    fun assertRegisterButtonIsDisabled(): RegisterScreenRobot {
         composeRule.onNodeWithText("GET STARTED").assertIsNotEnabled()
         return this
     }
 
-    fun assertRegisterButtonIsEnabled(): RegisterScreenIntegrationRobot {
+    fun assertRegisterButtonIsEnabled(): RegisterScreenRobot {
         composeRule.onNodeWithText("GET STARTED").assertIsEnabled()
         return this
     }
 
-    fun clickRegisterButton(): RegisterScreenIntegrationRobot {
+    fun clickRegisterButton(): RegisterScreenRobot {
         composeRule.onNodeWithText("GET STARTED").performClick()
         return this
     }
 
-    fun assertRegistering(): RegisterScreenIntegrationRobot {
+    fun assertRegistering(): RegisterScreenRobot {
         composeRule.onNodeWithText("GET STARTED").assertIsNotDisplayed()
         return this
     }

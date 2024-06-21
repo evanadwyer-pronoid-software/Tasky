@@ -51,6 +51,10 @@ gradlePlugin {
             id = "tasky.android.junit"
             implementationClass = "AndroidJunitConventionPlugin"
         }
+        register("androidScreenshot") {
+            id = "tasky.android.screenshot"
+            implementationClass = "AndroidScreenshotComposeConventionPlugin"
+        }
         register("jvmLibrary") {
             id = "tasky.jvm.library"
             implementationClass = "JvmLibraryConventionPlugin"

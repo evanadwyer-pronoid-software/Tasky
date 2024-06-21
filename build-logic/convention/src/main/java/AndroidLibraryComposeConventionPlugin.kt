@@ -10,6 +10,7 @@ class AndroidLibraryComposeConventionPlugin : Plugin<Project> {
         target.run {
             pluginManager.run {
                 apply("tasky.android.library")
+                apply("tasky.android.screenshot")
             }
 
             val extension = extensions.getByType<LibraryExtension>()

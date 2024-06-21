@@ -8,14 +8,14 @@ import org.junit.Rule
 import org.junit.Test
 
 @HiltAndroidTest
-class RegisterScreenIntegrationTest : TaskyAndroidTest() {
+class RegisterScreenTest : TaskyAndroidTest() {
 
     @get:Rule
     val composeRule = createAndroidComposeRule<MainActivity>()
 
     @Test
     fun testRegisterScreenUi_allValid() {
-        RegisterScreenIntegrationRobot(composeRule)
+        RegisterScreenRobot(composeRule)
             .navigateTo()
             .assertRegisterButtonIsDisabled()
             .assertNameIsInvalid()
@@ -38,6 +38,9 @@ class RegisterScreenIntegrationTest : TaskyAndroidTest() {
             .assertPasswordIsInvalid()
             .inputText("Test12345")
             .assertPasswordIsValid()
+            .showPassword()
+            .hidePassword()
             .assertRegisterButtonIsEnabled()
+            .clickRegisterButton()
     }
 }
