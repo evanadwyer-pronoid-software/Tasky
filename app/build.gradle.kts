@@ -26,10 +26,10 @@ android {
 ktlint {
     android = true
     ignoreFailures = false
+    outputToConsole = true
     reporters {
-        reporter(ReporterType.PLAIN)
         reporter(ReporterType.CHECKSTYLE)
-        reporter(ReporterType.SARIF)
+        reporter(ReporterType.HTML)
     }
 }
 
