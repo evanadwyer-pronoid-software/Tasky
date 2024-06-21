@@ -83,7 +83,7 @@ fun RegisterScreenRoot(
 }
 
 @Composable
-private fun RegisterScreen(state: RegisterState, onAction: (RegisterAction) -> Unit) {
+internal fun RegisterScreen(state: RegisterState, onAction: (RegisterAction) -> Unit) {
     val topAppBarState = rememberTopAppBarState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(
         state = topAppBarState,
@@ -183,6 +183,7 @@ private fun RegisterScreen(state: RegisterState, onAction: (RegisterAction) -> U
                 isLoading = state.isRegistering,
                 modifier = Modifier.fillMaxWidth(),
                 onClick = { onAction(RegisterAction.OnRegisterClick) },
+                enabled = state.canRegister.value,
             )
         }
     }

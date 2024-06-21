@@ -1,3 +1,4 @@
+
 import com.android.build.api.dsl.LibraryExtension
 import com.pronoidsoftware.convention.ExtensionType
 import com.pronoidsoftware.convention.configureBuildTypes
@@ -15,6 +16,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
             pluginManager.run {
                 apply("com.android.library")
                 apply("org.jetbrains.kotlin.android")
+                apply("tasky.android.junit")
             }
 
             extensions.configure<LibraryExtension> {
@@ -25,9 +27,14 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 )
 
                 defaultConfig {
-                    testInstrumentationRunner =
-                        "com.pronoidsoftware.core.presentation.ui.HiltTestRunner"
+                    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
                     consumerProguardFiles("consumer-rules.pro")
+                    packaging {
+                        resources {
+                            excludes += "META-INF/LICENSE.md"
+                            excludes += "META-INF/LICENSE-notice.md"
+                        }
+                    }
                 }
             }
 

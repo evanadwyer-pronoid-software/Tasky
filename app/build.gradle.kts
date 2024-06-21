@@ -14,9 +14,8 @@ ktlint {
     android = true
     ignoreFailures = false
     reporters {
-        reporter(ReporterType.PLAIN)
         reporter(ReporterType.CHECKSTYLE)
-        reporter(ReporterType.SARIF)
+        reporter(ReporterType.HTML)
     }
 }
 

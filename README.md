@@ -4,6 +4,7 @@ Tasky is a lite version of Google Calendar that allows users to create, view, ed
 ## Build Status
 [![Build Status](https://app.bitrise.io/app/9d0e7ce1-df31-499b-9a23-7bcfb7c7d688/status.svg?token=qDqFmwjMOhEluPAexsnASw)](https://app.bitrise.io/app/9d0e7ce1-df31-499b-9a23-7bcfb7c7d688)
 [![CodeQL](https://github.com/evanadwyer-pronoid-software/Tasky/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/evanadwyer-pronoid-software/Tasky/actions/workflows/github-code-scanning/codeql)
+[![ktlint](https://img.shields.io/badge/ktlint%20code--style-%E2%9D%A4-FF4081)](https://pinterest.github.io/ktlint/)
 
 ## Gradle Module Dependency Graph
 This graph represents the general dependencies between modules of the app.

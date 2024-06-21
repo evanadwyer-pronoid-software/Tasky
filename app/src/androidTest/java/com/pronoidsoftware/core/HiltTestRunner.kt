@@ -1,4 +1,4 @@
-package com.pronoidsoftware.core.presentation.ui
+package com.pronoidsoftware.core
 
 import android.app.Application
 import android.content.Context

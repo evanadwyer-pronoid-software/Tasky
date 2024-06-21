@@ -144,9 +144,10 @@ tasky-android-feature-ui = { id = "tasky.android.feature.ui", version = "unspeci
 tasky-android-room = { id = "tasky.android.room", version = "unspecified" }
 tasky-android-hilt = { id = "tasky.android.hilt", version = "unspecified" }
 tasky-android-hilt-compose = { id = "tasky.android.hilt.compose", version = "unspecified" }
+tasky-android-junit = { id = "tasky.android.junit", version = "unspecified" }
 tasky-jvm-library = { id = "tasky.jvm.library", version = "unspecified" }
 tasky-jvm-ktor = { id = "tasky.jvm.ktor", version = "unspecified" }
-tasky-junit = { id = "tasky.junit", version = "unspecified" }
+tasky-jvm-junit = { id = "tasky.jvm.junit", version = "unspecified" }
 
 
 [bundles]

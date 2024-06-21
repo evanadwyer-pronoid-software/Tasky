@@ -11,7 +11,6 @@ class AndroidHiltComposeConventionPlugin : Plugin<Project> {
 
             dependencies {
                 "implementation"(libs.findLibrary("androidx.hilt.navigation.compose").get())
-                "androidTestImplementation"(libs.findLibrary("androidx.test.runner").get())
             }
         }
     }

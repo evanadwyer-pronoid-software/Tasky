@@ -14,7 +14,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                 apply("com.android.application")
                 apply("org.jetbrains.kotlin.android")
                 apply("de.mannodermaus.android-junit5")
-                apply("tasky.junit")
+                apply("tasky.android.junit")
             }
 
             extensions.configure<ApplicationExtension> {
@@ -25,8 +25,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                     versionCode = libs.findVersion("projectVersionCode").get().toString().toInt()
                     versionName = libs.findVersion("projectVersionName").get().toString()
 
-                    testInstrumentationRunner =
-                        "com.pronoidsoftware.core.presentation.ui.HiltTestRunner"
+                    testInstrumentationRunner = "com.pronoidsoftware.core.HiltTestRunner"
 
                     vectorDrawables {
                         useSupportLibrary = true
@@ -35,6 +34,8 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                     packaging {
                         resources {
                             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+                            excludes += "META-INF/LICENSE.md"
+                            excludes += "META-INF/LICENSE-notice.md"
                         }
                     }
                 }
