@@ -13,6 +13,7 @@ android {
 ktlint {
     android = true
     ignoreFailures = false
+    outputToConsole = true
     reporters {
         reporter(ReporterType.CHECKSTYLE)
         reporter(ReporterType.HTML)
