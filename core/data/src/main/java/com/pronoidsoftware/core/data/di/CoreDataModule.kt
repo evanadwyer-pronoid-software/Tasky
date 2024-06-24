@@ -1,6 +1,7 @@
 package com.pronoidsoftware.core.data.di
 
 import com.pronoidsoftware.core.data.networking.HttpClientFactory
+import com.pronoidsoftware.core.domain.SessionStorage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,7 +15,9 @@ object CoreDataModule {
 
     @Provides
     @Singleton
-    fun provideHttpClient(): HttpClient {
-        return HttpClientFactory().build()
+    fun provideHttpClient(sessionStorage: SessionStorage): HttpClient {
+        return HttpClientFactory(
+            sessionStorage = sessionStorage,
+        ).build()
     }
 }
