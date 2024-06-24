@@ -1,6 +1,7 @@
 package com.pronoidsoftware.auth.data
 
 import com.pronoidsoftware.auth.domain.AuthRepository
+import com.pronoidsoftware.core.data.networking.AuthRoutes
 import com.pronoidsoftware.core.data.networking.post
 import com.pronoidsoftware.core.domain.util.DataError
 import com.pronoidsoftware.core.domain.util.EmptyResult

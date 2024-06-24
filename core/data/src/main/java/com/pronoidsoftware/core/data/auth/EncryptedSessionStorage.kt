@@ -3,12 +3,13 @@ package com.pronoidsoftware.core.data.auth
 import android.content.SharedPreferences
 import com.pronoidsoftware.core.domain.AuthInfo
 import com.pronoidsoftware.core.domain.SessionStorage
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-class EncryptedSessionStorage(
+class EncryptedSessionStorage @Inject constructor(
     private val sharedPreferences: SharedPreferences,
 ) : SessionStorage {
     override suspend fun get(): AuthInfo? {
