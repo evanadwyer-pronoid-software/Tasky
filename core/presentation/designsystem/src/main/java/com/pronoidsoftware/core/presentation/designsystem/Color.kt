@@ -14,6 +14,7 @@ val TaskyGray2 = Color(161, 164, 178) // text field hints
 val TaskyDarkGray = Color(92, 93, 90) // Agenda top dates
 val TaskyOrange = Color(253, 239, 168) // Agenda selected date
 val TaskyError = Color(255, 114, 114) // Agenda selected date
+val TaskyPurple = Color(142, 151, 253, 255) // Sign up annotated string on login screen
 
 // Unsure on usage...
 val TaskyDarkGreen = Color(6, 87, 42, 255)
