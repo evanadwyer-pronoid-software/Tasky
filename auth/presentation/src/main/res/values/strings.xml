@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="registration_successful">Registration successful! YOu can now log in.</string>
+    <string name="registration_successful">Registration successful! You can now log in.</string>
     <string name="create_account">Create your account</string>
     <string name="already_have_an_account">Already have an account?</string>
     <string name="login">Login</string>
@@ -17,4 +17,5 @@
     <string name="name_is_valid">Name is valid</string>
     <string name="email_is_valid">Email is valid</string>
     <string name="password_is_valid">Password is valid</string>
+    <string name="error_user_already_exists">A user with this name or email already exists.</string>
 </resources>
