@@ -13,7 +13,7 @@ inline fun <T, E : Error, R> Result<T, E>.map(map: (T) -> R): Result<R, E> {
     }
 }
 
-fun <T, E : Error> Result<T, E>.asEmptyDataResult(): EmptyResult<E> {
+fun <T, E : Error> Result<T, E>.asEmptyResult(): EmptyResult<E> {
     return map { }
 }
 
