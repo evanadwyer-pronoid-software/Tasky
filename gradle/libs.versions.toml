@@ -31,6 +31,8 @@ androidJunit5 = "1.10.0.0"
 # Compose versions
 activityCompose = "1.9.0"
 composeBom = "2024.06.00"
+chrisBanesComposeBom = "2024.05.00-alpha03"
+composeNavigation = "2.8.0-beta03"
 
 # Lifecycle versions
 lifecycleRuntimeKtx = "2.8.2"
@@ -80,6 +82,7 @@ androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-co
 # Compose Libraries
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+chrisbanes-androidx-compose-bom = { group = "dev.chrisbanes.compose", name = "compose-bom", version.ref = "chrisBanesComposeBom" }
 androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
@@ -87,6 +90,7 @@ androidx-compose-material3 = { group = "androidx.compose.material3", name = "mat
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "composeNavigation" }
 
 # Lifecycle Libraries
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
@@ -102,7 +106,7 @@ ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "k
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 
 # Serialization Libraries
-kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 
 # Room Libraries
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }

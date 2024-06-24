@@ -1,9 +1,6 @@
-@file:OptIn(ExperimentalFoundationApi::class)
-
 package com.pronoidsoftware.auth.presentation.register
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.text2.input.TextFieldState
+import androidx.compose.foundation.text.input.TextFieldState
 import com.pronoidsoftware.auth.domain.PasswordValidationState
 
 data class RegisterState(
@@ -15,7 +12,9 @@ data class RegisterState(
     var isPasswordVisible: Boolean = false,
     val passwordValidationState: PasswordValidationState = PasswordValidationState(),
     val isRegistering: Boolean = false,
-    val canRegister: Boolean = !isRegistering && isNameValid && isEmailValid &&
+    val canRegister: Boolean = !isRegistering &&
+        isNameValid &&
+        isEmailValid &&
         passwordValidationState.isPasswordValid,
 ) {
     private infix fun TextFieldState.equals(other: TextFieldState): Boolean {
