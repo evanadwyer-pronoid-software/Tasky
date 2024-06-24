@@ -4,9 +4,7 @@ import com.android.build.api.dsl.CommonExtension
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
 
-internal fun Project.configureAndroidCompose(
-    commonExtension: CommonExtension<*, *, *, *, *, *>,
-) {
+internal fun Project.configureAndroidCompose(commonExtension: CommonExtension<*, *, *, *, *, *>) {
     pluginManager.run {
         apply("org.jetbrains.kotlin.plugin.compose")
     }
@@ -17,7 +15,7 @@ internal fun Project.configureAndroidCompose(
         }
 
         dependencies {
-            val bom = libs.findLibrary("androidx.compose.bom").get()
+            val bom = libs.findLibrary("chrisbanes.androidx.compose.bom").get()
             "implementation"(platform(bom))
             "implementation"(libs.findBundle("compose").get())
             "androidTestImplementation"(platform(bom))

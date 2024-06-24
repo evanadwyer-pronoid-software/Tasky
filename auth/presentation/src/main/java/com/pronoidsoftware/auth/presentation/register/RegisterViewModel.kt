@@ -1,12 +1,9 @@
-@file:OptIn(ExperimentalFoundationApi::class)
-
 package com.pronoidsoftware.auth.presentation.register
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.text2.input.textAsFlow
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pronoidsoftware.auth.domain.UserDataValidator
@@ -19,9 +16,8 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import timber.log.Timber
 
 @HiltViewModel
-class RegisterViewModel @Inject constructor(
-    private val userDataValidator: UserDataValidator,
-) : ViewModel() {
+class RegisterViewModel @Inject constructor(private val userDataValidator: UserDataValidator) :
+    ViewModel() {
 
     var state by mutableStateOf(RegisterState())
         private set
@@ -30,7 +26,7 @@ class RegisterViewModel @Inject constructor(
     val events = eventChannel.receiveAsFlow()
 
     init {
-        state.name.textAsFlow()
+        snapshotFlow { state.name.text }
             .onEach { name ->
                 state = state.copy(
                     isNameValid = userDataValidator.validateName(name.toString()),
@@ -38,7 +34,7 @@ class RegisterViewModel @Inject constructor(
             }
             .launchIn(viewModelScope)
 
-        state.email.textAsFlow()
+        snapshotFlow { state.email.text }
             .onEach { email ->
                 state = state.copy(
                     isEmailValid = userDataValidator.validateEmail(email.toString()),
@@ -46,7 +42,7 @@ class RegisterViewModel @Inject constructor(
             }
             .launchIn(viewModelScope)
 
-        state.password.textAsFlow()
+        snapshotFlow { state.password.text }
             .onEach { password ->
                 state = state.copy(
                     passwordValidationState = userDataValidator.validatePassword(
