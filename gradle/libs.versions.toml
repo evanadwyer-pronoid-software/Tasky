@@ -15,6 +15,7 @@ ktor = "2.3.8"
 ktorClientLogging = "2.3.8"
 desugar_jdk_libs = "2.0.4"
 kotlinx-serialization = "1.6.3"
+securityCryptoKtx = "1.1.0-alpha06"
 
 # Hilt
 hilt = "2.51.1"
@@ -56,6 +57,7 @@ projectVersionCode = "1"
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+androidx-security-crypto-ktx = { group = "androidx.security", name = "security-crypto-ktx", version.ref = "securityCryptoKtx" }
 
 # Miscellanous Libraries
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }

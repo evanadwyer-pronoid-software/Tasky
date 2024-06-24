@@ -39,6 +39,9 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
+    // Crypto
+    implementation(libs.androidx.security.crypto.ktx)
+
     // Modules
     implementation(projects.core.presentation.designsystem)
     implementation(projects.core.presentation.ui)
