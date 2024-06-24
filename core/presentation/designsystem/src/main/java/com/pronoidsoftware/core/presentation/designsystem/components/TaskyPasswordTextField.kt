@@ -29,6 +29,8 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.pronoidsoftware.core.presentation.designsystem.EyeClosedIcon
@@ -46,6 +48,7 @@ fun TaskyPasswordTextField(
     onTogglePasswordVisibility: () -> Unit,
     hint: String,
     modifier: Modifier = Modifier,
+    passwordContentDescription: String? = null,
     error: Boolean = false,
 ) {
     var isFocused by remember {
@@ -81,6 +84,11 @@ fun TaskyPasswordTextField(
             )
             .onFocusChanged {
                 isFocused = it.isFocused
+            }
+            .semantics {
+                passwordContentDescription?.let {
+                    contentDescription = it
+                }
             },
         decorator = { innerBox ->
             Row(
@@ -135,6 +143,7 @@ private fun TaskyPasswordTextFieldPreview() {
             isPasswordVisible = false,
             onTogglePasswordVisibility = {},
             hint = "Password",
+            passwordContentDescription = "Password is valid",
             error = false,
         )
     }

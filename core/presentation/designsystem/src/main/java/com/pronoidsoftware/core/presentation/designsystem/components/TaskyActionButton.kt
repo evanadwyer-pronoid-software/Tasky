@@ -58,7 +58,6 @@ fun TaskyActionButton(
                 modifier = Modifier
                     .size(15.dp),
                 strokeWidth = spacing.strokeBold,
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
             )
         } else {
             Text(
@@ -83,7 +82,7 @@ private fun TaskyActionButtonPreview(
             text = "GET STARTED",
             isLoading = isLoading,
             onClick = {},
-            enabled = true,
+            enabled = !isLoading,
         )
     }
 }

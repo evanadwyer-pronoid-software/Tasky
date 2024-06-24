@@ -1,6 +1,6 @@
 [versions]
 # Core versions
-agp = "8.4.2"
+agp = "8.5.0"
 kotlin = "2.0.0"
 coreKtx = "1.13.1"
 coroutines = "1.8.1"
@@ -8,7 +8,7 @@ timber = "5.0.1"
 appcompat = "1.7.0"
 material = "1.12.0"
 jetbrainsKotlinJvm = "2.0.0"
-androidTools = "31.4.2"
+androidTools = "31.5.0"
 ksp = "2.0.0-1.0.21"
 room = "2.6.1"
 ktor = "2.3.8"
@@ -25,8 +25,10 @@ junit4 = "4.13.2"
 junitBom = "5.10.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
+testRunner = "1.5.2"
 assertk = "0.28.1"
 androidJunit5 = "1.10.0.0"
+screenshot = "0.0.1-alpha02"
 
 # Compose versions
 activityCompose = "1.9.0"
@@ -78,6 +80,7 @@ junit-vintage-engine = { group = "org.junit.vintage", name = "junit-vintage-engi
 assertk = { group = "com.willowtreeapps.assertk", name = "assertk", version.ref = "assertk" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "testRunner" }
 
 # Compose Libraries
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
@@ -136,6 +139,7 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 room = { id = "androidx.room", version.ref = "room" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 android-junit5 = { id = "de.mannodermaus.android-junit5", version.ref = "androidJunit5" }
+screenshot = { id = "com.android.compose.screenshot", version.ref = "screenshot" }
 
 # Convention Plugins
 tasky-android-application = { id = "tasky.android.application", version = "unspecified" }
@@ -146,9 +150,11 @@ tasky-android-feature-ui = { id = "tasky.android.feature.ui", version = "unspeci
 tasky-android-room = { id = "tasky.android.room", version = "unspecified" }
 tasky-android-hilt = { id = "tasky.android.hilt", version = "unspecified" }
 tasky-android-hilt-compose = { id = "tasky.android.hilt.compose", version = "unspecified" }
+tasky-android-junit = { id = "tasky.android.junit", version = "unspecified" }
+tasky-android-screenshot = { id = "tasky.android.screenshot", version = "unspecified" }
 tasky-jvm-library = { id = "tasky.jvm.library", version = "unspecified" }
 tasky-jvm-ktor = { id = "tasky.jvm.ktor", version = "unspecified" }
-tasky-junit = { id = "tasky.junit", version = "unspecified" }
+tasky-jvm-junit = { id = "tasky.jvm.junit", version = "unspecified" }
 
 
 [bundles]

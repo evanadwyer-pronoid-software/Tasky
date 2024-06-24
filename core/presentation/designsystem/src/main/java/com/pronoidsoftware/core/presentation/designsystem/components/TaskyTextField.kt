@@ -43,6 +43,7 @@ fun TaskyTextField(
     modifier: Modifier = Modifier,
     keyboardType: KeyboardType = KeyboardType.Text,
     endIcon: ImageVector? = null,
+    endIconContentDescription: String? = null,
     error: Boolean = false,
 ) {
     var isFocused by remember {
@@ -102,7 +103,7 @@ fun TaskyTextField(
                     Spacer(modifier = Modifier.width(spacing.spaceMedium))
                     Icon(
                         imageVector = endIcon,
-                        contentDescription = null,
+                        contentDescription = endIconContentDescription,
                         tint = MaterialTheme.colorScheme.primary,
                     )
                 }
@@ -118,6 +119,7 @@ private fun TaskyTextFieldPreview() {
         TaskyTextField(
             state = rememberTextFieldState("example@pronoid-software.com"),
             endIcon = CheckIcon,
+            endIconContentDescription = "Email is valid",
             hint = "Email address",
             error = false,
             modifier = Modifier

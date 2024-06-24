@@ -5,7 +5,7 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.withType
 
-class JunitConventionPlugin : Plugin<Project> {
+class JvmJunitConventionPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         target.run {
