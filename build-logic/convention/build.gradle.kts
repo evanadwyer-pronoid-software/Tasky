@@ -47,6 +47,14 @@ gradlePlugin {
             id = "tasky.android.hilt.compose"
             implementationClass = "AndroidHiltComposeConventionPlugin"
         }
+        register("androidJunit") {
+            id = "tasky.android.junit"
+            implementationClass = "AndroidJunitConventionPlugin"
+        }
+        register("androidScreenshot") {
+            id = "tasky.android.screenshot"
+            implementationClass = "AndroidScreenshotComposeConventionPlugin"
+        }
         register("jvmLibrary") {
             id = "tasky.jvm.library"
             implementationClass = "JvmLibraryConventionPlugin"
@@ -55,9 +63,9 @@ gradlePlugin {
             id = "tasky.jvm.ktor"
             implementationClass = "JvmKtorConventionPlugin"
         }
-        register("junit") {
-            id = "tasky.junit"
-            implementationClass = "JunitConventionPlugin"
+        register("jvmJunit") {
+            id = "tasky.jvm.junit"
+            implementationClass = "JvmJunitConventionPlugin"
         }
     }
 }
