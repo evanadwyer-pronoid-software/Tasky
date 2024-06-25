@@ -182,7 +182,7 @@ internal fun RegisterScreen(state: RegisterState, onAction: (RegisterAction) -> 
                 isLoading = state.isRegistering,
                 modifier = Modifier.fillMaxWidth(),
                 onClick = { onAction(RegisterAction.OnRegisterClick) },
-                enabled = state.canRegister.value,
+                enabled = state.canRegister,
             )
         }
     }

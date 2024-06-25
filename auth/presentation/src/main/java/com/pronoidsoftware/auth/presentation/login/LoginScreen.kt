@@ -160,7 +160,7 @@ internal fun LoginScreen(state: LoginState, onAction: (LoginAction) -> Unit) {
                 isLoading = state.isLoggingIn,
                 modifier = Modifier.fillMaxWidth(),
                 onClick = { onAction(LoginAction.OnLoginClick) },
-                enabled = state.canLogin.value,
+                enabled = state.canLogin,
             )
 
             val annotatedString = buildAnnotatedString {

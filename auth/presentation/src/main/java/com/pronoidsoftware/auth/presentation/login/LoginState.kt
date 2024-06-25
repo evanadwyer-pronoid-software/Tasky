@@ -2,6 +2,7 @@ package com.pronoidsoftware.auth.presentation.login
 
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 
 data class LoginState(
     val email: TextFieldState = TextFieldState(),
@@ -10,7 +11,7 @@ data class LoginState(
     val isPasswordVisible: Boolean = false,
     val isLoggingIn: Boolean = false,
 ) {
-    val canLogin = derivedStateOf {
+    val canLogin by derivedStateOf {
         !isLoggingIn && isEmailValid && password.text.isNotBlank()
     }
 
@@ -33,7 +34,7 @@ data class LoginState(
         if (!(password equals other.password)) return false
         if (isPasswordVisible != other.isPasswordVisible) return false
         if (isLoggingIn != other.isLoggingIn) return false
-        if (canLogin.value != other.canLogin.value) return false
+        if (canLogin != other.canLogin) return false
 
         return true
     }
