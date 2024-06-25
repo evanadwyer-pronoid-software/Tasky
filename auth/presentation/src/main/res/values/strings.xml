@@ -21,4 +21,5 @@
     <string name="email_is_valid">Email is valid</string>
     <string name="password_is_valid">Password is valid</string>
     <string name="error_user_already_exists">A user with this email already exists.</string>
+    <string name="error_email_password_incorrect">The email or password is incorrect.</string>
 </resources>

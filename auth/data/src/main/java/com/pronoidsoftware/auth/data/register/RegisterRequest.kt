@@ -1,4 +1,4 @@
-package com.pronoidsoftware.auth.data
+package com.pronoidsoftware.auth.data.register
 
 import kotlinx.serialization.Serializable
 
