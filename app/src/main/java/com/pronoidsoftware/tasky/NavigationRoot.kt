@@ -12,10 +12,10 @@ import com.pronoidsoftware.auth.presentation.register.RegisterScreenRoot
 import kotlinx.serialization.Serializable
 
 @Composable
-fun NavigationRoot(navController: NavHostController) {
+fun NavigationRoot(navController: NavHostController, isLoggedIn: Boolean) {
     NavHost(
         navController = navController,
-        startDestination = AuthFeature,
+        startDestination = if (isLoggedIn) AgendaFeature else AuthFeature,
     ) {
         authGraph(navController)
         agendaGraph(navController)
