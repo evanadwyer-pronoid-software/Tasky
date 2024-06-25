@@ -1,12 +1,13 @@
 package com.pronoidsoftware.tasky.di
 
+import android.content.Context
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
-import com.pronoidsoftware.tasky.TaskyApp
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -16,11 +17,11 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideSharedPreferences(): SharedPreferences {
+    fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
         return EncryptedSharedPreferences(
-            TaskyApp(),
+            context,
             "auth_pref",
-            MasterKey(TaskyApp()),
+            MasterKey(context),
             EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
             EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM,
         )
