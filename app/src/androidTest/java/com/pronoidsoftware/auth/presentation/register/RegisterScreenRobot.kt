@@ -10,13 +10,25 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
+import androidx.navigation.NavHostController
 import com.pronoidsoftware.TaskyComposeRule
+import com.pronoidsoftware.tasky.RegisterScreen
+import kotlinx.coroutines.runBlocking
 
 class RegisterScreenRobot(
     private val composeRule: TaskyComposeRule,
 ) {
-    fun navigateTo(): RegisterScreenRobot {
-        // Replace this with using the navHostController
+    fun navigateTo(navController: NavHostController): RegisterScreenRobot {
+        runBlocking {
+            composeRule.awaitIdle()
+            composeRule.runOnUiThread {
+                navController.navigate(RegisterScreen) {
+                    popUpTo(RegisterScreen) {
+                        inclusive = true
+                    }
+                }
+            }
+        }
         return this
     }
 

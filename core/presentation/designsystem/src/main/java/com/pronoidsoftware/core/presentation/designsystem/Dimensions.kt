@@ -25,6 +25,7 @@ data class Dimensions(
     val authContainerRadius: Dp = 30.dp,
     val authPaddingInterior: Dp = 15.dp,
     val registerActionButtonSpacingTop: Dp = 70.dp,
+    val loginActionButtonSpacingTop: Dp = 25.dp,
 )
 
 val LocalSpacing = compositionLocalOf { Dimensions() }

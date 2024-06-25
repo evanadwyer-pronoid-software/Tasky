@@ -7,6 +7,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import com.pronoidsoftware.auth.presentation.login.LoginScreenRoot
 import com.pronoidsoftware.auth.presentation.register.RegisterScreenRoot
 import kotlinx.serialization.Serializable
 
@@ -17,13 +18,34 @@ fun NavigationRoot(navController: NavHostController) {
         startDestination = AuthFeature,
     ) {
         authGraph(navController)
+        agendaGraph(navController)
     }
 }
 
 private fun NavGraphBuilder.authGraph(navController: NavHostController) {
     navigation<AuthFeature>(
-        startDestination = RegisterScreen,
+        startDestination = LoginScreen,
     ) {
+        composable<LoginScreen> {
+            LoginScreenRoot(
+                onLoginSuccess = {
+                    navController.navigate(AgendaFeature) {
+                        popUpTo(AuthFeature) {
+                            inclusive = true
+                        }
+                    }
+                },
+                onRegisterClick = {
+                    navController.navigate(RegisterScreen) {
+                        popUpTo(LoginScreen) {
+                            inclusive = true
+                            saveState = true
+                        }
+                        restoreState = true
+                    }
+                },
+            )
+        }
         composable<RegisterScreen> {
             RegisterScreenRoot(
                 onLogInClick = {
@@ -40,12 +62,20 @@ private fun NavGraphBuilder.authGraph(navController: NavHostController) {
                 },
             )
         }
-        composable<LoginScreen> {
-            Text(text = "LoginScreen")
+    }
+}
+
+private fun NavGraphBuilder.agendaGraph(navController: NavHostController) {
+    navigation<AgendaFeature>(
+        startDestination = AgendaScreen,
+    ) {
+        composable<AgendaScreen> {
+            Text(text = "AgendaScreen")
         }
     }
 }
 
+// Auth
 @Serializable
 object AuthFeature
 
@@ -54,3 +84,10 @@ object RegisterScreen
 
 @Serializable
 object LoginScreen
+
+// Agenda
+@Serializable
+object AgendaFeature
+
+@Serializable
+object AgendaScreen

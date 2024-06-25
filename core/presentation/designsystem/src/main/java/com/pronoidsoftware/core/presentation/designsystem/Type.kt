@@ -73,6 +73,14 @@ val Typography = Typography(
         fontSize = 16.sp,
         lineHeight = 30.sp,
     ),
+    labelMedium = TextStyle(
+        // used for register annotated string
+        fontFamily = Inter,
+        fontWeight = FontWeight.Medium,
+        fontSize = 14.sp,
+        lineHeight = 30.sp,
+        letterSpacing = 0.5.sp,
+    ),
     headlineMedium = TextStyle(
         fontFamily = Inter,
         fontWeight = FontWeight.SemiBold,

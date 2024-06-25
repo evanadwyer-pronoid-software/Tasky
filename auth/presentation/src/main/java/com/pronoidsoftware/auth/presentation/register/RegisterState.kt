@@ -2,6 +2,7 @@ package com.pronoidsoftware.auth.presentation.register
 
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import com.pronoidsoftware.auth.domain.PasswordValidationState
 
 data class RegisterState(
@@ -14,7 +15,7 @@ data class RegisterState(
     val passwordValidationState: PasswordValidationState = PasswordValidationState(),
     val isRegistering: Boolean = false,
 ) {
-    val canRegister = derivedStateOf {
+    val canRegister by derivedStateOf {
         !isRegistering && isNameValid && isEmailValid && passwordValidationState.isPasswordValid
     }
 
@@ -40,7 +41,7 @@ data class RegisterState(
         if (isPasswordVisible != other.isPasswordVisible) return false
         if (passwordValidationState != other.passwordValidationState) return false
         if (isRegistering != other.isRegistering) return false
-        if (canRegister.value != other.canRegister.value) return false
+        if (canRegister != other.canRegister) return false
 
         return true
     }
