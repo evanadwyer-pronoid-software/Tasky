@@ -42,6 +42,9 @@ dependencies {
     // Crypto
     implementation(libs.androidx.security.crypto.ktx)
 
+    // SplashScreen
+    implementation(libs.androidx.core.splashscreen)
+
     // Modules
     implementation(projects.core.presentation.designsystem)
     implementation(projects.core.presentation.ui)
