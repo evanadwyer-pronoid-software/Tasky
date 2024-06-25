@@ -5,6 +5,7 @@ import com.pronoidsoftware.core.domain.util.DataError
 import com.pronoidsoftware.core.domain.util.Result
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.request.delete
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.get
@@ -42,6 +43,19 @@ suspend inline fun <reified Response : Any> HttpClient.delete(
             queryParameters.forEach { (key, value) ->
                 parameter(key, value)
             }
+        }
+    }
+}
+
+suspend inline fun <reified Request, reified Response : Any> HttpClient.postRefreshToken(
+    route: String,
+    body: Request,
+): Result<Response, DataError.Network> {
+    return safeCAll {
+        post {
+            attributes.put(Auth.AuthCircuitBreaker, Unit)
+            url(constructRoute(route))
+            setBody(body)
         }
     }
 }
