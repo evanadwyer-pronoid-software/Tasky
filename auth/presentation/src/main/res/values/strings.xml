@@ -12,13 +12,10 @@
     <string name="email">Email address</string>
     <string name="must_be_a_valid_email">Must be a valid email</string>
     <string name="password">Password</string>
-    <string name="at_least_X_characters">At least %d characters</string>
-    <string name="at_least_one_number">At least one number</string>
-    <string name="contains_lowercase_character">Contains a lowercase character</string>
-    <string name="contains_uppercase_character">Contains an uppercase character</string>
     <string name="get_started">GET STARTED</string>
     <string name="name_is_valid">Name is valid</string>
     <string name="email_is_valid">Email is valid</string>
     <string name="password_is_valid">Password is valid</string>
     <string name="error_user_already_exists">A user with this email already exists.</string>
+    <string name="error_email_password_incorrect">The email or password is incorrect.</string>
 </resources>
