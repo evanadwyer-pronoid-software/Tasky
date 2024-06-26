@@ -10,27 +10,11 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
-import androidx.navigation.NavHostController
 import com.pronoidsoftware.TaskyComposeRule
-import com.pronoidsoftware.tasky.LoginScreen
-import kotlinx.coroutines.runBlocking
 
 class LoginScreenRobot(
     private val composeRule: TaskyComposeRule,
 ) {
-    fun navigateTo(navController: NavHostController): LoginScreenRobot {
-        runBlocking {
-            composeRule.awaitIdle()
-            composeRule.runOnUiThread {
-                navController.navigate(LoginScreen) {
-                    popUpTo(LoginScreen) {
-                        inclusive = true
-                    }
-                }
-            }
-        }
-        return this
-    }
 
     fun inputText(value: String): LoginScreenRobot {
         composeRule.onNode(isFocused()).performTextClearance()
