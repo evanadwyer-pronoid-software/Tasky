@@ -22,7 +22,10 @@ class LoginScreenTest : TaskyAndroidTest() {
         composeRule.activity.setContent {
             TaskyTheme {
                 val navController = rememberNavController()
-                NavigationRoot(navController = navController)
+                NavigationRoot(
+                    navController = navController,
+                    isLoggedIn = false,
+                )
                 LoginScreenRobot(composeRule)
                     .navigateTo(navController)
                     .assertLoginButtonIsDisabled()
