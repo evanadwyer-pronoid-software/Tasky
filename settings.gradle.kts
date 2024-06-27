@@ -28,6 +28,8 @@ gradle.startParameter.excludedTaskNames.addAll(listOf(":build-logic:convention:t
 
 rootProject.name = "Tasky"
 include(":app")
+include(":common:androidTest")
+include(":common:test")
 include(":core:data")
 include(":core:database")
 include(":core:domain")
