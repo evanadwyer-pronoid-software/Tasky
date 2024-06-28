@@ -13,4 +13,7 @@ dependencies {
     implementation(projects.core.database)
 
     implementation(libs.timber)
+
+    // Crypto
+    implementation(libs.androidx.security.crypto.ktx)
 }

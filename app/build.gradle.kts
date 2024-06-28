@@ -39,9 +39,6 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-    // Crypto
-    implementation(libs.androidx.security.crypto.ktx)
-
     // SplashScreen
     implementation(libs.androidx.core.splashscreen)
 
