@@ -1,19 +1,19 @@
 package com.pronoidsoftware.common.test.core.data.networking
 
 import io.ktor.client.engine.HttpClientEngine
-import org.junit.After
-import org.junit.Before
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 
 abstract class TaskyKtorTest {
 
     protected lateinit var mockEngine: HttpClientEngine
 
-    @Before
+    @BeforeEach
     open fun setUp() {
         mockEngine = MockHttpClientEngine().get()
     }
 
-    @After
+    @AfterEach
     open fun tearDown() {
         mockEngine.close()
     }

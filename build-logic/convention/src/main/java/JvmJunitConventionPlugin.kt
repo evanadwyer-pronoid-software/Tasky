@@ -17,7 +17,9 @@ class JvmJunitConventionPlugin : Plugin<Project> {
             }
 
             tasks.withType<Test> {
-                useJUnitPlatform()
+                useJUnitPlatform {
+//                    exclude("**/AuthRepositoryImplementationTest.*")
+                }
             }
         }
     }

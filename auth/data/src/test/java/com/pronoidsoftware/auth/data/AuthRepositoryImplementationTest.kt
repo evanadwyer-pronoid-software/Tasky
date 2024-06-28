@@ -12,15 +12,15 @@ import com.pronoidsoftware.core.domain.SessionStorage
 import com.pronoidsoftware.core.domain.util.DataError
 import com.pronoidsoftware.core.domain.util.Result
 import kotlinx.coroutines.runBlocking
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 class AuthRepositoryImplementationTest : TaskyKtorTest() {
 
     private lateinit var authRepository: AuthRepository
     private lateinit var sessionStorage: SessionStorage
 
-    @Before
+    @BeforeEach
     override fun setUp() {
         super.setUp()
         sessionStorage = SessionStorageFake()
