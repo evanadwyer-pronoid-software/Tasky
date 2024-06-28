@@ -61,3 +61,26 @@ dependencies {
     implementation(projects.agenda.data)
     implementation(projects.agenda.network)
 }
+
+tasks.register("testAllUnitTests") {
+    group = "verification"
+    description = "Runs all unit tests for debug variant."
+
+    // core tests
+    dependsOn(":core:domain:test")
+    dependsOn(":core:data:testDebugUnitTest")
+    dependsOn(":core:database:testDebugUnitTest")
+    dependsOn(":core:presentation:designsystem:testDebugUnitTest")
+    dependsOn(":core:presentation:ui:testDebugUnitTest")
+
+    // auth tests
+    dependsOn(":auth:domain:test")
+    dependsOn(":auth:data:testDebugUnitTest")
+    dependsOn(":auth:presentation:testDebugUnitTest")
+
+    // agenda tests
+    dependsOn(":agenda:domain:test")
+    dependsOn(":agenda:data:testDebugUnitTest")
+    dependsOn(":agenda:network:testDebugUnitTest")
+    dependsOn(":agenda:presentation:testDebugUnitTest")
+}
