@@ -33,6 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -142,6 +143,7 @@ internal fun LoginScreen(state: LoginState, onAction: (LoginAction) -> Unit) {
                     null
                 },
                 error = state.email.text.isNotBlank() && !state.isEmailValid,
+                keyboardType = KeyboardType.Email,
                 modifier = Modifier.fillMaxWidth(),
             )
             Spacer(modifier = Modifier.height(spacing.authPaddingInterior))
