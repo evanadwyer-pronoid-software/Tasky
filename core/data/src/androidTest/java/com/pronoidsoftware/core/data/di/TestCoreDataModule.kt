@@ -4,26 +4,29 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import com.pronoidsoftware.common.test.core.data.networking.MockHttpClientEngine
 import com.pronoidsoftware.core.data.networking.HttpClientFactory
 import com.pronoidsoftware.core.domain.SessionStorage
 import dagger.Module
 import dagger.Provides
-import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import dagger.hilt.testing.TestInstallIn
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
-import io.ktor.client.engine.cio.CIO
 import javax.inject.Singleton
 
 @Module
-@InstallIn(SingletonComponent::class)
-object CoreDataModule {
+@TestInstallIn(
+    components = [SingletonComponent::class],
+    replaces = [CoreDataModule::class],
+)
+object TestCoreDataModule {
 
     @Provides
     @Singleton
     fun provideCIOEngine(): HttpClientEngine {
-        return CIO.create()
+        return MockHttpClientEngine().get()
     }
 
     @Provides

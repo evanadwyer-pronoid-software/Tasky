@@ -3,9 +3,10 @@ package com.pronoidsoftware.core.data.networking
 import com.pronoidsoftware.core.data.BuildConfig
 import com.pronoidsoftware.core.domain.AuthInfo
 import com.pronoidsoftware.core.domain.SessionStorage
+import com.pronoidsoftware.core.domain.networking.AuthRoutes
 import com.pronoidsoftware.core.domain.util.Result
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.cio.CIO
+import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
@@ -23,9 +24,10 @@ import timber.log.Timber
 
 class HttpClientFactory(
     private val sessionStorage: SessionStorage,
+    private val engine: HttpClientEngine,
 ) {
 
-    fun build(): HttpClient = HttpClient(CIO) {
+    fun build(): HttpClient = HttpClient(engine) {
         install(ContentNegotiation) {
             json(
                 json = Json {

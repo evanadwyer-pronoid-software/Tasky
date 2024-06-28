@@ -1,4 +1,4 @@
-package com.pronoidsoftware.common.test.core.data
+package com.pronoidsoftware.common.test.core.data.auth
 
 import com.pronoidsoftware.core.domain.AuthInfo
 import com.pronoidsoftware.core.domain.SessionStorage

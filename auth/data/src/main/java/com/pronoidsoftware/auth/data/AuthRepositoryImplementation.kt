@@ -4,10 +4,10 @@ import com.pronoidsoftware.auth.data.login.LoginRequest
 import com.pronoidsoftware.auth.data.login.LoginResponse
 import com.pronoidsoftware.auth.data.register.RegisterRequest
 import com.pronoidsoftware.auth.domain.AuthRepository
-import com.pronoidsoftware.core.data.networking.AuthRoutes
 import com.pronoidsoftware.core.data.networking.post
 import com.pronoidsoftware.core.domain.AuthInfo
 import com.pronoidsoftware.core.domain.SessionStorage
+import com.pronoidsoftware.core.domain.networking.AuthRoutes
 import com.pronoidsoftware.core.domain.util.DataError
 import com.pronoidsoftware.core.domain.util.EmptyResult
 import com.pronoidsoftware.core.domain.util.asEmptyResult

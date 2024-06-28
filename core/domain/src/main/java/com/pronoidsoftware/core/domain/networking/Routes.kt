@@ -1,4 +1,4 @@
-package com.pronoidsoftware.core.data.networking
+package com.pronoidsoftware.core.domain.networking
 
 object AuthRoutes {
     const val REGISTER = "/register"

@@ -1,0 +1,7 @@
+{
+  "accessToken": "testAccessToken",
+  "refreshToken": "testRefreshToken",
+  "userId": "1234a",
+  "fullName": "Tester",
+  "accessTokenExpirationTimestamp": 1719438045853
+}
