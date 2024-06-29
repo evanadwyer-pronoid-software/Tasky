@@ -25,7 +25,7 @@ class MockHttpClientEngineFactory {
             when (request.url.encodedPath) {
                 "/register" -> {
                     val email = json["email"]?.jsonPrimitive?.content
-                    if (email == TestConstants.INVALID_EMAIL) {
+                    if (email == TestConstants.CONFLICT_EMAIL) {
                         content = "/registerErrorRS.json"
                         status = HttpStatusCode.Conflict
                     } else if (email == TestConstants.VALID_EMAIL) {

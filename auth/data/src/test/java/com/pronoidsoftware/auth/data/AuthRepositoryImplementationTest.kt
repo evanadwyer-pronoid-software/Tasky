@@ -61,7 +61,7 @@ class AuthRepositoryImplementationTest {
     fun `register error - conflict`() = runBlocking {
         val response = authRepository.register(
             fullName = TestConstants.FULL_NAME,
-            email = TestConstants.INVALID_EMAIL,
+            email = TestConstants.CONFLICT_EMAIL,
             password = TestConstants.VALID_PASSWORD,
         )
 
@@ -97,7 +97,7 @@ class AuthRepositoryImplementationTest {
     @Test
     fun `login error - wrong email - session storage not updated`() = runBlocking {
         val response = authRepository.login(
-            email = TestConstants.INVALID_EMAIL,
+            email = TestConstants.CONFLICT_EMAIL,
             password = TestConstants.VALID_PASSWORD,
         )
         val authInfo = sessionStorage.get()
@@ -115,7 +115,7 @@ class AuthRepositoryImplementationTest {
     fun `login error - wrong password - session storage not updated`() = runBlocking {
         val response = authRepository.login(
             email = TestConstants.VALID_EMAIL,
-            password = TestConstants.INVALID_PASSWORD,
+            password = TestConstants.WRONG_PASSWORD,
         )
         val authInfo = sessionStorage.get()
 

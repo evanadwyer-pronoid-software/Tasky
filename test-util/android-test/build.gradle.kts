@@ -1,21 +1,20 @@
 plugins {
     alias(libs.plugins.tasky.android.library)
-    alias(libs.plugins.tasky.jvm.ktor)
     alias(libs.plugins.tasky.android.hilt)
+    alias(libs.plugins.tasky.jvm.ktor)
 }
 
 android {
-    namespace = "com.pronoidsoftware.core.data"
+    namespace = "com.pronoidsoftware.testutil.androidtest"
 }
 
 dependencies {
     implementation(projects.core.domain)
-    implementation(projects.core.database)
-
-    implementation(libs.timber)
+    implementation(projects.core.data)
 
     // Crypto
     implementation(libs.androidx.security.crypto.ktx)
 
-    androidTestImplementation(projects.testUtil.androidTest)
+    api(projects.testUtil.jvmTest)
+    implementation(libs.hilt.android.testing)
 }

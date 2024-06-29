@@ -57,6 +57,9 @@ dependencies {
     implementation(projects.agenda.domain)
     implementation(projects.agenda.data)
     implementation(projects.agenda.network)
+
+    testImplementation(projects.testUtil.jvmTest)
+    androidTestImplementation(projects.testUtil.androidTest)
 }
 
 tasks.register("testAllUnitTests") {
