@@ -4,10 +4,8 @@ class UserDataValidator(
     private val emailPatternValidator: PatternValidator,
 ) {
 
-    // name should not contain special characters, only alphanumeric
     fun validateName(name: String): Boolean {
-        return name.trim().matches(Regex("^[a-zA-Z0-9 ]+$")) &&
-            name.trim().length in MIN_NAME_LENGTH..MAX_NAME_LENGTH
+        return name.trim().length in MIN_NAME_LENGTH..MAX_NAME_LENGTH
     }
 
     fun validateEmail(email: String): Boolean {
