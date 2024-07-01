@@ -5,6 +5,7 @@ import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.isFocused
+import androidx.compose.ui.test.isNotDisplayed
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -67,6 +68,16 @@ class RegisterScreenRobot(
         return this
     }
 
+    fun assertPasswordIsHidden(): RegisterScreenRobot {
+        composeRule.onNodeWithContentDescription("Hide password").isNotDisplayed()
+        return this
+    }
+
+    fun assertPasswordIsShown(): RegisterScreenRobot {
+        composeRule.onNodeWithContentDescription("Show password").isNotDisplayed()
+        return this
+    }
+
     fun assertPasswordIsInvalid(): RegisterScreenRobot {
         composeRule.onNodeWithContentDescription("Password is valid").assertIsNotDisplayed()
         return this
@@ -94,6 +105,11 @@ class RegisterScreenRobot(
 
     fun assertRegistering(): RegisterScreenRobot {
         composeRule.onNodeWithText("GET STARTED").assertIsNotDisplayed()
+        return this
+    }
+
+    fun clickLoginButton(): RegisterScreenRobot {
+        composeRule.onNodeWithContentDescription("Go back to login").performClick()
         return this
     }
 }

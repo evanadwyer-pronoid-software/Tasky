@@ -24,6 +24,7 @@ class AuthFeatureE2ETest : TaskyAndroidTest() {
             .clickSignUp()
 
         RegisterScreenRobot(composeRule)
+            .assertPasswordIsHidden()
             .assertRegisterButtonIsDisabled()
             .assertNameIsInvalid()
             .clickName()
@@ -46,7 +47,9 @@ class AuthFeatureE2ETest : TaskyAndroidTest() {
             .inputText(TestConstants.VALID_PASSWORD)
             .assertPasswordIsValid()
             .showPassword()
+            .assertPasswordIsShown()
             .hidePassword()
+            .assertPasswordIsHidden()
             .assertRegisterButtonIsEnabled()
             .clickRegisterButton()
             .assertRegistering()
@@ -70,5 +73,20 @@ class AuthFeatureE2ETest : TaskyAndroidTest() {
             .assertLoggingIn()
 
         composeRule.onNodeWithText("AgendaScreen").assertIsDisplayed()
+    }
+
+    @Test
+    fun testAuthFeature_infoRetainedOnNavigation() {
+        LoginScreenRobot(composeRule)
+            .clickEmail()
+            .inputText(TestConstants.VALID_EMAIL)
+            .assertEmailIsValid()
+            .clickSignUp()
+
+        RegisterScreenRobot(composeRule)
+            .clickLoginButton()
+
+        LoginScreenRobot(composeRule)
+            .assertEmailIsValid()
     }
 }

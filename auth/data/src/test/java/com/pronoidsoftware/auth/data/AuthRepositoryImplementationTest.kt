@@ -4,12 +4,12 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import com.pronoidsoftware.auth.domain.AuthRepository
 import com.pronoidsoftware.core.data.networking.HttpClientFactory
-import com.pronoidsoftware.core.domain.AuthInfo
 import com.pronoidsoftware.core.domain.SessionStorage
 import com.pronoidsoftware.core.domain.util.DataError
 import com.pronoidsoftware.core.domain.util.Result
 import com.pronoidsoftware.testutil.jvmtest.TestConstants
 import com.pronoidsoftware.testutil.jvmtest.core.data.auth.FakeSessionStorage
+import com.pronoidsoftware.testutil.jvmtest.core.data.auth.authInfoStub
 import com.pronoidsoftware.testutil.jvmtest.core.data.networking.MockHttpClientEngineFactory
 import io.ktor.client.engine.HttpClientEngine
 import kotlinx.coroutines.runBlocking
@@ -83,12 +83,7 @@ class AuthRepositoryImplementationTest {
         val expectedResponse = Result.Success(
             data = Unit,
         )
-        val expectedAuthInfo = AuthInfo(
-            accessToken = TestConstants.ACCESS_TOKEN,
-            refreshToken = TestConstants.REFRESH_TOKEN,
-            userId = TestConstants.USER_ID,
-            fullName = TestConstants.FULL_NAME,
-        )
+        val expectedAuthInfo = authInfoStub()
 
         assertThat(response).isEqualTo(expectedResponse)
         assertThat(authInfo).isEqualTo(expectedAuthInfo)

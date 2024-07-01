@@ -7,10 +7,9 @@ import androidx.compose.ui.test.onNodeWithText
 import com.pronoidsoftware.core.TaskyAndroidTest
 import com.pronoidsoftware.core.data.auth.EncryptedSessionStorage
 import com.pronoidsoftware.core.data.di.SessionStorageModule
-import com.pronoidsoftware.core.domain.AuthInfo
 import com.pronoidsoftware.core.domain.SessionStorage
 import com.pronoidsoftware.tasky.MainActivity
-import com.pronoidsoftware.testutil.jvmtest.TestConstants
+import com.pronoidsoftware.testutil.jvmtest.core.data.auth.authInfoStub
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -38,12 +37,7 @@ class AuthFeatureLoggedInTest : TaskyAndroidTest() {
         fun provideLoggedInSessionStorage(sharedPreferences: SharedPreferences): SessionStorage {
             val sessionStorage = EncryptedSessionStorage(sharedPreferences)
             runBlocking {
-                val authInfo = AuthInfo(
-                    accessToken = TestConstants.ACCESS_TOKEN,
-                    refreshToken = TestConstants.REFRESH_TOKEN,
-                    userId = TestConstants.USER_ID,
-                    fullName = TestConstants.FULL_NAME,
-                )
+                val authInfo = authInfoStub()
                 sessionStorage.set(authInfo)
             }
             return sessionStorage
