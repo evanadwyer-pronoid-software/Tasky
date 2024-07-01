@@ -4,31 +4,34 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.click
 import androidx.compose.ui.test.isFocused
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
-import androidx.navigation.NavHostController
+import androidx.compose.ui.test.performTouchInput
 import com.pronoidsoftware.TaskyComposeRule
-import com.pronoidsoftware.tasky.LoginScreen
-import kotlinx.coroutines.runBlocking
 
 class LoginScreenRobot(
     private val composeRule: TaskyComposeRule,
 ) {
-    fun navigateTo(navController: NavHostController): LoginScreenRobot {
-        runBlocking {
-            composeRule.awaitIdle()
-            composeRule.runOnUiThread {
-                navController.navigate(LoginScreen) {
-                    popUpTo(LoginScreen) {
-                        inclusive = true
-                    }
-                }
+
+    fun clickSignUp(): LoginScreenRobot {
+        composeRule
+            .onNodeWithText(
+                text = "SIGN UP",
+                substring = true,
+            )
+            .performTouchInput {
+                click(
+                    percentOffset(
+                        .9f,
+                        .5f,
+                    ),
+                )
             }
-        }
         return this
     }
 

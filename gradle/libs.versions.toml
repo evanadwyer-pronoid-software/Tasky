@@ -11,12 +11,13 @@ jetbrainsKotlinJvm = "2.0.0"
 androidTools = "31.5.0"
 ksp = "2.0.0-1.0.21"
 room = "2.6.1"
-ktor = "2.3.8"
+ktor = "2.3.12"
 ktorClientLogging = "2.3.8"
 desugar_jdk_libs = "2.0.4"
 kotlinx-serialization = "1.6.3"
 securityCryptoKtx = "1.1.0-alpha06"
 coreSplashscreen = "1.0.1"
+slf4j = "2.0.13"
 
 # Hilt
 hilt = "2.51.1"
@@ -25,9 +26,9 @@ androidxHilt = "1.2.0"
 # Testing versions
 junit4 = "4.13.2"
 junitBom = "5.10.2"
-junitVersion = "1.1.5"
-espressoCore = "3.5.1"
-testRunner = "1.5.2"
+androidxJunitVersion = "1.2.1"
+espressoCore = "3.6.1"
+testRunner = "1.6.1"
 assertk = "0.28.1"
 androidJunit5 = "1.10.0.0"
 screenshot = "0.0.1-alpha02"
@@ -36,7 +37,7 @@ screenshot = "0.0.1-alpha02"
 activityCompose = "1.9.0"
 composeBom = "2024.06.00"
 chrisBanesComposeBom = "2024.05.00-alpha03"
-composeNavigation = "2.8.0-beta03"
+composeNavigation = "2.8.0-beta04"
 
 # Lifecycle versions
 lifecycleRuntimeKtx = "2.8.2"
@@ -65,6 +66,7 @@ androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscree
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 desugar-jdk-libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
+slf4j = { group = "org.slf4j", name = "slf4j-nop", version.ref = "slf4j" }
 
 # Hilt Libraries
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
@@ -81,8 +83,9 @@ junit-jupiter-api = { group = "org.junit.jupiter", name = "junit-jupiter-api" }
 junit-jupiter-params = { group = "org.junit.jupiter", name = "junit-jupiter-params" }
 junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine" }
 junit-vintage-engine = { group = "org.junit.vintage", name = "junit-vintage-engine" }
+junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
 assertk = { group = "com.willowtreeapps.assertk", name = "assertk", version.ref = "assertk" }
-androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxJunitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "testRunner" }
 
@@ -111,6 +114,7 @@ ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negoti
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktorClientLogging" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
 
 # Serialization Libraries
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
@@ -187,6 +191,7 @@ ktor = [
     "ktor-client-core",
     "ktor-client-logging",
     "ktor-serialization-kotlinx-json",
+    "slf4j"
 ]
 
 # Testing Bundle

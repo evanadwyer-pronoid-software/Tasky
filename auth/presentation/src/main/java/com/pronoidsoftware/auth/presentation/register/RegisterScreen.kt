@@ -98,6 +98,7 @@ internal fun RegisterScreen(state: RegisterState, onAction: (RegisterAction) -> 
         floatingActionButton = {
             TaskyFloatingActionButton(
                 icon = BackChevronIcon,
+                contentDescription = stringResource(id = R.string.back_to_login),
                 onClick = {
                     onAction(RegisterAction.OnLoginClick)
                 },

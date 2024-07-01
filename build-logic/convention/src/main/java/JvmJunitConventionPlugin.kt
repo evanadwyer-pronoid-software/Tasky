@@ -12,6 +12,7 @@ class JvmJunitConventionPlugin : Plugin<Project> {
             dependencies {
                 "testImplementation"(platform(libs.findLibrary("junit.bom").get()))
                 "testImplementation"(libs.findBundle("test").get())
+                "testRuntimeOnly"(libs.findLibrary("junit.platform.launcher").get())
                 "testRuntimeOnly"(libs.findLibrary("junit.jupiter.engine").get())
                 "testRuntimeOnly"(libs.findLibrary("junit.vintage.engine").get())
             }

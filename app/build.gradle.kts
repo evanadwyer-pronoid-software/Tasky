@@ -39,9 +39,6 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-    // Crypto
-    implementation(libs.androidx.security.crypto.ktx)
-
     // SplashScreen
     implementation(libs.androidx.core.splashscreen)
 
@@ -60,4 +57,30 @@ dependencies {
     implementation(projects.agenda.domain)
     implementation(projects.agenda.data)
     implementation(projects.agenda.network)
+
+    testImplementation(projects.testUtil.jvmTest)
+    androidTestImplementation(projects.testUtil.androidTest)
+}
+
+tasks.register("testAllUnitTests") {
+    group = "verification"
+    description = "Runs all unit tests for debug variant."
+
+    // core tests
+    dependsOn(":core:domain:test")
+    dependsOn(":core:data:testDebugUnitTest")
+    dependsOn(":core:database:testDebugUnitTest")
+    dependsOn(":core:presentation:designsystem:testDebugUnitTest")
+    dependsOn(":core:presentation:ui:testDebugUnitTest")
+
+    // auth tests
+    dependsOn(":auth:domain:test")
+    dependsOn(":auth:data:testDebugUnitTest")
+    dependsOn(":auth:presentation:testDebugUnitTest")
+
+    // agenda tests
+    dependsOn(":agenda:domain:test")
+    dependsOn(":agenda:data:testDebugUnitTest")
+    dependsOn(":agenda:network:testDebugUnitTest")
+    dependsOn(":agenda:presentation:testDebugUnitTest")
 }

@@ -26,7 +26,7 @@ jobs:
     - name: Setup Android SDK
       uses: android-actions/setup-android@v3.2.1
 
-    - run: ./gradlew test
+    - run: ./gradlew --no-daemon clean testAllUnitTests
 
     - name: Delete local.properties
       run: rm local.properties

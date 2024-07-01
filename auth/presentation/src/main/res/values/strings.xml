@@ -18,4 +18,5 @@
     <string name="password_is_valid">Password is valid</string>
     <string name="error_user_already_exists">A user with this email already exists.</string>
     <string name="error_email_password_incorrect">The email or password is incorrect.</string>
+    <string name="back_to_login">Go back to login</string>
 </resources>
