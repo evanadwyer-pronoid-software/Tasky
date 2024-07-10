@@ -7,4 +7,5 @@ dependencies {
     implementation(projects.core.domain)
 
     implementation(libs.ktor.client.mock)
+    implementation(libs.kotlinx.datetime)
 }
