@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="completed">Completed</string>
+    <string name="more">More</string>
+    <string name="open">Open</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="select_date">Select date</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="today">Today</string>
+    <string name="logout">Logout</string>
+    <string name="create_agenda_item">Create an agenda item</string>
+</resources>

@@ -46,6 +46,6 @@ class AuthFeatureLoggedInTest : TaskyAndroidTest() {
 
     @Test
     fun testAuthFeature_alreadyLoggedIn() {
-        composeRule.onNodeWithText("AgendaScreen").assertIsDisplayed()
+        composeRule.onNodeWithText("Today").assertIsDisplayed()
     }
 }

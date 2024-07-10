@@ -54,7 +54,9 @@ class LoginViewModel @Inject constructor(
                 )
             }
 
-            else -> Timber.wtf("Unknown Login Action in VM")
+            else -> {
+                Timber.wtf("Unknown Login Action in VM")
+            }
         }
     }
 

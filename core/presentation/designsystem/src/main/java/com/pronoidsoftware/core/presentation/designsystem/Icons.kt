@@ -43,3 +43,11 @@ val DeleteIcon: ImageVector
 val NotificationIcon: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.notification)
+
+val EllipsesIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ellipses)
+
+val ArrowDownIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.arrow_down)

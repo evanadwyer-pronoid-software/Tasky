@@ -6,7 +6,6 @@ coreKtx = "1.13.1"
 coroutines = "1.8.1"
 timber = "5.0.1"
 appcompat = "1.7.0"
-material = "1.12.0"
 jetbrainsKotlinJvm = "2.0.0"
 androidTools = "31.5.0"
 ksp = "2.0.0-1.0.21"
@@ -15,6 +14,7 @@ ktor = "2.3.12"
 ktorClientLogging = "2.3.8"
 desugar_jdk_libs = "2.0.4"
 kotlinx-serialization = "1.6.3"
+kotlinx-datetime = "0.6.0"
 securityCryptoKtx = "1.1.0-alpha06"
 coreSplashscreen = "1.0.1"
 slf4j = "2.0.13"
@@ -40,7 +40,7 @@ chrisBanesComposeBom = "2024.05.00-alpha03"
 composeNavigation = "2.8.0-beta04"
 
 # Lifecycle versions
-lifecycleRuntimeKtx = "2.8.2"
+lifecycleRuntimeKtx = "2.8.3"
 
 # Ktlint version
 ktlint = "12.1.1"
@@ -58,7 +58,6 @@ projectVersionCode = "1"
 # AndroidX Libraries
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-security-crypto-ktx = { group = "androidx.security", name = "security-crypto-ktx", version.ref = "securityCryptoKtx" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 
@@ -66,6 +65,7 @@ androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscree
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 desugar-jdk-libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinx-datetime" }
 slf4j = { group = "org.slf4j", name = "slf4j-nop", version.ref = "slf4j" }
 
 # Hilt Libraries
