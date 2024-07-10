@@ -73,6 +73,13 @@ fun Long.toLocalDate(): LocalDate {
         .date
 }
 
+fun Long.toLocalDateUTC(): LocalDate {
+    return Instant
+        .fromEpochMilliseconds(this)
+        .toLocalDateTime(TimeZone.UTC)
+        .date
+}
+
 fun LocalDate.toRelativeDate(clock: Clock = Clock.System): UiText {
     return when (this) {
         today(clock).plus(1, DateTimeUnit.DAY) -> UiText.StringResource(R.string.tomorrow)

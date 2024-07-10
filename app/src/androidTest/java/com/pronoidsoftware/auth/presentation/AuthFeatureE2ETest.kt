@@ -72,7 +72,7 @@ class AuthFeatureE2ETest : TaskyAndroidTest() {
             .clickLoginButton()
             .assertLoggingIn()
 
-        composeRule.onNodeWithText("AgendaScreen").assertIsDisplayed()
+        composeRule.onNodeWithText("Today").assertIsDisplayed()
     }
 
     @Test

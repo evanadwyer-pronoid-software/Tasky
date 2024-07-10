@@ -80,6 +80,22 @@ class DateTimeUtilTest {
     }
 
     @Test
+    fun conversionBetweenLocalDateAndMillisFuture() {
+        val future = today().plus(1, DateTimeUnit.MONTH)
+        val millis = future.toMillis()
+        val futureFromMillis = millis.toLocalDate()
+        assertThat(futureFromMillis).isEqualTo(future)
+    }
+
+    @Test
+    fun conversionBetweenLocalDateAndMillisPast() {
+        val past = today().minus(1, DateTimeUnit.MONTH)
+        val millis = past.toMillis()
+        val pastFromMillis = millis.toLocalDate()
+        assertThat(pastFromMillis).isEqualTo(past)
+    }
+
+    @Test
     fun conversionBetweenLocalDateTimeAndMillis() {
         val now = now(clockNow)
         val millis = now.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
