@@ -1,12 +1,12 @@
 package com.pronoidsoftware.tasky
 
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import com.pronoidsoftware.agenda.presentation.overview.AgendaOverviewScreenRoot
 import com.pronoidsoftware.auth.presentation.login.LoginScreenRoot
 import com.pronoidsoftware.auth.presentation.register.RegisterScreenRoot
 import kotlinx.serialization.Serializable
@@ -70,7 +70,7 @@ private fun NavGraphBuilder.agendaGraph(navController: NavHostController) {
         startDestination = AgendaScreen,
     ) {
         composable<AgendaScreen> {
-            Text(text = "AgendaScreen")
+            AgendaOverviewScreenRoot()
         }
     }
 }

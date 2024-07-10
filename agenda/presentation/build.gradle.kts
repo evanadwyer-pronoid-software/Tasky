@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.tasky.android.feature.ui)
+    alias(libs.plugins.tasky.android.hilt.compose)
 }
 
 android {
