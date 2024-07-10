@@ -48,11 +48,11 @@ val Inter = FontFamily(
 
 val Typography = Typography(
     bodySmall = TextStyle(
+        // agenda overview item body
         fontFamily = Inter,
         fontWeight = FontWeight.Normal,
-        fontSize = 12.sp,
-        lineHeight = 20.sp,
-        color = TaskyDarkGray,
+        fontSize = 14.sp,
+        lineHeight = 15.sp,
     ),
     bodyMedium = TextStyle(
         fontFamily = Inter,
@@ -61,6 +61,7 @@ val Typography = Typography(
         lineHeight = 22.sp,
     ),
     bodyLarge = TextStyle(
+        // auth text fields
         fontFamily = Inter,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
@@ -68,6 +69,7 @@ val Typography = Typography(
         letterSpacing = 0.5.sp,
     ),
     labelLarge = TextStyle(
+        // action button
         fontFamily = Inter,
         fontWeight = FontWeight.Bold,
         fontSize = 16.sp,
@@ -81,16 +83,47 @@ val Typography = Typography(
         lineHeight = 30.sp,
         letterSpacing = 0.5.sp,
     ),
-    headlineMedium = TextStyle(
+    labelSmall = TextStyle(
+        // menu items
         fontFamily = Inter,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 24.sp,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp,
+        lineHeight = 15.sp,
         color = TaskyBlack,
     ),
+    headlineSmall = TextStyle(
+        // profile badge
+        fontFamily = Inter,
+        fontWeight = FontWeight.W600,
+        fontSize = 12.5.sp,
+        lineHeight = 15.sp,
+    ),
+    headlineMedium = TextStyle(
+        // agenda datepicker
+        fontFamily = Inter,
+        fontWeight = FontWeight.Bold,
+        fontSize = 16.sp,
+        lineHeight = 19.2.sp,
+    ),
     headlineLarge = TextStyle(
+        // Auth toolbar heading
         fontFamily = Inter,
         fontWeight = FontWeight.Bold,
         fontSize = 28.sp,
         lineHeight = 30.sp,
+    ),
+    titleMedium = TextStyle(
+        // title of agenda overview item
+        fontFamily = Inter,
+        fontWeight = FontWeight.W700,
+        fontSize = 20.sp,
+        lineHeight = 16.sp,
+    ),
+    displaySmall = TextStyle(
+        // agenda overview date widget
+        fontFamily = Inter,
+        fontWeight = FontWeight.W700,
+        fontSize = 11.sp,
+        lineHeight = 13.2.sp,
     ),
 )
