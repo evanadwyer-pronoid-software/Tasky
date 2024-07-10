@@ -112,15 +112,15 @@ internal fun RegisterScreen(state: RegisterState, onAction: (RegisterAction) -> 
                 .verticalScroll(rememberScrollState())
                 .clip(
                     RoundedCornerShape(
-                        topStart = spacing.authContainerRadius,
-                        topEnd = spacing.authContainerRadius,
+                        topStart = spacing.scaffoldContainerRadius,
+                        topEnd = spacing.scaffoldContainerRadius,
                     ),
                 )
                 .background(
                     MaterialTheme.colorScheme.background,
                     shape = RoundedCornerShape(
-                        topStart = spacing.authContainerRadius,
-                        topEnd = spacing.authContainerRadius,
+                        topStart = spacing.scaffoldContainerRadius,
+                        topEnd = spacing.scaffoldContainerRadius,
                     ),
                 )
                 .padding(top = spacing.authPaddingTop)

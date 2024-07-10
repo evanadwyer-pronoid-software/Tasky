@@ -25,6 +25,7 @@ import com.pronoidsoftware.core.presentation.designsystem.TaskyWhite2
 import com.pronoidsoftware.core.presentation.designsystem.components.TaskyDropdownMenu
 import com.pronoidsoftware.core.presentation.designsystem.components.TaskyProfileBadge
 import com.pronoidsoftware.core.presentation.ui.today
+import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import timber.log.Timber
 
@@ -34,6 +35,7 @@ fun AgendaOverviewToolbar(
     selectedDate: LocalDate,
     onAction: (AgendaOverviewAction) -> Unit,
     modifier: Modifier = Modifier,
+    clock: Clock = Clock.System,
     scrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(),
 ) {
     val spacing = LocalSpacing.current
@@ -51,6 +53,7 @@ fun AgendaOverviewToolbar(
                 onSelectDate = { date ->
                     onAction(AgendaOverviewAction.OnSelectDate(date))
                 },
+                clock = clock,
             )
         },
         scrollBehavior = scrollBehavior,

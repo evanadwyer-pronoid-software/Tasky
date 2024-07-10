@@ -115,15 +115,15 @@ internal fun LoginScreen(state: LoginState, onAction: (LoginAction) -> Unit) {
                 .verticalScroll(rememberScrollState())
                 .clip(
                     RoundedCornerShape(
-                        topStart = spacing.authContainerRadius,
-                        topEnd = spacing.authContainerRadius,
+                        topStart = spacing.scaffoldContainerRadius,
+                        topEnd = spacing.scaffoldContainerRadius,
                     ),
                 )
                 .background(
                     MaterialTheme.colorScheme.background,
                     shape = RoundedCornerShape(
-                        topStart = spacing.authContainerRadius,
-                        topEnd = spacing.authContainerRadius,
+                        topStart = spacing.scaffoldContainerRadius,
+                        topEnd = spacing.scaffoldContainerRadius,
                     ),
                 )
                 .padding(top = spacing.authPaddingTop)

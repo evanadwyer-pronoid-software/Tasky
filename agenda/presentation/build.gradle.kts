@@ -13,4 +13,6 @@ dependencies {
 
     implementation(libs.timber)
     implementation(libs.kotlinx.datetime)
+
+    screenshotTestImplementation(projects.testUtil.jvmTest)
 }
