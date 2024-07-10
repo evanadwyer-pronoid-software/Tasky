@@ -10,4 +10,8 @@ android {
 dependencies {
     implementation(projects.core.domain)
     implementation(projects.core.presentation.designsystem)
+
+    implementation(libs.kotlinx.datetime)
+
+    androidTestImplementation(projects.testUtil.androidTest)
 }
