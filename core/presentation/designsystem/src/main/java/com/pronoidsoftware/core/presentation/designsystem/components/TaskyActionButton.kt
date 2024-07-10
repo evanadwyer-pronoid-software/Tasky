@@ -49,8 +49,8 @@ fun TaskyActionButton(
         contentPadding = PaddingValues(
             start = spacing.spaceLargeMedium,
             end = spacing.spaceLargeMedium,
-            top = spacing.spaceMediumSmall,
-            bottom = spacing.spaceMediumSmall,
+            top = spacing.actionButtonVerticalPadding,
+            bottom = spacing.actionButtonVerticalPadding,
         ),
     ) {
         if (isLoading) {
@@ -68,7 +68,7 @@ fun TaskyActionButton(
     }
 }
 
-class IsLoadingPreviewParameterProvider : PreviewParameterProvider<Boolean> {
+private class IsLoadingPreviewParameterProvider : PreviewParameterProvider<Boolean> {
     override val values: Sequence<Boolean> = sequenceOf(true, false)
 }
 

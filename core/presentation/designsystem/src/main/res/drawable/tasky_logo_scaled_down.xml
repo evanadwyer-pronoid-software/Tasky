@@ -7,8 +7,8 @@
         android:name="scale"
         android:pivotX="250"
         android:pivotY="250"
-        android:scaleX="0.5"
-        android:scaleY="0.5">
+        android:scaleX="0.75"
+        android:scaleY="0.75">
         <path
             android:fillColor="#259f70"
             android:pathData="M250,250m-250,0a250,250 0,1 1,500 0a250,250 0,1 1,-500 0" />
