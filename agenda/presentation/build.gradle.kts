@@ -9,4 +9,7 @@ android {
 dependencies {
     implementation(projects.core.domain)
     implementation(projects.agenda.domain)
+
+    implementation(libs.timber)
+    implementation(libs.kotlinx.datetime)
 }
