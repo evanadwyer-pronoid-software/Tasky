@@ -6,7 +6,7 @@ import com.pronoidsoftware.agenda.domain.AgendaItem
 import com.pronoidsoftware.agenda.presentation.overview.model.AgendaOverviewItemUi
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
 import com.pronoidsoftware.core.presentation.ui.today
-import com.pronoidsoftware.testutil.jvmtest.core.data.time.FixedClock
+import com.pronoidsoftware.testutil.jvmtest.core.data.time.TestClock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
@@ -16,7 +16,7 @@ import kotlinx.datetime.atStartOfDayIn
 private fun AgendaOverviewScreenPreview_Figma() {
     TaskyTheme {
         val selectedDate = LocalDate(2023, 3, 5)
-        val fixedClock = FixedClock(selectedDate.atStartOfDayIn(TimeZone.currentSystemDefault()))
+        val fixedClock = TestClock(selectedDate.atStartOfDayIn(TimeZone.currentSystemDefault()))
         AgendaOverviewScreen(
             state = AgendaOverviewState(
                 userInitials = "AB",

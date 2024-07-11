@@ -13,14 +13,20 @@ import javax.inject.Inject
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import timber.log.Timber
 
 @HiltViewModel
 class AgendaOverviewViewModel @Inject constructor(
     sessionStorage: SessionStorage,
+    clock: Clock,
 ) : ViewModel() {
 
-    var state by mutableStateOf(AgendaOverviewState())
+    var state by mutableStateOf(
+        AgendaOverviewState(
+            clock = clock,
+        ),
+    )
         private set
 
     private val eventChannel = Channel<AgendaOverviewEvent>()
@@ -29,8 +35,10 @@ class AgendaOverviewViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             state = AgendaOverviewState(
+                // TODO: provide user initials another way to avoid initializing state twice?
                 userInitials = sessionStorage.get()?.fullName?.toInitials()?.capitalizeInitials()
                     ?: "",
+                clock = clock,
             )
         }
     }

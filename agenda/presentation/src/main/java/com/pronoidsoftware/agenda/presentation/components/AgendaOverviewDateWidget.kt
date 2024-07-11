@@ -26,10 +26,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.pronoidsoftware.agenda.presentation.R
 import com.pronoidsoftware.core.presentation.designsystem.Inter
 import com.pronoidsoftware.core.presentation.designsystem.LocalSpacing
 import com.pronoidsoftware.core.presentation.designsystem.TaskyDarkGray
@@ -119,6 +123,11 @@ fun DateDisplay(
     modifier: Modifier = Modifier,
 ) {
     val spacing = LocalSpacing.current
+    val description = if (selected) {
+        stringResource(id = R.string.selected_date)
+    } else {
+        null
+    }
     Column(
         modifier = modifier
             .height(spacing.agendaDateWidgetHeight)
@@ -131,6 +140,11 @@ fun DateDisplay(
                     Color.Transparent
                 },
             )
+            .semantics {
+                description?.let {
+                    contentDescription = it
+                }
+            }
             .clickable {
                 onclick(date)
             },
