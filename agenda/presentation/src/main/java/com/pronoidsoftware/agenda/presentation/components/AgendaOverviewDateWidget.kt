@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -86,18 +87,26 @@ fun AgendaOverviewDateWidget(
             DateDisplay(
                 date = date,
                 selected = date.dayOfMonth == selectedDate.dayOfMonth,
-            ) { newSelectedDate ->
-                if (newSelectedDate == selectedDate) {
-                    coroutineScope.launch {
-                        rowState.animateScrollToItem(
-                            index = scrollIndex,
-                            scrollOffset = -offsetPx,
-                        )
+                onclick = { newSelectedDate ->
+                    if (newSelectedDate == selectedDate) {
+                        coroutineScope.launch {
+                            rowState.animateScrollToItem(
+                                index = scrollIndex,
+                                scrollOffset = -offsetPx,
+                            )
+                        }
+                    } else {
+                        onSelectDate(newSelectedDate)
                     }
-                } else {
-                    onSelectDate(newSelectedDate)
-                }
-            }
+                },
+                modifier = Modifier.then(
+                    when (date) {
+                        range.first() -> Modifier.padding(start = paddingHorizontal / 2)
+                        range.last() -> Modifier.padding(end = paddingHorizontal / 2)
+                        else -> Modifier
+                    },
+                ),
+            )
         }
     }
 }
@@ -106,8 +115,8 @@ fun AgendaOverviewDateWidget(
 fun DateDisplay(
     date: LocalDate,
     selected: Boolean,
-    modifier: Modifier = Modifier,
     onclick: (LocalDate) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val spacing = LocalSpacing.current
     Column(
