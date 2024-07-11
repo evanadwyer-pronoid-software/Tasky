@@ -10,6 +10,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.pronoidsoftware.core.presentation.designsystem.Dimensions
 import com.pronoidsoftware.core.presentation.designsystem.LocalSpacing
 import com.pronoidsoftware.core.presentation.designsystem.TaskyBlack
@@ -62,8 +63,8 @@ private fun TimeMarkerPreview() {
                 .padding(
                     start = spacing.overviewStartPadding,
                     end = spacing.overviewEndPadding,
-                    top = spacing.timeMarkerBallRadius + spacing.timeMarkerVerticalPadding,
-                    bottom = spacing.timeMarkerBallRadius + spacing.timeMarkerVerticalPadding,
+                    top = spacing.timeMarkerBallRadius + 2.dp,
+                    bottom = spacing.timeMarkerBallRadius + 2.dp,
                 ),
         )
     }

@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
@@ -29,7 +29,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.pronoidsoftware.agenda.domain.AgendaItem
 import com.pronoidsoftware.agenda.presentation.R
 import com.pronoidsoftware.agenda.presentation.components.AgendaOverviewDateWidget
+import com.pronoidsoftware.agenda.presentation.components.AgendaOverviewItem
 import com.pronoidsoftware.agenda.presentation.components.AgendaOverviewToolbar
+import com.pronoidsoftware.agenda.presentation.components.TimeMarker
 import com.pronoidsoftware.core.presentation.designsystem.LocalSpacing
 import com.pronoidsoftware.core.presentation.designsystem.PlusIcon
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
@@ -38,6 +40,7 @@ import com.pronoidsoftware.core.presentation.designsystem.components.TaskyFloati
 import com.pronoidsoftware.core.presentation.designsystem.components.TaskyScaffold
 import com.pronoidsoftware.core.presentation.ui.ObserveAsEvents
 import com.pronoidsoftware.core.presentation.ui.toRelativeDate
+import com.pronoidsoftware.core.presentation.ui.today
 import java.util.Locale
 import timber.log.Timber
 
@@ -75,6 +78,7 @@ internal fun AgendaOverviewScreen(
             AgendaOverviewToolbar(
                 userInitials = state.userInitials,
                 selectedDate = state.selectedDate,
+                clock = state.clock,
                 onAction = onAction,
             )
         },
@@ -110,15 +114,15 @@ internal fun AgendaOverviewScreen(
                 .fillMaxSize()
                 .clip(
                     RoundedCornerShape(
-                        topStart = spacing.authContainerRadius,
-                        topEnd = spacing.authContainerRadius,
+                        topStart = spacing.scaffoldContainerRadius,
+                        topEnd = spacing.scaffoldContainerRadius,
                     ),
                 )
                 .background(
                     MaterialTheme.colorScheme.background,
                     shape = RoundedCornerShape(
-                        topStart = spacing.authContainerRadius,
-                        topEnd = spacing.authContainerRadius,
+                        topStart = spacing.scaffoldContainerRadius,
+                        topEnd = spacing.scaffoldContainerRadius,
                     ),
                 )
                 .padding(top = spacing.authPaddingTop),
@@ -137,16 +141,32 @@ internal fun AgendaOverviewScreen(
             ) {
                 item {
                     Text(
-                        text = state.selectedDate.toRelativeDate().asString(),
+                        text = state.selectedDate.toRelativeDate(state.clock).asString(),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurface,
                     )
+                    Spacer(modifier = Modifier.height(15.5.dp))
                 }
 
-                items(
+                itemsIndexed(
                     items = state.items,
-//                    key = { it.id }
-                ) {
+                    key = { _, agendaOverviewItem -> agendaOverviewItem.id },
+                ) { index, agendaOverviewItem ->
+                    AgendaOverviewItem(
+                        agendaOverviewItemUi = agendaOverviewItem,
+                        onAction = { agendaOverviewAction ->
+                            onAction(agendaOverviewAction)
+                        },
+                        onTickClick = {
+                            onAction(AgendaOverviewAction.OnTickClick(agendaOverviewItem.id))
+                        },
+                        modifier = Modifier.padding(
+                            vertical = 7.5.dp,
+                        ),
+                    )
+                    if (index == 0) {
+                        TimeMarker()
+                    }
                 }
             }
         }
@@ -158,7 +178,10 @@ internal fun AgendaOverviewScreen(
 private fun AgendaOverviewScreenPreview() {
     TaskyTheme {
         AgendaOverviewScreen(
-            state = AgendaOverviewState(),
+            state = AgendaOverviewState(
+                userInitials = "AB",
+                selectedDate = today(),
+            ),
             onAction = {},
         )
     }

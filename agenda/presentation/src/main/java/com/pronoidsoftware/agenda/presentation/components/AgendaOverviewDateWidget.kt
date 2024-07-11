@@ -23,9 +23,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pronoidsoftware.core.presentation.designsystem.Inter
 import com.pronoidsoftware.core.presentation.designsystem.LocalSpacing
@@ -48,17 +50,23 @@ fun AgendaOverviewDateWidget(
     modifier: Modifier = Modifier,
 ) {
     val spacing = LocalSpacing.current
+    val configuration = LocalConfiguration.current
+    val density = LocalDensity.current
+
+    val screenWidthDp = configuration.screenWidthDp.dp
+    val paddingHorizontal = (screenWidthDp - (spacing.agendaDateWidgetWidth * 6)) / 6
+    val offsetPx = with(density) { (paddingHorizontal / 2).roundToPx() }
     val scrollIndex = selectedDate.dayOfMonth - 1
-    val offsetPx = with(LocalDensity.current) { spacing.agendaDateWidgetOffset.roundToPx() }
+
     val rowState = rememberLazyListState(
         initialFirstVisibleItemIndex = scrollIndex,
-        initialFirstVisibleItemScrollOffset = scrollIndex - offsetPx,
+        initialFirstVisibleItemScrollOffset = -offsetPx,
     )
     val coroutineScope = rememberCoroutineScope()
     LaunchedEffect(selectedDate) {
         rowState.animateScrollToItem(
             index = scrollIndex,
-            scrollOffset = scrollIndex - offsetPx,
+            scrollOffset = -offsetPx,
         )
     }
     val startDate = selectedDate.startOfMonth()
@@ -68,7 +76,7 @@ fun AgendaOverviewDateWidget(
         modifier = modifier
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(spacing.agendaItemPaddingHorizontal),
+        horizontalArrangement = Arrangement.spacedBy(paddingHorizontal),
         state = rowState,
     ) {
         items(
@@ -83,7 +91,7 @@ fun AgendaOverviewDateWidget(
                     coroutineScope.launch {
                         rowState.animateScrollToItem(
                             index = scrollIndex,
-                            scrollOffset = scrollIndex - offsetPx,
+                            scrollOffset = -offsetPx,
                         )
                     }
                 } else {

@@ -26,16 +26,17 @@ data class Dimensions(
     // dropdown menu
     val dropdownMenuCornerRadius: Dp = 7.dp,
 
+    // scaffold
+    val scaffoldContainerRadius: Dp = 30.dp,
+
     // auth feature
     val authPaddingTop: Dp = 30.dp,
-    val authContainerRadius: Dp = 30.dp,
     val authPaddingInterior: Dp = 15.dp,
     val registerActionButtonSpacingTop: Dp = 70.dp,
     val loginActionButtonSpacingTop: Dp = 25.dp,
     val maxTextFieldWidth: Dp = 488.dp,
 
     // agenda feature
-    val timeMarkerVerticalPadding: Dp = 2.dp,
     val timeMarkerBallRadius: Dp = 5.dp,
     val timeMarkerStrokeWidth: Dp = strokeBold,
     val agendaItemCornerRadius: Dp = 20.dp,
@@ -54,7 +55,6 @@ data class Dimensions(
     val agendaDateWidgetHeight: Dp = 61.dp,
     val agendaDateWidgetWidth: Dp = 40.dp,
     val agendaDateWidgetCornerRadius: Dp = 100.dp,
-    val agendaDateWidgetOffset: Dp = 30.dp,
 )
 
 val LocalSpacing = compositionLocalOf { Dimensions() }
