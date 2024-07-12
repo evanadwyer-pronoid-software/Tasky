@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import com.pronoidsoftware.core.data.auth.EncryptedSessionStorage
 import com.pronoidsoftware.core.data.di.SessionStorageModule
 import com.pronoidsoftware.core.domain.AuthInfo
+import com.pronoidsoftware.core.domain.DispatcherProvider
 import com.pronoidsoftware.core.domain.SessionStorage
 import dagger.Module
 import dagger.Provides
@@ -23,9 +24,13 @@ object TestSessionStorageModule {
     @Singleton
     fun provideTestSessionStorage(
         sharedPreferences: SharedPreferences,
+        dispatchers: DispatcherProvider,
         authInfo: AuthInfo?,
     ): SessionStorage {
-        val sessionStorage = EncryptedSessionStorage(sharedPreferences)
+        val sessionStorage = EncryptedSessionStorage(
+            sharedPreferences,
+            dispatchers,
+        )
         runBlocking {
             sessionStorage.set(authInfo)
         }

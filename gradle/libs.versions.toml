@@ -1,13 +1,13 @@
 [versions]
 # Core versions
-agp = "8.5.0"
+agp = "8.5.1"
 kotlin = "2.0.0"
 coreKtx = "1.13.1"
 coroutines = "1.8.1"
 timber = "5.0.1"
 appcompat = "1.7.0"
 jetbrainsKotlinJvm = "2.0.0"
-androidTools = "31.5.0"
+androidTools = "31.5.1"
 ksp = "2.0.0-1.0.21"
 room = "2.6.1"
 ktor = "2.3.12"
@@ -32,12 +32,13 @@ testRunner = "1.6.1"
 assertk = "0.28.1"
 androidJunit5 = "1.10.0.0"
 screenshot = "0.0.1-alpha02"
+coroutinesTest = "1.8.1"
 
 # Compose versions
 activityCompose = "1.9.0"
 composeBom = "2024.06.00"
 chrisBanesComposeBom = "2024.05.00-alpha03"
-composeNavigation = "2.8.0-beta04"
+composeNavigation = "2.8.0-beta05"
 
 # Lifecycle versions
 lifecycleRuntimeKtx = "2.8.3"
@@ -88,6 +89,7 @@ assertk = { group = "com.willowtreeapps.assertk", name = "assertk", version.ref 
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxJunitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "testRunner" }
+coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutinesTest" }
 
 # Compose Libraries
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }

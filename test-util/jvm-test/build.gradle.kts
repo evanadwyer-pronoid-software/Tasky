@@ -8,4 +8,5 @@ dependencies {
 
     implementation(libs.ktor.client.mock)
     implementation(libs.kotlinx.datetime)
+    implementation(libs.coroutines.test)
 }
