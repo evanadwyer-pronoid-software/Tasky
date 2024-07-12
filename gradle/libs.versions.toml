@@ -32,6 +32,7 @@ testRunner = "1.6.1"
 assertk = "0.28.1"
 androidJunit5 = "1.10.0.0"
 screenshot = "0.0.1-alpha02"
+coroutinesTest = "1.8.1"
 
 # Compose versions
 activityCompose = "1.9.0"
@@ -88,6 +89,7 @@ assertk = { group = "com.willowtreeapps.assertk", name = "assertk", version.ref 
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxJunitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "testRunner" }
+coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutinesTest" }
 
 # Compose Libraries
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }

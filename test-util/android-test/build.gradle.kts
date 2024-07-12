@@ -17,4 +17,5 @@ dependencies {
 
     api(projects.testUtil.jvmTest)
     implementation(libs.hilt.android.testing)
+    implementation(libs.coroutines.test)
 }
