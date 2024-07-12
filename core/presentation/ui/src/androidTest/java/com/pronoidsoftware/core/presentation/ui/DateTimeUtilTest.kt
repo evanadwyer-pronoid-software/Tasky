@@ -5,7 +5,7 @@ import androidx.test.core.app.ApplicationProvider
 import assertk.assertThat
 import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
-import com.pronoidsoftware.testutil.jvmtest.core.data.time.FixedClock
+import com.pronoidsoftware.testutil.jvmtest.core.data.time.TestClock
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.Instant
@@ -39,7 +39,7 @@ class DateTimeUtilTest {
             chars(", ")
             yearTwoDigits(1996)
         }
-        clockNow = FixedClock(
+        clockNow = TestClock(
             dateFormat.parse("Jul 7, 24").atStartOfDayIn(TimeZone.currentSystemDefault()),
         )
     }

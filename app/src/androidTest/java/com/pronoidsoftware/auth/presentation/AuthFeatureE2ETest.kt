@@ -6,17 +6,37 @@ import androidx.compose.ui.test.onNodeWithText
 import com.pronoidsoftware.auth.presentation.login.LoginScreenRobot
 import com.pronoidsoftware.auth.presentation.register.RegisterScreenRobot
 import com.pronoidsoftware.core.TaskyAndroidTest
+import com.pronoidsoftware.core.domain.AuthInfo
 import com.pronoidsoftware.tasky.MainActivity
+import com.pronoidsoftware.testutil.androidtest.core.data.di.TestAuthInfoModule
 import com.pronoidsoftware.testutil.jvmtest.TestConstants
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
 import dagger.hilt.android.testing.HiltAndroidTest
+import dagger.hilt.android.testing.UninstallModules
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 import org.junit.Rule
 import org.junit.Test
 
+@UninstallModules(TestAuthInfoModule::class)
 @HiltAndroidTest
 class AuthFeatureE2ETest : TaskyAndroidTest() {
 
     @get:Rule
     val composeRule = createAndroidComposeRule<MainActivity>()
+
+    @Module
+    @InstallIn(SingletonComponent::class)
+    object AuthInfoLoggedOutModule {
+
+        @Provides
+        @Singleton
+        fun provideAuthInfoLoggedOut(): AuthInfo? {
+            return null
+        }
+    }
 
     @Test
     fun testAuthFeature_happyPath() {
@@ -73,6 +93,7 @@ class AuthFeatureE2ETest : TaskyAndroidTest() {
             .assertLoggingIn()
 
         composeRule.onNodeWithText("Today").assertIsDisplayed()
+        composeRule.onNodeWithText("TE").assertIsDisplayed()
     }
 
     @Test

@@ -14,6 +14,11 @@ class FullNameToInitialsTest {
         value = [
             "ValidName: Va",
             "Valid Name : VN",
+            "Valid    2Name: V2",
+            "Valid\t3Name: V3",
+            "'Valid\n4Name': V4",
+            "'\tnew\t\nname\n': nn",
+            " new  name : nn",
             "abc: ab",
             "abcd: ab",
             "This name is simply too long and therefore does not constrain to the limit: Tl",
@@ -41,6 +46,18 @@ class FullNameToInitialsTest {
     )
     fun `test name initialization`(name: String, expectedInitials: String) {
         assertThat(name.toInitials()).isEqualTo(expectedInitials)
+    }
+
+    // using this test because CSV source handles whitespace weird
+    @Test
+    fun `name initialization with whitespace`() {
+        assertThat("Vew\tName".toInitials()).isEqualTo("VN")
+        assertThat("Vew\nName".toInitials()).isEqualTo("VN")
+        assertThat("\tnew\t\nname\n".toInitials()).isEqualTo("nn")
+        assertThat(" new  name ".toInitials()).isEqualTo("nn")
+        assertThat(" a a a ".toInitials()).isEqualTo("aa")
+        assertThat(" a b ".toInitials()).isEqualTo("ab")
+        assertThat(" \ta b \n".toInitials()).isEqualTo("ab")
     }
 
     @Test

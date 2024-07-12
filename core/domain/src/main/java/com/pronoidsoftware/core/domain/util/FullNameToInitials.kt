@@ -1,7 +1,12 @@
 package com.pronoidsoftware.core.domain.util
 
 fun String.toInitials(): String {
-    val words = this.split(" ")
+    val words = this
+        .replace('\t', ' ')
+        .replace('\n', ' ')
+        .split(" ")
+        .dropWhile { it.isBlank() }
+        .dropLastWhile { it.isBlank() }
     return when (words.size) {
         0 -> "" // should not happen
         1 -> {

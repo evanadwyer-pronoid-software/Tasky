@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -25,10 +26,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.pronoidsoftware.agenda.presentation.R
 import com.pronoidsoftware.core.presentation.designsystem.Inter
 import com.pronoidsoftware.core.presentation.designsystem.LocalSpacing
 import com.pronoidsoftware.core.presentation.designsystem.TaskyDarkGray
@@ -86,18 +91,26 @@ fun AgendaOverviewDateWidget(
             DateDisplay(
                 date = date,
                 selected = date.dayOfMonth == selectedDate.dayOfMonth,
-            ) { newSelectedDate ->
-                if (newSelectedDate == selectedDate) {
-                    coroutineScope.launch {
-                        rowState.animateScrollToItem(
-                            index = scrollIndex,
-                            scrollOffset = -offsetPx,
-                        )
+                onclick = { newSelectedDate ->
+                    if (newSelectedDate == selectedDate) {
+                        coroutineScope.launch {
+                            rowState.animateScrollToItem(
+                                index = scrollIndex,
+                                scrollOffset = -offsetPx,
+                            )
+                        }
+                    } else {
+                        onSelectDate(newSelectedDate)
                     }
-                } else {
-                    onSelectDate(newSelectedDate)
-                }
-            }
+                },
+                modifier = Modifier.then(
+                    when (date) {
+                        range.first() -> Modifier.padding(start = paddingHorizontal / 2)
+                        range.last() -> Modifier.padding(end = paddingHorizontal / 2)
+                        else -> Modifier
+                    },
+                ),
+            )
         }
     }
 }
@@ -106,10 +119,15 @@ fun AgendaOverviewDateWidget(
 fun DateDisplay(
     date: LocalDate,
     selected: Boolean,
-    modifier: Modifier = Modifier,
     onclick: (LocalDate) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val spacing = LocalSpacing.current
+    val description = if (selected) {
+        stringResource(id = R.string.selected_date)
+    } else {
+        null
+    }
     Column(
         modifier = modifier
             .height(spacing.agendaDateWidgetHeight)
@@ -122,6 +140,11 @@ fun DateDisplay(
                     Color.Transparent
                 },
             )
+            .semantics {
+                description?.let {
+                    contentDescription = it
+                }
+            }
             .clickable {
                 onclick(date)
             },

@@ -25,7 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.pronoidsoftware.agenda.presentation.R
 import com.pronoidsoftware.core.presentation.designsystem.ArrowDownIcon
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
-import com.pronoidsoftware.core.presentation.ui.toLocalDateUTC
+import com.pronoidsoftware.core.presentation.ui.toLocalDateFromUTC
 import com.pronoidsoftware.core.presentation.ui.toMillis
 import com.pronoidsoftware.core.presentation.ui.today
 import java.util.Locale
@@ -108,8 +108,7 @@ fun AgendaOverviewDatePicker(
                             onSelectDate(
                                 // Date Picker operates in UTC
                                 // But we want to stay local to the user
-                                // So we'll act as if though this is the current timezone
-                                datePickerState.selectedDateMillis!!.toLocalDateUTC(),
+                                datePickerState.selectedDateMillis!!.toLocalDateFromUTC(),
                             )
                         },
                     ) {

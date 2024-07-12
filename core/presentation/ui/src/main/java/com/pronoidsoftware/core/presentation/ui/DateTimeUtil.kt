@@ -73,7 +73,7 @@ fun Long.toLocalDate(): LocalDate {
         .date
 }
 
-fun Long.toLocalDateUTC(): LocalDate {
+fun Long.toLocalDateFromUTC(): LocalDate {
     return Instant
         .fromEpochMilliseconds(this)
         .toLocalDateTime(TimeZone.UTC)
