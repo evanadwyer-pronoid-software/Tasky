@@ -79,7 +79,7 @@ fun AgendaDetailTime(
 
 @Preview(showBackground = true)
 @Composable
-private fun AgendaDetailFromTimePreview() {
+private fun AgendaDetailTimePreview() {
     TaskyTheme {
         Column(
             verticalArrangement = Arrangement.SpaceBetween,
