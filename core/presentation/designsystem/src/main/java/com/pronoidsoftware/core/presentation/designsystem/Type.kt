@@ -126,4 +126,11 @@ val Typography = Typography(
         fontSize = 11.sp,
         lineHeight = 13.2.sp,
     ),
+    displayLarge = TextStyle(
+        // edit text title
+        fontFamily = Inter,
+        fontWeight = FontWeight.W600,
+        fontSize = 18.sp,
+        lineHeight = 12.sp,
+    ),
 )

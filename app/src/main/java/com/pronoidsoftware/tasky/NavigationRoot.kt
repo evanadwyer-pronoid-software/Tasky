@@ -6,6 +6,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import androidx.navigation.toRoute
+import com.pronoidsoftware.agenda.presentation.edittext.EditTextScreenRoot
 import com.pronoidsoftware.agenda.presentation.overview.AgendaOverviewScreenRoot
 import com.pronoidsoftware.auth.presentation.login.LoginScreenRoot
 import com.pronoidsoftware.auth.presentation.register.RegisterScreenRoot
@@ -67,10 +69,44 @@ private fun NavGraphBuilder.authGraph(navController: NavHostController) {
 
 private fun NavGraphBuilder.agendaGraph(navController: NavHostController) {
     navigation<AgendaFeature>(
-        startDestination = AgendaScreen,
+        startDestination = AgendaScreen(
+            text = null,
+        ),
     ) {
         composable<AgendaScreen> {
-            AgendaOverviewScreenRoot()
+            val args = it.toRoute<AgendaScreen>()
+            AgendaOverviewScreenRoot(
+                fabAction = {
+                    navController.navigate(
+                        EditTextScreen(
+                            editType = EditType.Title.title,
+                            value = args.text,
+                        ),
+                    )
+                },
+                text = args.text,
+            )
+        }
+        composable<EditTextScreen> {
+            val args = it.toRoute<EditTextScreen>()
+            EditTextScreenRoot(
+                title = args.editType,
+                actionTitle = "Save",
+                onBackClick = {
+                    navController.navigateUp()
+                },
+                onSaveClick = { updatedText ->
+                    navController.navigate(
+                        AgendaScreen(
+                            text = updatedText,
+                        ),
+                    ) {
+                        popUpTo(EditTextScreen) {
+                            inclusive = true
+                        }
+                    }
+                },
+            )
         }
     }
 }
@@ -90,4 +126,17 @@ object LoginScreen
 object AgendaFeature
 
 @Serializable
-object AgendaScreen
+data class AgendaScreen(
+    val text: String?,
+)
+
+@Serializable
+data class EditTextScreen(
+    val editType: String,
+    val value: String?,
+)
+
+sealed class EditType(val title: String) {
+    data object Title : EditType("EDIT TITLE")
+    data object Description : EditType("EDIT DESCRIPTION")
+}

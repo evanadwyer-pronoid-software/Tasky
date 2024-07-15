@@ -14,8 +14,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,7 +47,11 @@ import java.util.Locale
 import timber.log.Timber
 
 @Composable
-fun AgendaOverviewScreenRoot(viewModel: AgendaOverviewViewModel = hiltViewModel()) {
+fun AgendaOverviewScreenRoot(
+    fabAction: () -> Unit,
+    viewModel: AgendaOverviewViewModel = hiltViewModel(),
+    text: String? = "",
+) {
     ObserveAsEvents(flow = viewModel.events) { event ->
         when (event) {
             else -> {
@@ -55,22 +61,37 @@ fun AgendaOverviewScreenRoot(viewModel: AgendaOverviewViewModel = hiltViewModel(
     }
 
     AgendaOverviewScreen(
+        fabAction = fabAction,
         state = viewModel.state,
         onAction = viewModel::onAction,
+        text = text,
     )
 }
 
 @Composable
 internal fun AgendaOverviewScreen(
+    fabAction: () -> Unit,
     state: AgendaOverviewState,
     onAction: (AgendaOverviewAction) -> Unit,
+    text: String?,
 ) {
     val spacing = LocalSpacing.current
     var createFABDropdownExpanded by remember {
         mutableStateOf(false)
     }
+    val snackbarHostState = remember {
+        SnackbarHostState()
+    }
     val toggleCreateFABDropdownExpanded = {
         createFABDropdownExpanded = !createFABDropdownExpanded
+    }
+
+    LaunchedEffect(true) {
+        if (text?.isNotEmpty() == true) {
+            snackbarHostState.showSnackbar(
+                message = text,
+            )
+        }
     }
 
     TaskyScaffold(
@@ -93,7 +114,8 @@ internal fun AgendaOverviewScreen(
                 expanded = createFABDropdownExpanded,
                 toggleExpanded = toggleCreateFABDropdownExpanded,
                 onMenuItemClick = { index ->
-                    onAction(AgendaOverviewAction.OnCreateClick(AgendaItem.entries[index]))
+//                    onAction(AgendaOverviewAction.OnCreateClick(AgendaItem.entries[index]))
+                    fabAction()
                 },
             ) {
                 TaskyFloatingActionButton(
@@ -104,6 +126,7 @@ internal fun AgendaOverviewScreen(
             }
         },
         floatingActionButtonPosition = FabPosition.End,
+        snackbarHostState = snackbarHostState,
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -183,6 +206,8 @@ private fun AgendaOverviewScreenPreview() {
                 selectedDate = today(),
             ),
             onAction = {},
+            fabAction = {},
+            text = "",
         )
     }
 }
