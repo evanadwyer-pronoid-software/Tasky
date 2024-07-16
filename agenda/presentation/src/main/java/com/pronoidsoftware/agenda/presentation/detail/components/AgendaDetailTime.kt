@@ -53,7 +53,7 @@ fun AgendaDetailTime(
         IconButton(
             enabled = isEditable,
             onClick = onEditTime,
-            modifier = Modifier.alpha(if (isEditable) 100f else 0f),
+            modifier = Modifier.alpha(if (isEditable) 1f else 0f),
         ) {
             Icon(
                 imageVector = ForwardChevronIcon,
