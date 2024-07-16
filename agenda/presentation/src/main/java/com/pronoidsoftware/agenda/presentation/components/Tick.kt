@@ -19,7 +19,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.pronoidsoftware.agenda.domain.AgendaItem
 import com.pronoidsoftware.agenda.presentation.R
 import com.pronoidsoftware.agenda.presentation.util.AgendaOverviewItemUiParameterProvider
@@ -44,7 +43,7 @@ fun Tick(
 ) {
     Box(
         modifier = modifier
-            .size(17.5.dp)
+            .size(radius * 2 + strokeWidth)
             .clip(CircleShape)
             .then(
                 if (onClick != null) {
