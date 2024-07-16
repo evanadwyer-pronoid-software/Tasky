@@ -12,4 +12,5 @@
     <string name="today">Today</string>
     <string name="logout">Logout</string>
     <string name="create_agenda_item">Create an agenda item</string>
+    <string name="reminder">Reminder</string>
 </resources>
