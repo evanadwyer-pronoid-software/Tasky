@@ -14,7 +14,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -40,6 +43,12 @@ fun AgendaDetailTitle(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        val textStyle = TextStyle(
+            fontFamily = Inter,
+            fontWeight = FontWeight.W700,
+            fontSize = 26.sp,
+            lineHeight = 25.sp,
+        )
         Tick(
             color = TaskyBlack,
             ticked = isCompleted,
@@ -47,14 +56,22 @@ fun AgendaDetailTitle(
             strokeWidth = 2.dp,
         )
         Spacer(modifier = Modifier.width(10.dp))
+        val titleFormatted = buildAnnotatedString {
+            withStyle(
+                style = textStyle.toSpanStyle().copy(
+                    textDecoration = if (isCompleted) {
+                        TextDecoration.LineThrough
+                    } else {
+                        TextDecoration.None
+                    },
+                ),
+            ) {
+                append(title)
+            }
+        }
         Text(
-            text = title,
-            style = TextStyle(
-                fontFamily = Inter,
-                fontWeight = FontWeight.W700,
-                fontSize = 26.sp,
-                lineHeight = 25.sp,
-            ),
+            text = titleFormatted,
+            style = textStyle,
         )
         Spacer(modifier = Modifier.weight(1f))
         if (isEditable) {
