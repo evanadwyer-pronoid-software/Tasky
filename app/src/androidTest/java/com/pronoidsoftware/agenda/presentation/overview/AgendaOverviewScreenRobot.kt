@@ -46,8 +46,8 @@ class AgendaOverviewScreenRobot(
         return this
     }
 
-    fun clickConfirm(): AgendaOverviewScreenRobot {
-        composeRule.onNodeWithText("Confirm").performClick()
+    fun clickOK(): AgendaOverviewScreenRobot {
+        composeRule.onNodeWithText("OK").performClick()
         return this
     }
 
