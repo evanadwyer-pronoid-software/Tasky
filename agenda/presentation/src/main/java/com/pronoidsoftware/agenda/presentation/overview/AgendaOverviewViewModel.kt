@@ -63,6 +63,12 @@ class AgendaOverviewViewModel @Inject constructor(
                 )
             }
 
+            AgendaOverviewAction.OnToggleFABDropdownMenuExpanded -> {
+                state = state.copy(
+                    fabDropdownMenuExpanded = !state.fabDropdownMenuExpanded,
+                )
+            }
+
             else -> {
                 Timber.wtf("Unknown AgendaOverviewAction in VM")
             }
