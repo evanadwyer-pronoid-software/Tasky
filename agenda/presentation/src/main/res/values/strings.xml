@@ -4,10 +4,21 @@
     <string name="more">More</string>
     <string name="open">Open</string>
     <string name="edit">Edit</string>
+    <string name="edit_date">Edit date</string>
+    <string name="edit_time">Edit time</string>
     <string name="delete">Delete</string>
     <string name="select_date">Select date</string>
     <string name="selected_date">Selected date</string>
     <string name="logout">Logout</string>
     <string name="create_agenda_item">Create an agenda item</string>
     <string name="reminder">Reminder</string>
+    <string name="go_back_to_agenda_overview">Go back to Agenda Overview</string>
+    <string name="save">Save</string>
+    <string name="edit_reminder">EDIT REMINDER</string>
+    <string name="saved">Saved</string>
+    <string name="minutes10">10 minutes before</string>
+    <string name="minutes30">30 minutes before</string>
+    <string name="hours1">1 hour before</string>
+    <string name="hours6">6 hours before</string>
+    <string name="days1">1 day before</string>
 </resources>

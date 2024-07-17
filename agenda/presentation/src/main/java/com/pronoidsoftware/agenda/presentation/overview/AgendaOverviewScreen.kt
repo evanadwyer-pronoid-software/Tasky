@@ -24,10 +24,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.pronoidsoftware.agenda.domain.AgendaItem
 import com.pronoidsoftware.agenda.presentation.R
-import com.pronoidsoftware.agenda.presentation.components.AgendaOverviewDateWidget
-import com.pronoidsoftware.agenda.presentation.components.AgendaOverviewItem
-import com.pronoidsoftware.agenda.presentation.components.AgendaOverviewToolbar
-import com.pronoidsoftware.agenda.presentation.components.TimeMarker
+import com.pronoidsoftware.agenda.presentation.overview.components.AgendaOverviewDateWidget
+import com.pronoidsoftware.agenda.presentation.overview.components.AgendaOverviewItem
+import com.pronoidsoftware.agenda.presentation.overview.components.AgendaOverviewToolbar
+import com.pronoidsoftware.agenda.presentation.overview.components.TimeMarker
 import com.pronoidsoftware.core.domain.util.today
 import com.pronoidsoftware.core.presentation.designsystem.LocalSpacing
 import com.pronoidsoftware.core.presentation.designsystem.PlusIcon
@@ -132,7 +132,7 @@ internal fun AgendaOverviewScreen(
                         topEnd = spacing.scaffoldContainerRadius,
                     ),
                 )
-                .padding(top = spacing.authPaddingTop),
+                .padding(top = spacing.scaffoldPaddingTop),
         ) {
             AgendaOverviewDateWidget(
                 selectedDate = state.selectedDate,

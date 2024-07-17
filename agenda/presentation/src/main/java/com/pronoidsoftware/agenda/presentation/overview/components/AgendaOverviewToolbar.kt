@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.pronoidsoftware.agenda.presentation.components
+package com.pronoidsoftware.agenda.presentation.overview.components
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api

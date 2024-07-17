@@ -7,14 +7,15 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.sp
@@ -28,10 +29,11 @@ import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
 @Composable
 fun AgendaDetailDescription(
     description: String,
+    onEdit: () -> Unit,
     modifier: Modifier = Modifier,
-    isEditable: Boolean = false,
-    onEdit: () -> Unit = {},
+    editEnabled: Boolean = false,
 ) {
+    val contentColor = MaterialTheme.colorScheme.onBackground
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -44,17 +46,19 @@ fun AgendaDetailDescription(
                 fontSize = 16.sp,
                 lineHeight = 15.sp,
             ),
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
+            color = contentColor,
         )
         Spacer(modifier = Modifier.weight(1f))
-        if (isEditable) {
-            IconButton(onClick = onEdit) {
-                Icon(
-                    imageVector = ForwardChevronIcon,
-                    contentDescription = stringResource(id = R.string.edit),
-                )
-            }
+        IconButton(
+            enabled = editEnabled,
+            onClick = onEdit,
+            modifier = Modifier.alpha(if (editEnabled) 1f else 0f),
+        ) {
+            Icon(
+                imageVector = ForwardChevronIcon,
+                contentDescription = stringResource(id = R.string.edit),
+                tint = contentColor,
+            )
         }
     }
 }
@@ -73,11 +77,13 @@ private fun AgendaDetailDescriptionPreview(
                     AgendaDetailDescription(
                         description = "Amet minim mollit non deserunt ullamco " +
                             "est sit aliqua dolor do amet sint. ",
+                        onEdit = { },
                     )
                     AgendaDetailDescription(
                         description = "Amet minim mollit non deserunt ullamco " +
                             "est sit aliqua dolor do amet sint. ",
-                        isEditable = true,
+                        editEnabled = true,
+                        onEdit = { },
                     )
                 }
 
@@ -85,20 +91,26 @@ private fun AgendaDetailDescriptionPreview(
                     AgendaDetailDescription(
                         description = "Weekly plan\n" +
                             "Role distribution",
+                        onEdit = { },
                     )
                     AgendaDetailDescription(
                         description = "Weekly plan\n" +
                             "Role distribution",
-                        isEditable = true,
+                        editEnabled = true,
+                        onEdit = { },
                     )
                 }
 
                 AgendaItem.REMINDER -> {
-                    AgendaDetailDescription(description = "Weekly plan\nRole distribution")
+                    AgendaDetailDescription(
+                        description = "Weekly plan\nRole distribution",
+                        onEdit = { },
+                    )
                     AgendaDetailDescription(
                         description = "Weekly plan\n" +
                             "Role distribution",
-                        isEditable = true,
+                        editEnabled = true,
+                        onEdit = { },
                     )
                 }
             }

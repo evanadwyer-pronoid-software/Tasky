@@ -1,4 +1,4 @@
-package com.pronoidsoftware.agenda.presentation.components
+package com.pronoidsoftware.agenda.presentation.overview.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

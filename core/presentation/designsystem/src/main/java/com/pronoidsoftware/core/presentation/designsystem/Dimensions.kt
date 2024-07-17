@@ -28,9 +28,9 @@ data class Dimensions(
 
     // scaffold
     val scaffoldContainerRadius: Dp = 30.dp,
+    val scaffoldPaddingTop: Dp = 30.dp,
 
     // auth feature
-    val authPaddingTop: Dp = 30.dp,
     val authPaddingInterior: Dp = 15.dp,
     val registerActionButtonSpacingTop: Dp = 70.dp,
     val loginActionButtonSpacingTop: Dp = 25.dp,
