@@ -10,4 +10,6 @@ data class AgendaOverviewState(
     val clock: Clock = Clock.System,
     val selectedDate: LocalDate = today(clock),
     val items: List<AgendaOverviewItemUi> = emptyList(),
+    val profileDropdownMenuExpanded: Boolean = false,
+    val datePickerExpanded: Boolean = false,
 )

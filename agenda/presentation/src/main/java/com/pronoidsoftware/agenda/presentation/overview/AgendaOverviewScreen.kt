@@ -78,8 +78,21 @@ internal fun AgendaOverviewScreen(
             AgendaOverviewToolbar(
                 userInitials = state.userInitials,
                 selectedDate = state.selectedDate,
+                onSelectDate = { date ->
+                    onAction(AgendaOverviewAction.OnSelectDate(date))
+                },
                 clock = state.clock,
-                onAction = onAction,
+                profileDropdownMenuExpanded = state.profileDropdownMenuExpanded,
+                toggleProfileDropdownMenuExpanded = {
+                    onAction(AgendaOverviewAction.OnToggleProfileDropdownMenu)
+                },
+                datePickerExpanded = state.datePickerExpanded,
+                toggleDatePickerExpanded = {
+                    onAction(AgendaOverviewAction.OnToggleDatePickerExpanded)
+                },
+                onLogoutClick = {
+                    onAction(AgendaOverviewAction.OnLogoutClick)
+                },
             )
         },
         floatingActionButton = {
@@ -154,11 +167,17 @@ internal fun AgendaOverviewScreen(
                 ) { index, agendaOverviewItem ->
                     AgendaOverviewItem(
                         agendaOverviewItemUi = agendaOverviewItem,
-                        onAction = { agendaOverviewAction ->
-                            onAction(agendaOverviewAction)
-                        },
                         onTickClick = {
                             onAction(AgendaOverviewAction.OnTickClick(agendaOverviewItem.id))
+                        },
+                        onOpenClick = { id ->
+                            onAction(AgendaOverviewAction.OnOpenClick(id))
+                        },
+                        onEditClick = { id ->
+                            onAction(AgendaOverviewAction.OnEditClick(id))
+                        },
+                        onDeleteClick = { id ->
+                            onAction(AgendaOverviewAction.OnDeleteClick(id))
                         },
                         modifier = Modifier.padding(
                             vertical = 7.5.dp,

@@ -51,6 +51,18 @@ class AgendaOverviewViewModel @Inject constructor(
                 )
             }
 
+            AgendaOverviewAction.OnToggleProfileDropdownMenu -> {
+                state = state.copy(
+                    profileDropdownMenuExpanded = !state.profileDropdownMenuExpanded,
+                )
+            }
+
+            AgendaOverviewAction.OnToggleDatePickerExpanded -> {
+                state = state.copy(
+                    datePickerExpanded = !state.datePickerExpanded,
+                )
+            }
+
             else -> {
                 Timber.wtf("Unknown AgendaOverviewAction in VM")
             }

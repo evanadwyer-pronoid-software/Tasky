@@ -33,7 +33,7 @@ fun TaskyDropdownMenu(
     toggleExpanded: () -> Unit,
     onMenuItemClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    content: @Composable () -> Unit = {},
+    content: @Composable () -> Unit,
 ) {
     val spacing = LocalSpacing.current
     Box(
