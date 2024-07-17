@@ -16,10 +16,6 @@ import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
@@ -66,20 +62,27 @@ internal fun AgendaOverviewScreen(
     onAction: (AgendaOverviewAction) -> Unit,
 ) {
     val spacing = LocalSpacing.current
-    var createFABDropdownExpanded by remember {
-        mutableStateOf(false)
-    }
-    val toggleCreateFABDropdownExpanded = {
-        createFABDropdownExpanded = !createFABDropdownExpanded
-    }
 
     TaskyScaffold(
         topAppBar = {
             AgendaOverviewToolbar(
                 userInitials = state.userInitials,
                 selectedDate = state.selectedDate,
+                onSelectDate = { date ->
+                    onAction(AgendaOverviewAction.OnSelectDate(date))
+                },
                 clock = state.clock,
-                onAction = onAction,
+                profileDropdownMenuExpanded = state.profileDropdownMenuExpanded,
+                toggleProfileDropdownMenuExpanded = {
+                    onAction(AgendaOverviewAction.OnToggleProfileDropdownMenu)
+                },
+                datePickerExpanded = state.datePickerExpanded,
+                toggleDatePickerExpanded = {
+                    onAction(AgendaOverviewAction.OnToggleDatePickerExpanded)
+                },
+                onLogoutClick = {
+                    onAction(AgendaOverviewAction.OnLogoutClick)
+                },
             )
         },
         floatingActionButton = {
@@ -90,8 +93,10 @@ internal fun AgendaOverviewScreen(
                             character.titlecase(Locale.getDefault())
                         }
                 },
-                expanded = createFABDropdownExpanded,
-                toggleExpanded = toggleCreateFABDropdownExpanded,
+                expanded = state.fabDropdownMenuExpanded,
+                toggleExpanded = {
+                    onAction(AgendaOverviewAction.OnToggleFABDropdownMenuExpanded)
+                },
                 onMenuItemClick = { index ->
                     onAction(AgendaOverviewAction.OnCreateClick(AgendaItem.entries[index]))
                 },
@@ -99,7 +104,9 @@ internal fun AgendaOverviewScreen(
                 TaskyFloatingActionButton(
                     icon = PlusIcon,
                     contentDescription = stringResource(id = R.string.create_agenda_item),
-                    onClick = toggleCreateFABDropdownExpanded,
+                    onClick = {
+                        onAction(AgendaOverviewAction.OnToggleFABDropdownMenuExpanded)
+                    },
                 )
             }
         },
@@ -154,11 +161,17 @@ internal fun AgendaOverviewScreen(
                 ) { index, agendaOverviewItem ->
                     AgendaOverviewItem(
                         agendaOverviewItemUi = agendaOverviewItem,
-                        onAction = { agendaOverviewAction ->
-                            onAction(agendaOverviewAction)
-                        },
                         onTickClick = {
                             onAction(AgendaOverviewAction.OnTickClick(agendaOverviewItem.id))
+                        },
+                        onOpenClick = { id ->
+                            onAction(AgendaOverviewAction.OnOpenClick(id))
+                        },
+                        onEditClick = { id ->
+                            onAction(AgendaOverviewAction.OnEditClick(id))
+                        },
+                        onDeleteClick = { id ->
+                            onAction(AgendaOverviewAction.OnDeleteClick(id))
                         },
                         modifier = Modifier.padding(
                             vertical = 7.5.dp,

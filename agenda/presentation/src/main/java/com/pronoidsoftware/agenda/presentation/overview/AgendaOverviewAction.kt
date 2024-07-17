@@ -11,4 +11,7 @@ sealed interface AgendaOverviewAction {
     data class OnCreateClick(val type: AgendaItem) : AgendaOverviewAction
     data object OnLogoutClick : AgendaOverviewAction
     data class OnSelectDate(val date: LocalDate) : AgendaOverviewAction
+    data object OnToggleProfileDropdownMenu : AgendaOverviewAction
+    data object OnToggleFABDropdownMenuExpanded : AgendaOverviewAction
+    data object OnToggleDatePickerExpanded : AgendaOverviewAction
 }

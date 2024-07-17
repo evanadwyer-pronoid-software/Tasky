@@ -34,7 +34,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.pronoidsoftware.agenda.domain.AgendaItem
 import com.pronoidsoftware.agenda.presentation.R
-import com.pronoidsoftware.agenda.presentation.overview.AgendaOverviewAction
 import com.pronoidsoftware.agenda.presentation.overview.model.AgendaOverviewItemUi
 import com.pronoidsoftware.agenda.presentation.util.AgendaOverviewItemUiParameterProvider
 import com.pronoidsoftware.core.presentation.designsystem.EllipsesIcon
@@ -47,7 +46,9 @@ import timber.log.Timber
 @Composable
 fun AgendaOverviewItem(
     agendaOverviewItemUi: AgendaOverviewItemUi,
-    onAction: (AgendaOverviewAction) -> Unit,
+    onOpenClick: (String) -> Unit,
+    onEditClick: (String) -> Unit,
+    onDeleteClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     onTickClick: (() -> Unit)? = null,
 ) {
@@ -68,7 +69,7 @@ fun AgendaOverviewItem(
             .background(agendaOverviewItemUi.backgroundColor)
             .padding(start = spacing.agendaItemPaddingHorizontal)
             .clickable {
-                onAction(AgendaOverviewAction.OnOpenClick(agendaOverviewItemUi.id))
+                onOpenClick(agendaOverviewItemUi.id)
             },
     ) {
         Row(
@@ -114,22 +115,16 @@ fun AgendaOverviewItem(
                 toggleExpanded = toggleDropdownExpanded,
                 onMenuItemClick = { index ->
                     when (index) {
-                        0 -> onAction(
-                            AgendaOverviewAction.OnOpenClick(
-                                agendaOverviewItemUi.id,
-                            ),
+                        0 -> onOpenClick(
+                            agendaOverviewItemUi.id,
                         )
 
-                        1 -> onAction(
-                            AgendaOverviewAction.OnEditClick(
-                                agendaOverviewItemUi.id,
-                            ),
+                        1 -> onEditClick(
+                            agendaOverviewItemUi.id,
                         )
 
-                        2 -> onAction(
-                            AgendaOverviewAction.OnDeleteClick(
-                                agendaOverviewItemUi.id,
-                            ),
+                        2 -> onDeleteClick(
+                            agendaOverviewItemUi.id,
                         )
 
                         else -> Timber.wtf("Unknown AgendaOverviewItem menu click")
@@ -203,10 +198,12 @@ private fun AgendaOverviewItemUiPreview(
                 toTime = "Mar 5, 11:00",
                 completed = completed,
             ),
-            onAction = { },
             onTickClick = {
                 completed = !completed
             },
+            onOpenClick = { },
+            onEditClick = { },
+            onDeleteClick = { },
             modifier = Modifier
                 .background(TaskyWhite)
                 .fillMaxWidth()
