@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.pronoidsoftware.agenda.presentation.components
+package com.pronoidsoftware.agenda.presentation.overview.components
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -18,13 +18,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.pronoidsoftware.agenda.presentation.R
 import com.pronoidsoftware.agenda.presentation.overview.AgendaOverviewAction
+import com.pronoidsoftware.core.domain.util.today
 import com.pronoidsoftware.core.presentation.designsystem.LocalSpacing
 import com.pronoidsoftware.core.presentation.designsystem.TaskyLightBlue2
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
 import com.pronoidsoftware.core.presentation.designsystem.TaskyWhite2
 import com.pronoidsoftware.core.presentation.designsystem.components.TaskyDropdownMenu
 import com.pronoidsoftware.core.presentation.designsystem.components.TaskyProfileBadge
-import com.pronoidsoftware.core.presentation.ui.today
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import timber.log.Timber
@@ -39,11 +39,17 @@ fun AgendaOverviewToolbar(
     scrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(),
 ) {
     val spacing = LocalSpacing.current
-    var dropdownExpanded by remember {
+    var profileDropdownExpanded by remember {
         mutableStateOf(false)
     }
-    val toggleDropdownExpanded = {
-        dropdownExpanded = !dropdownExpanded
+    val toggleProfileDropdownExpanded = {
+        profileDropdownExpanded = !profileDropdownExpanded
+    }
+    var datePickerExpanded by remember {
+        mutableStateOf(false)
+    }
+    val toggleDatePickerExpanded = {
+        datePickerExpanded = !datePickerExpanded
     }
     TopAppBar(
         modifier = modifier,
@@ -53,6 +59,8 @@ fun AgendaOverviewToolbar(
                 onSelectDate = { date ->
                     onAction(AgendaOverviewAction.OnSelectDate(date))
                 },
+                expanded = datePickerExpanded,
+                toggleExpanded = toggleDatePickerExpanded,
                 clock = clock,
             )
         },
@@ -65,20 +73,20 @@ fun AgendaOverviewToolbar(
                 items = listOf(
                     stringResource(id = R.string.logout),
                 ),
-                expanded = dropdownExpanded,
+                expanded = profileDropdownExpanded,
                 onMenuItemClick = { index ->
                     when (index) {
                         0 -> onAction(AgendaOverviewAction.OnLogoutClick)
                         else -> Timber.wtf("Unknown AgendaOverview Profile badge click")
                     }
                 },
-                toggleExpanded = toggleDropdownExpanded,
+                toggleExpanded = toggleProfileDropdownExpanded,
             ) {
                 TaskyProfileBadge(
                     initials = userInitials,
                     initialColors = TaskyLightBlue2,
                     backgroundColor = TaskyWhite2,
-                    onClick = toggleDropdownExpanded,
+                    onClick = toggleProfileDropdownExpanded,
                     modifier = Modifier
                         .padding(end = spacing.spaceMediumSmall),
                 )

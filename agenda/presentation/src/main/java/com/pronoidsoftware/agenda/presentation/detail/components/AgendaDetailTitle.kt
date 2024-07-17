@@ -8,10 +8,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -28,7 +30,6 @@ import com.pronoidsoftware.agenda.presentation.components.Tick
 import com.pronoidsoftware.agenda.presentation.util.AgendaOverviewItemUiParameterProvider
 import com.pronoidsoftware.core.presentation.designsystem.ForwardChevronIcon
 import com.pronoidsoftware.core.presentation.designsystem.Inter
-import com.pronoidsoftware.core.presentation.designsystem.TaskyBlack
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
 
 @Composable
@@ -39,6 +40,7 @@ fun AgendaDetailTitle(
     isEditable: Boolean = false,
     onEdit: () -> Unit = {},
 ) {
+    val contentColor = MaterialTheme.colorScheme.onBackground
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -50,7 +52,7 @@ fun AgendaDetailTitle(
             lineHeight = 25.sp,
         )
         Tick(
-            color = TaskyBlack,
+            color = contentColor,
             ticked = isCompleted,
             radius = 10.dp,
             strokeWidth = 2.dp,
@@ -72,15 +74,19 @@ fun AgendaDetailTitle(
         Text(
             text = titleFormatted,
             style = textStyle,
+            color = contentColor,
         )
         Spacer(modifier = Modifier.weight(1f))
-        if (isEditable) {
-            IconButton(onClick = onEdit) {
-                Icon(
-                    imageVector = ForwardChevronIcon,
-                    contentDescription = stringResource(id = R.string.edit),
-                )
-            }
+        IconButton(
+            enabled = isEditable,
+            onClick = onEdit,
+            modifier = Modifier.alpha(if (isEditable) 1f else 0f),
+        ) {
+            Icon(
+                imageVector = ForwardChevronIcon,
+                contentDescription = stringResource(id = R.string.edit),
+                tint = contentColor,
+            )
         }
     }
 }

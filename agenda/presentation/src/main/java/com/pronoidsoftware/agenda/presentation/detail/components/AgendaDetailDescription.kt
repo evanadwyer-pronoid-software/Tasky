@@ -7,14 +7,15 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.sp
@@ -32,6 +33,7 @@ fun AgendaDetailDescription(
     isEditable: Boolean = false,
     onEdit: () -> Unit = {},
 ) {
+    val contentColor = MaterialTheme.colorScheme.onBackground
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -44,17 +46,19 @@ fun AgendaDetailDescription(
                 fontSize = 16.sp,
                 lineHeight = 15.sp,
             ),
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
+            color = contentColor,
         )
         Spacer(modifier = Modifier.weight(1f))
-        if (isEditable) {
-            IconButton(onClick = onEdit) {
-                Icon(
-                    imageVector = ForwardChevronIcon,
-                    contentDescription = stringResource(id = R.string.edit),
-                )
-            }
+        IconButton(
+            enabled = isEditable,
+            onClick = onEdit,
+            modifier = Modifier.alpha(if (isEditable) 1f else 0f),
+        ) {
+            Icon(
+                imageVector = ForwardChevronIcon,
+                contentDescription = stringResource(id = R.string.edit),
+                tint = contentColor,
+            )
         }
     }
 }

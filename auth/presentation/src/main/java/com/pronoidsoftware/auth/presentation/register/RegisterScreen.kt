@@ -123,7 +123,7 @@ internal fun RegisterScreen(state: RegisterState, onAction: (RegisterAction) -> 
                         topEnd = spacing.scaffoldContainerRadius,
                     ),
                 )
-                .padding(top = spacing.authPaddingTop)
+                .padding(top = spacing.scaffoldPaddingTop)
                 .padding(horizontal = spacing.spaceMedium),
         ) {
             TaskyTextField(

@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.pronoidsoftware.agenda.domain.AgendaItem
 import com.pronoidsoftware.agenda.presentation.overview.model.AgendaOverviewItemUi
+import com.pronoidsoftware.core.domain.util.today
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
-import com.pronoidsoftware.core.presentation.ui.today
 import com.pronoidsoftware.testutil.jvmtest.core.data.time.TestClock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone

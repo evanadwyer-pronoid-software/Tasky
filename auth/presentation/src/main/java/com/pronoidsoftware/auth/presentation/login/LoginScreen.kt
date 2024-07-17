@@ -126,7 +126,7 @@ internal fun LoginScreen(state: LoginState, onAction: (LoginAction) -> Unit) {
                         topEnd = spacing.scaffoldContainerRadius,
                     ),
                 )
-                .padding(top = spacing.authPaddingTop)
+                .padding(top = spacing.scaffoldPaddingTop)
                 .padding(horizontal = spacing.spaceMedium),
         ) {
             TaskyTextField(

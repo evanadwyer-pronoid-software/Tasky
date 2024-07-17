@@ -1,4 +1,4 @@
-package com.pronoidsoftware.agenda.presentation.components
+package com.pronoidsoftware.agenda.presentation.overview.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -34,16 +34,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pronoidsoftware.agenda.presentation.R
+import com.pronoidsoftware.core.domain.util.endOfMonth
+import com.pronoidsoftware.core.domain.util.rangeTo
+import com.pronoidsoftware.core.domain.util.startOfMonth
+import com.pronoidsoftware.core.domain.util.today
 import com.pronoidsoftware.core.presentation.designsystem.Inter
 import com.pronoidsoftware.core.presentation.designsystem.LocalSpacing
 import com.pronoidsoftware.core.presentation.designsystem.TaskyDarkGray
 import com.pronoidsoftware.core.presentation.designsystem.TaskyGray
 import com.pronoidsoftware.core.presentation.designsystem.TaskyOrange
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
-import com.pronoidsoftware.core.presentation.ui.endOfMonth
-import com.pronoidsoftware.core.presentation.ui.rangeTo
-import com.pronoidsoftware.core.presentation.ui.startOfMonth
-import com.pronoidsoftware.core.presentation.ui.today
 import java.util.Locale
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate

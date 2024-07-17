@@ -5,6 +5,13 @@ import androidx.test.core.app.ApplicationProvider
 import assertk.assertThat
 import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
+import com.pronoidsoftware.core.domain.util.endOfMonth
+import com.pronoidsoftware.core.domain.util.now
+import com.pronoidsoftware.core.domain.util.rangeTo
+import com.pronoidsoftware.core.domain.util.startOfMonth
+import com.pronoidsoftware.core.domain.util.toLocalDate
+import com.pronoidsoftware.core.domain.util.toMillis
+import com.pronoidsoftware.core.domain.util.today
 import com.pronoidsoftware.testutil.jvmtest.core.data.time.TestClock
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
@@ -23,7 +30,7 @@ import kotlinx.datetime.toLocalDateTime
 import org.junit.Before
 import org.junit.Test
 
-class DateTimeUtilTest {
+class DateTimePresentationUtilTest {
 
     private lateinit var context: Context
     private lateinit var dateFormat: DateTimeFormat<LocalDate>
@@ -108,7 +115,7 @@ class DateTimeUtilTest {
     fun todayFormatted() {
         val date = today()
         val expectedFormat = "Today"
-        val actualFormat = date.toRelativeDate().asString(context)
+        val actualFormat = date.toRelativeDateTwoYear().asString(context)
         assertThat(actualFormat).isEqualTo(expectedFormat)
     }
 
@@ -116,7 +123,7 @@ class DateTimeUtilTest {
     fun yesterdayFormatted() {
         val date = today().minus(1, DateTimeUnit.DAY)
         val expectedFormat = "Yesterday"
-        val actualFormat = date.toRelativeDate().asString(context)
+        val actualFormat = date.toRelativeDateTwoYear().asString(context)
         assertThat(actualFormat).isEqualTo(expectedFormat)
     }
 
@@ -124,7 +131,7 @@ class DateTimeUtilTest {
     fun tomorrowFormatted() {
         val date = today().plus(1, DateTimeUnit.DAY)
         val expectedFormat = "Tomorrow"
-        val actualFormat = date.toRelativeDate().asString(context)
+        val actualFormat = date.toRelativeDateTwoYear().asString(context)
         assertThat(actualFormat).isEqualTo(expectedFormat)
     }
 
@@ -132,7 +139,7 @@ class DateTimeUtilTest {
     fun futureDateInYearFormatted() {
         val futureDate = LocalDate(2024, 12, 5)
         val expectedFormat = "Dec 5"
-        val actualFormat = futureDate.toRelativeDate(clockNow).asString(context)
+        val actualFormat = futureDate.toRelativeDateTwoYear(clockNow).asString(context)
         assertThat(actualFormat).isEqualTo(expectedFormat)
     }
 
@@ -140,7 +147,7 @@ class DateTimeUtilTest {
     fun futureDateOutOfYearFormatted() {
         val futureDate = LocalDate(2025, 3, 5)
         val expectedFormat = "Mar 5, 25"
-        val actualFormat = futureDate.toRelativeDate(clockNow).asString(context)
+        val actualFormat = futureDate.toRelativeDateTwoYear(clockNow).asString(context)
         assertThat(actualFormat).isEqualTo(expectedFormat)
     }
 
@@ -148,7 +155,7 @@ class DateTimeUtilTest {
     fun pastDateInYearFormatted() {
         val pastDate = LocalDate(2024, 3, 5)
         val expectedFormat = "Mar 5"
-        val actualFormat = pastDate.toRelativeDate(clockNow).asString(context)
+        val actualFormat = pastDate.toRelativeDateTwoYear(clockNow).asString(context)
         assertThat(actualFormat).isEqualTo(expectedFormat)
     }
 
@@ -156,7 +163,7 @@ class DateTimeUtilTest {
     fun pastDateOutOfYearFormatted() {
         val pastDate = LocalDate(2023, 3, 5)
         val expectedFormat = "Mar 5, 23"
-        val actualFormat = pastDate.toRelativeDate(clockNow).asString(context)
+        val actualFormat = pastDate.toRelativeDateTwoYear(clockNow).asString(context)
         assertThat(actualFormat).isEqualTo(expectedFormat)
     }
 }

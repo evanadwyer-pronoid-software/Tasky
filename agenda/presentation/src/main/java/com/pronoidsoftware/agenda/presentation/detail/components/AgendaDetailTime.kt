@@ -4,76 +4,109 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import com.pronoidsoftware.agenda.presentation.R
-import com.pronoidsoftware.core.presentation.designsystem.ForwardChevronIcon
 import com.pronoidsoftware.core.presentation.designsystem.Inter
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
+import com.pronoidsoftware.core.presentation.ui.formatForHours
+import com.pronoidsoftware.core.presentation.ui.toRelativeDateTwoYear
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
 
 @Composable
 fun AgendaDetailTime(
-    timeDescription: String,
-    time: String,
-    date: String,
+    timeDesignation: String,
+//    time: String,
+//    date: String,
+    onSelectDate: (LocalDate) -> Unit,
+    localDateTime: LocalDateTime,
     modifier: Modifier = Modifier,
     isEditable: Boolean = false,
-    onEditTime: () -> Unit,
-    onEditDate: () -> Unit,
+//    onEditTime: () -> Unit,
+    onSelectTime: (LocalTime) -> Unit,
+//    clock: Clock = Clock.System,
+//    onEditDate: () -> Unit,
 ) {
+    var datePickerExpanded by remember {
+        mutableStateOf(false)
+    }
+    val toggleDatePickerExpanded = {
+        datePickerExpanded = !datePickerExpanded
+    }
+    var timePickerExpanded by remember {
+        mutableStateOf(false)
+    }
+    val toggleTimePickerExpanded = {
+        timePickerExpanded = !timePickerExpanded
+    }
+
     val textStyle = TextStyle(
         fontFamily = Inter,
         fontWeight = FontWeight.W400,
         fontSize = 16.sp,
         lineHeight = 15.sp,
     )
+    val contentColor = MaterialTheme.colorScheme.onBackground
+
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(
-            text = timeDescription,
+            text = timeDesignation,
             style = textStyle,
+            color = contentColor,
         )
         Text(
-            text = time,
+            text = localDateTime.time.formatForHours().asString(),
             style = textStyle,
+            color = contentColor,
         )
-        IconButton(
+//        IconButton(
+//            enabled = isEditable,
+//            onClick = onEditTime,
+//            modifier = Modifier.alpha(if (isEditable) 1f else 0f),
+//        ) {
+//            Icon(
+//                imageVector = ForwardChevronIcon,
+//                contentDescription = stringResource(id = R.string.edit),
+//                tint = contentColor,
+//            )
+//        }
+        AgendaDetailTimePicker(
+            selectedTime = localDateTime.time,
+            onSelectTime = onSelectTime,
+            expanded = timePickerExpanded,
+            toggleExpanded = toggleTimePickerExpanded,
             enabled = isEditable,
-            onClick = onEditTime,
-            modifier = Modifier.alpha(if (isEditable) 1f else 0f),
-        ) {
-            Icon(
-                imageVector = ForwardChevronIcon,
-                contentDescription = stringResource(id = R.string.edit),
-            )
-        }
+            contentColor = contentColor,
+        )
         Text(
-            text = date,
+            text = localDateTime.date.toRelativeDateTwoYear().asString(),
             style = textStyle,
+            color = contentColor,
         )
-        IconButton(
+        AgendaDetailDatePicker(
+            selectedDate = localDateTime.date,
+            expanded = datePickerExpanded,
+            toggleExpanded = toggleDatePickerExpanded,
+            onSelectDate = onSelectDate,
             enabled = isEditable,
-            onClick = onEditDate,
-            modifier = Modifier.alpha(if (isEditable) 100f else 0f),
-        ) {
-            Icon(
-                imageVector = ForwardChevronIcon,
-                contentDescription = stringResource(id = R.string.edit),
-            )
-        }
+            contentColor = contentColor,
+        )
     }
 }
 
@@ -85,18 +118,24 @@ private fun AgendaDetailTimePreview() {
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
             AgendaDetailTime(
-                timeDescription = "At",
-                time = "08:00",
-                date = "July 21 2022",
-                onEditTime = {},
-                onEditDate = {},
+                timeDesignation = "At",
+//                time = "08:00",
+//                date = "July 21 2022",
+                localDateTime = LocalDateTime(2022, 7, 21, 8, 0),
+//                onEditTime = {},
+                onSelectTime = {},
+//                onEditDate = {},
+                onSelectDate = {},
             )
             AgendaDetailTime(
-                timeDescription = "At",
-                time = "08:00",
-                date = "July 21 2022",
-                onEditTime = {},
-                onEditDate = {},
+                timeDesignation = "At",
+//                time = "08:00",
+//                date = "July 21 2022",
+                localDateTime = LocalDateTime(2022, 7, 21, 8, 0),
+//                onEditTime = {},
+                onSelectTime = {},
+//                onEditDate = {},
+                onSelectDate = {},
                 isEditable = true,
             )
         }

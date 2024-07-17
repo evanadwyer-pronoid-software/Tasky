@@ -28,10 +28,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.pronoidsoftware.agenda.domain.AgendaItem
 import com.pronoidsoftware.agenda.presentation.R
-import com.pronoidsoftware.agenda.presentation.components.AgendaOverviewDateWidget
-import com.pronoidsoftware.agenda.presentation.components.AgendaOverviewItem
-import com.pronoidsoftware.agenda.presentation.components.AgendaOverviewToolbar
-import com.pronoidsoftware.agenda.presentation.components.TimeMarker
+import com.pronoidsoftware.agenda.presentation.overview.components.AgendaOverviewDateWidget
+import com.pronoidsoftware.agenda.presentation.overview.components.AgendaOverviewItem
+import com.pronoidsoftware.agenda.presentation.overview.components.AgendaOverviewToolbar
+import com.pronoidsoftware.agenda.presentation.overview.components.TimeMarker
+import com.pronoidsoftware.core.domain.util.today
 import com.pronoidsoftware.core.presentation.designsystem.LocalSpacing
 import com.pronoidsoftware.core.presentation.designsystem.PlusIcon
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
@@ -39,13 +40,15 @@ import com.pronoidsoftware.core.presentation.designsystem.components.TaskyDropdo
 import com.pronoidsoftware.core.presentation.designsystem.components.TaskyFloatingActionButton
 import com.pronoidsoftware.core.presentation.designsystem.components.TaskyScaffold
 import com.pronoidsoftware.core.presentation.ui.ObserveAsEvents
-import com.pronoidsoftware.core.presentation.ui.toRelativeDate
-import com.pronoidsoftware.core.presentation.ui.today
+import com.pronoidsoftware.core.presentation.ui.toRelativeDateTwoYear
 import java.util.Locale
 import timber.log.Timber
 
 @Composable
-fun AgendaOverviewScreenRoot(viewModel: AgendaOverviewViewModel = hiltViewModel()) {
+fun AgendaOverviewScreenRoot(
+    onNavigateToReminderDetailScreen: () -> Unit,
+    viewModel: AgendaOverviewViewModel = hiltViewModel(),
+) {
     ObserveAsEvents(flow = viewModel.events) { event ->
         when (event) {
             else -> {
@@ -56,7 +59,17 @@ fun AgendaOverviewScreenRoot(viewModel: AgendaOverviewViewModel = hiltViewModel(
 
     AgendaOverviewScreen(
         state = viewModel.state,
-        onAction = viewModel::onAction,
+        onAction = { action ->
+            when (action) {
+                is AgendaOverviewAction.OnCreateClick -> {
+                    if (action.type == AgendaItem.REMINDER) {
+                        onNavigateToReminderDetailScreen()
+                    }
+                }
+
+                else -> viewModel.onAction(action)
+            }
+        },
     )
 }
 
@@ -125,7 +138,7 @@ internal fun AgendaOverviewScreen(
                         topEnd = spacing.scaffoldContainerRadius,
                     ),
                 )
-                .padding(top = spacing.authPaddingTop),
+                .padding(top = spacing.scaffoldPaddingTop),
         ) {
             AgendaOverviewDateWidget(
                 selectedDate = state.selectedDate,
@@ -141,7 +154,7 @@ internal fun AgendaOverviewScreen(
             ) {
                 item {
                     Text(
-                        text = state.selectedDate.toRelativeDate(state.clock).asString(),
+                        text = state.selectedDate.toRelativeDateTwoYear(state.clock).asString(),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurface,
                     )

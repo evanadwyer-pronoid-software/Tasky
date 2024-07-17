@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import com.pronoidsoftware.agenda.presentation.detail.reminder.ReminderDetailScreenRoot
 import com.pronoidsoftware.agenda.presentation.overview.AgendaOverviewScreenRoot
 import com.pronoidsoftware.auth.presentation.login.LoginScreenRoot
 import com.pronoidsoftware.auth.presentation.register.RegisterScreenRoot
@@ -70,7 +71,18 @@ private fun NavGraphBuilder.agendaGraph(navController: NavHostController) {
         startDestination = AgendaScreen,
     ) {
         composable<AgendaScreen> {
-            AgendaOverviewScreenRoot()
+            AgendaOverviewScreenRoot(
+                onNavigateToReminderDetailScreen = {
+                    navController.navigate(ReminderDetailScreen)
+                },
+            )
+        }
+        composable<ReminderDetailScreen> {
+            ReminderDetailScreenRoot(
+                onCloseClick = {
+                    navController.navigateUp()
+                },
+            )
         }
     }
 }
@@ -91,3 +103,6 @@ object AgendaFeature
 
 @Serializable
 object AgendaScreen
+
+@Serializable
+object ReminderDetailScreen
