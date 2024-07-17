@@ -8,10 +8,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -28,17 +30,17 @@ import com.pronoidsoftware.agenda.presentation.components.Tick
 import com.pronoidsoftware.agenda.presentation.util.AgendaOverviewItemUiParameterProvider
 import com.pronoidsoftware.core.presentation.designsystem.ForwardChevronIcon
 import com.pronoidsoftware.core.presentation.designsystem.Inter
-import com.pronoidsoftware.core.presentation.designsystem.TaskyBlack
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
 
 @Composable
 fun AgendaDetailTitle(
     title: String,
+    onEdit: () -> Unit,
     modifier: Modifier = Modifier,
     isCompleted: Boolean = false,
-    isEditable: Boolean = false,
-    onEdit: () -> Unit = {},
+    editEnabled: Boolean = false,
 ) {
+    val contentColor = MaterialTheme.colorScheme.onBackground
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -50,7 +52,7 @@ fun AgendaDetailTitle(
             lineHeight = 25.sp,
         )
         Tick(
-            color = TaskyBlack,
+            color = contentColor,
             ticked = isCompleted,
             radius = 10.dp,
             strokeWidth = 2.dp,
@@ -72,15 +74,19 @@ fun AgendaDetailTitle(
         Text(
             text = titleFormatted,
             style = textStyle,
+            color = contentColor,
         )
         Spacer(modifier = Modifier.weight(1f))
-        if (isEditable) {
-            IconButton(onClick = onEdit) {
-                Icon(
-                    imageVector = ForwardChevronIcon,
-                    contentDescription = stringResource(id = R.string.edit),
-                )
-            }
+        IconButton(
+            enabled = editEnabled,
+            onClick = onEdit,
+            modifier = Modifier.alpha(if (editEnabled) 1f else 0f),
+        ) {
+            Icon(
+                imageVector = ForwardChevronIcon,
+                contentDescription = stringResource(id = R.string.edit),
+                tint = contentColor,
+            )
         }
     }
 }
@@ -96,20 +102,25 @@ private fun AgendaDetailTitlePreview(
         ) {
             when (type) {
                 AgendaItem.EVENT -> {
-                    AgendaDetailTitle(title = "Meeting")
-                    AgendaDetailTitle(title = "Meeting", isEditable = true)
+                    AgendaDetailTitle(title = "Meeting", onEdit = { })
+                    AgendaDetailTitle(title = "Meeting", onEdit = { }, editEnabled = true)
                 }
 
                 AgendaItem.TASK -> {
-                    AgendaDetailTitle(title = "Project X")
-                    AgendaDetailTitle(title = "Project X", isEditable = true)
-                    AgendaDetailTitle(title = "Project X", isCompleted = true)
-                    AgendaDetailTitle(title = "Project X", isCompleted = true, isEditable = true)
+                    AgendaDetailTitle(title = "Project X", onEdit = { })
+                    AgendaDetailTitle(title = "Project X", editEnabled = true, onEdit = { })
+                    AgendaDetailTitle(title = "Project X", isCompleted = true, onEdit = { })
+                    AgendaDetailTitle(
+                        title = "Project X",
+                        isCompleted = true,
+                        editEnabled = true,
+                        onEdit = { },
+                    )
                 }
 
                 AgendaItem.REMINDER -> {
-                    AgendaDetailTitle(title = "Project X")
-                    AgendaDetailTitle(title = "Project X", isEditable = true)
+                    AgendaDetailTitle(title = "Project X", onEdit = { })
+                    AgendaDetailTitle(title = "Project X", editEnabled = true, onEdit = { })
                 }
             }
         }
