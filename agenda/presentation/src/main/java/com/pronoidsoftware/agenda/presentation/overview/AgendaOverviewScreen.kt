@@ -32,6 +32,7 @@ import com.pronoidsoftware.agenda.presentation.components.AgendaOverviewDateWidg
 import com.pronoidsoftware.agenda.presentation.components.AgendaOverviewItem
 import com.pronoidsoftware.agenda.presentation.components.AgendaOverviewToolbar
 import com.pronoidsoftware.agenda.presentation.components.TimeMarker
+import com.pronoidsoftware.core.domain.util.today
 import com.pronoidsoftware.core.presentation.designsystem.LocalSpacing
 import com.pronoidsoftware.core.presentation.designsystem.PlusIcon
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
@@ -40,7 +41,6 @@ import com.pronoidsoftware.core.presentation.designsystem.components.TaskyFloati
 import com.pronoidsoftware.core.presentation.designsystem.components.TaskyScaffold
 import com.pronoidsoftware.core.presentation.ui.ObserveAsEvents
 import com.pronoidsoftware.core.presentation.ui.toRelativeDate
-import com.pronoidsoftware.core.presentation.ui.today
 import java.util.Locale
 import timber.log.Timber
 

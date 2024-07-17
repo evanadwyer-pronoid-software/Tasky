@@ -8,6 +8,10 @@ android {
 
 dependencies {
 
+    implementation(projects.core.domain)
+
+    implementation(libs.kotlinx.datetime)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)

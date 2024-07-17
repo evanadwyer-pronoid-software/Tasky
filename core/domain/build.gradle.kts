@@ -4,4 +4,7 @@ plugins {
 
 dependencies {
     implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.datetime)
+
+    testImplementation(projects.testUtil.jvmTest)
 }
