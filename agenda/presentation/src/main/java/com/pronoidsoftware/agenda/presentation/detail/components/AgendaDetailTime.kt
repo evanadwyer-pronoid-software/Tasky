@@ -56,6 +56,7 @@ fun AgendaDetailTime(
         Text(
             text = timeDescription,
             style = textStyle,
+            color = contentColor,
         )
         Text(
             text = localDateTime.time.formatHours().asString(),

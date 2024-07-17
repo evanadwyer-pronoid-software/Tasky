@@ -55,6 +55,12 @@ data class Dimensions(
     val agendaDateWidgetHeight: Dp = 61.dp,
     val agendaDateWidgetWidth: Dp = 40.dp,
     val agendaDateWidgetCornerRadius: Dp = 100.dp,
+
+    // agenda detail
+    val agendaDetailNotificationPaddingTop: Dp = 11.dp,
+    val agendaDetailSpaceMediumSmall: Dp = 15.dp,
+    val agendaDetailSpaceMedium: Dp = 18.dp,
+    val agendaDetailSpaceBottom: Dp = 35.dp,
 )
 
 val LocalSpacing = compositionLocalOf { Dimensions() }

@@ -44,7 +44,6 @@ fun AgendaDetailNotification(
     reminderDescription: String,
     expanded: Boolean,
     toggleExpanded: () -> Unit,
-    onEdit: () -> Unit,
     onSelectNotificationDuration: (NotificationDuration) -> Unit,
     modifier: Modifier = Modifier,
     icon: ImageVector = NotificationIcon,
@@ -90,7 +89,7 @@ fun AgendaDetailNotification(
         ) {
             IconButton(
                 enabled = editEnabled,
-                onClick = onEdit,
+                onClick = toggleExpanded,
                 modifier = Modifier.alpha(if (editEnabled) 1f else 0f),
             ) {
                 Icon(
@@ -120,14 +119,12 @@ private fun AgendaDetailReminderPreview() {
                 reminderDescription = "30 minutes before",
                 expanded = expanded,
                 toggleExpanded = toggleExpanded,
-                onEdit = { },
                 onSelectNotificationDuration = { },
             )
             AgendaDetailNotification(
                 reminderDescription = "30 minutes before",
                 expanded = expanded,
                 toggleExpanded = toggleExpanded,
-                onEdit = { },
                 onSelectNotificationDuration = { },
                 editEnabled = true,
             )
