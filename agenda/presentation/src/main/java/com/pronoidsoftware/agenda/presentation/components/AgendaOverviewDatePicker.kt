@@ -23,11 +23,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.pronoidsoftware.agenda.presentation.R
+import com.pronoidsoftware.core.domain.util.toLocalDateFromUTC
+import com.pronoidsoftware.core.domain.util.toMillis
+import com.pronoidsoftware.core.domain.util.today
 import com.pronoidsoftware.core.presentation.designsystem.ArrowDownIcon
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
-import com.pronoidsoftware.core.presentation.ui.toLocalDateFromUTC
-import com.pronoidsoftware.core.presentation.ui.toMillis
-import com.pronoidsoftware.core.presentation.ui.today
 import java.util.Locale
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate

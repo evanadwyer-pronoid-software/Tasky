@@ -18,13 +18,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.pronoidsoftware.agenda.presentation.R
 import com.pronoidsoftware.agenda.presentation.overview.AgendaOverviewAction
+import com.pronoidsoftware.core.domain.util.today
 import com.pronoidsoftware.core.presentation.designsystem.LocalSpacing
 import com.pronoidsoftware.core.presentation.designsystem.TaskyLightBlue2
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
 import com.pronoidsoftware.core.presentation.designsystem.TaskyWhite2
 import com.pronoidsoftware.core.presentation.designsystem.components.TaskyDropdownMenu
 import com.pronoidsoftware.core.presentation.designsystem.components.TaskyProfileBadge
-import com.pronoidsoftware.core.presentation.ui.today
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import timber.log.Timber

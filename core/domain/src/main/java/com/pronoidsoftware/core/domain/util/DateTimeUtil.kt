@@ -1,4 +1,4 @@
-package com.pronoidsoftware.core.presentation.ui
+package com.pronoidsoftware.core.domain.util
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
@@ -7,11 +7,6 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
-import kotlinx.datetime.format
-import kotlinx.datetime.format.MonthNames
-import kotlinx.datetime.format.Padding
-import kotlinx.datetime.format.char
-import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
@@ -78,28 +73,4 @@ fun Long.toLocalDateFromUTC(): LocalDate {
         .fromEpochMilliseconds(this)
         .toLocalDateTime(TimeZone.UTC)
         .date
-}
-
-fun LocalDate.toRelativeDate(clock: Clock = Clock.System): UiText {
-    return when (this) {
-        today(clock).plus(1, DateTimeUnit.DAY) -> UiText.StringResource(R.string.tomorrow)
-        today(clock).minus(1, DateTimeUnit.DAY) -> UiText.StringResource(R.string.yesterday)
-        today(clock) -> UiText.StringResource(R.string.today)
-        else -> {
-            val thisYear = this.year
-            UiText.DynamicString(
-                this.format(
-                    LocalDate.Format {
-                        monthName(MonthNames.ENGLISH_ABBREVIATED)
-                        char(' ')
-                        dayOfMonth(padding = Padding.NONE)
-                        if (thisYear != today(clock).year) {
-                            chars(", ")
-                            yearTwoDigits(1996)
-                        }
-                    },
-                ),
-            )
-        }
-    }
 }

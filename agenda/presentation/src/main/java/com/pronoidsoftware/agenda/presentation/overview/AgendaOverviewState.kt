@@ -1,7 +1,7 @@
 package com.pronoidsoftware.agenda.presentation.overview
 
 import com.pronoidsoftware.agenda.presentation.overview.model.AgendaOverviewItemUi
-import com.pronoidsoftware.core.presentation.ui.today
+import com.pronoidsoftware.core.domain.util.today
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 
