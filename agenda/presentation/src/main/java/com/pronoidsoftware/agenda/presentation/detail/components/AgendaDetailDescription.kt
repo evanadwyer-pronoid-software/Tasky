@@ -24,11 +24,12 @@ import com.pronoidsoftware.agenda.presentation.R
 import com.pronoidsoftware.agenda.presentation.util.AgendaOverviewItemUiParameterProvider
 import com.pronoidsoftware.core.presentation.designsystem.ForwardChevronIcon
 import com.pronoidsoftware.core.presentation.designsystem.Inter
+import com.pronoidsoftware.core.presentation.designsystem.TaskyLightGray
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
 
 @Composable
 fun AgendaDetailDescription(
-    description: String,
+    description: String?,
     onEdit: () -> Unit,
     modifier: Modifier = Modifier,
     editEnabled: Boolean = false,
@@ -39,14 +40,18 @@ fun AgendaDetailDescription(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = description,
+            text = description ?: stringResource(id = R.string.enter_description),
             style = TextStyle(
                 fontFamily = Inter,
                 fontWeight = FontWeight.W400,
                 fontSize = 16.sp,
                 lineHeight = 15.sp,
             ),
-            color = contentColor,
+            color = if (description != null) {
+                contentColor
+            } else {
+                TaskyLightGray
+            },
         )
         Spacer(modifier = Modifier.weight(1f))
         IconButton(
@@ -85,6 +90,15 @@ private fun AgendaDetailDescriptionPreview(
                         editEnabled = true,
                         onEdit = { },
                     )
+                    AgendaDetailDescription(
+                        description = null,
+                        onEdit = { },
+                    )
+                    AgendaDetailDescription(
+                        editEnabled = true,
+                        description = null,
+                        onEdit = { },
+                    )
                 }
 
                 AgendaItem.TASK -> {
@@ -99,6 +113,15 @@ private fun AgendaDetailDescriptionPreview(
                         editEnabled = true,
                         onEdit = { },
                     )
+                    AgendaDetailDescription(
+                        description = null,
+                        onEdit = { },
+                    )
+                    AgendaDetailDescription(
+                        description = null,
+                        editEnabled = true,
+                        onEdit = { },
+                    )
                 }
 
                 AgendaItem.REMINDER -> {
@@ -109,6 +132,15 @@ private fun AgendaDetailDescriptionPreview(
                     AgendaDetailDescription(
                         description = "Weekly plan\n" +
                             "Role distribution",
+                        editEnabled = true,
+                        onEdit = { },
+                    )
+                    AgendaDetailDescription(
+                        description = null,
+                        onEdit = { },
+                    )
+                    AgendaDetailDescription(
+                        description = null,
                         editEnabled = true,
                         onEdit = { },
                     )
