@@ -24,7 +24,7 @@ import com.pronoidsoftware.agenda.presentation.R
 import com.pronoidsoftware.agenda.presentation.util.AgendaOverviewItemUiParameterProvider
 import com.pronoidsoftware.core.presentation.designsystem.ForwardChevronIcon
 import com.pronoidsoftware.core.presentation.designsystem.Inter
-import com.pronoidsoftware.core.presentation.designsystem.TaskyLightGray
+import com.pronoidsoftware.core.presentation.designsystem.TaskyDarkGray
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
 
 @Composable
@@ -50,7 +50,7 @@ fun AgendaDetailDescription(
             color = if (description != null) {
                 contentColor
             } else {
-                TaskyLightGray
+                TaskyDarkGray
             },
         )
         Spacer(modifier = Modifier.weight(1f))

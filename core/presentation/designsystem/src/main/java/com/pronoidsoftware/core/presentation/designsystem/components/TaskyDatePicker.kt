@@ -68,7 +68,7 @@ fun TaskyDatePicker(
                             )
                         },
                     ) {
-                        Text(text = stringResource(id = R.string.confirm))
+                        Text(text = stringResource(id = R.string.ok))
                     }
                 }
             },

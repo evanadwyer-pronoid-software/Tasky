@@ -72,7 +72,7 @@ fun TaskyTimePicker(
                             onSelectTime(LocalTime(timePickerState.hour, timePickerState.minute))
                         },
                     ) {
-                        Text(text = stringResource(id = R.string.confirm))
+                        Text(text = stringResource(id = R.string.ok))
                     }
                 }
             },
