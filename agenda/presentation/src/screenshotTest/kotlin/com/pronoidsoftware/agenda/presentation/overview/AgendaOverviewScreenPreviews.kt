@@ -21,7 +21,6 @@ private fun AgendaOverviewScreenPreview_Figma() {
             state = AgendaOverviewState(
                 userInitials = "AB",
                 selectedDate = today(fixedClock),
-                clock = fixedClock,
                 items = listOf(
                     AgendaOverviewItemUi(
                         id = "1",
@@ -56,6 +55,7 @@ private fun AgendaOverviewScreenPreview_Figma() {
                 ),
             ),
             onAction = {},
+            clock = fixedClock,
         )
     }
 }

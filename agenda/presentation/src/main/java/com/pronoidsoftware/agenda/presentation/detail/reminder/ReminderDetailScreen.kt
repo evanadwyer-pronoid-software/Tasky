@@ -38,6 +38,7 @@ import com.pronoidsoftware.core.presentation.designsystem.TaskyWhite2
 import com.pronoidsoftware.core.presentation.designsystem.components.TaskyScaffold
 import com.pronoidsoftware.core.presentation.ui.ObserveAsEvents
 import com.pronoidsoftware.core.presentation.ui.formatFullDate
+import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 
@@ -70,6 +71,7 @@ fun ReminderDetailScreenRoot(
 
     ReminderDetailScreen(
         state = viewModel.state,
+        clock = viewModel.clock,
         onAction = { action ->
             when (action) {
                 is ReminderDetailAction.OnClose -> onCloseClick()
@@ -83,6 +85,7 @@ fun ReminderDetailScreenRoot(
 internal fun ReminderDetailScreen(
     state: ReminderDetailState,
     onAction: (ReminderDetailAction) -> Unit,
+    clock: Clock = Clock.System,
 ) {
     val spacing = LocalSpacing.current
     val dividerColor = TaskyWhite2
@@ -93,7 +96,7 @@ internal fun ReminderDetailScreen(
                 title = if (state.isEditing) {
                     stringResource(id = R.string.edit_reminder)
                 } else {
-                    state.selectedDate.formatFullDate(state.clock).asString()
+                    state.selectedDate.formatFullDate(clock).asString()
                 },
                 onCloseClick = { onAction(ReminderDetailAction.OnClose) },
                 isEditing = state.isEditing,
@@ -167,7 +170,7 @@ internal fun ReminderDetailScreen(
                 toggleDatePickerExpanded = {
                     onAction(ReminderDetailAction.OnToggleDatePickerExpanded)
                 },
-                clock = state.clock,
+                clock = clock,
             )
             Spacer(modifier = Modifier.height(spacing.spaceMedium))
             HorizontalDivider(color = dividerColor)

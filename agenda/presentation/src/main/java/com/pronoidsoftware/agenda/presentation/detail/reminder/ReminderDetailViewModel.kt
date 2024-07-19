@@ -5,23 +5,33 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.pronoidsoftware.core.domain.util.now
+import com.pronoidsoftware.core.domain.util.today
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
 import timber.log.Timber
 
 @HiltViewModel
 class ReminderDetailViewModel @Inject constructor(
-    clock: Clock,
+    val clock: Clock,
 ) : ViewModel() {
 
     var state by mutableStateOf(
         ReminderDetailState(
-            clock = clock,
+            selectedDate = today(clock),
+            atTime = now(clock)
+                .toInstant(TimeZone.currentSystemDefault())
+                .plus(60.minutes)
+                .toLocalDateTime(TimeZone.currentSystemDefault()),
             title = "Project X",
             description = "Weekly plan\nRole distribution",
         ),

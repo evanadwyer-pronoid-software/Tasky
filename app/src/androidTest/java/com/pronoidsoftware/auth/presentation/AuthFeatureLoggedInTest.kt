@@ -18,5 +18,6 @@ class AuthFeatureLoggedInTest : TaskyAndroidTest() {
     @Test
     fun testAuthFeature_alreadyLoggedIn() {
         composeRule.onNodeWithText("Today").assertIsDisplayed()
+        composeRule.onNodeWithText("TE").assertIsDisplayed() // profile badge
     }
 }
