@@ -38,7 +38,6 @@ import com.pronoidsoftware.core.presentation.designsystem.components.TaskyScaffo
 import com.pronoidsoftware.core.presentation.ui.ObserveAsEvents
 import com.pronoidsoftware.core.presentation.ui.toRelativeDate
 import java.util.Locale
-import kotlinx.datetime.Clock
 import timber.log.Timber
 
 @Composable
@@ -53,7 +52,6 @@ fun AgendaOverviewScreenRoot(viewModel: AgendaOverviewViewModel = hiltViewModel(
 
     AgendaOverviewScreen(
         state = viewModel.state,
-        clock = viewModel.clock,
         onAction = viewModel::onAction,
     )
 }
@@ -62,9 +60,9 @@ fun AgendaOverviewScreenRoot(viewModel: AgendaOverviewViewModel = hiltViewModel(
 internal fun AgendaOverviewScreen(
     state: AgendaOverviewState,
     onAction: (AgendaOverviewAction) -> Unit,
-    clock: Clock = Clock.System,
 ) {
     val spacing = LocalSpacing.current
+    val clock = LocalClock.current
 
     TaskyScaffold(
         topAppBar = {

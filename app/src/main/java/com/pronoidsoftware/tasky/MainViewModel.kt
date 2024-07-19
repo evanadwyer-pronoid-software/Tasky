@@ -9,10 +9,12 @@ import com.pronoidsoftware.core.domain.SessionStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val sessionStorage: SessionStorage,
+    val clock: Clock,
 ) : ViewModel() {
 
     var state by mutableStateOf(MainState())

@@ -22,7 +22,7 @@ import timber.log.Timber
 
 @HiltViewModel
 class ReminderDetailViewModel @Inject constructor(
-    val clock: Clock,
+    clock: Clock,
 ) : ViewModel() {
 
     var state by mutableStateOf(

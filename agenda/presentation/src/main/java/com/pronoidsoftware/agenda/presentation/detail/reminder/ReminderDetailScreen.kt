@@ -32,6 +32,7 @@ import com.pronoidsoftware.agenda.presentation.detail.components.AgendaDetailToo
 import com.pronoidsoftware.agenda.presentation.detail.components.AgendaDetailType
 import com.pronoidsoftware.agenda.presentation.detail.components.edittext.AgendaDetailEditTextScreen
 import com.pronoidsoftware.agenda.presentation.detail.components.edittext.EditTextType
+import com.pronoidsoftware.core.presentation.designsystem.LocalClock
 import com.pronoidsoftware.core.presentation.designsystem.LocalSpacing
 import com.pronoidsoftware.core.presentation.designsystem.TaskyGray
 import com.pronoidsoftware.core.presentation.designsystem.TaskyLightGray
@@ -40,7 +41,6 @@ import com.pronoidsoftware.core.presentation.designsystem.TaskyWhite2
 import com.pronoidsoftware.core.presentation.designsystem.components.TaskyScaffold
 import com.pronoidsoftware.core.presentation.ui.ObserveAsEvents
 import com.pronoidsoftware.core.presentation.ui.formatFullDate
-import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 
@@ -73,7 +73,6 @@ fun ReminderDetailScreenRoot(
 
     ReminderDetailScreen(
         state = viewModel.state,
-        clock = viewModel.clock,
         onAction = { action ->
             when (action) {
                 is ReminderDetailAction.OnClose -> onCloseClick()
@@ -87,9 +86,9 @@ fun ReminderDetailScreenRoot(
 internal fun ReminderDetailScreen(
     state: ReminderDetailState,
     onAction: (ReminderDetailAction) -> Unit,
-    clock: Clock = Clock.System,
 ) {
     val spacing = LocalSpacing.current
+    val clock = LocalClock.current
     val dividerColor = TaskyWhite2
 
     if (state.isEditingTitle) {
