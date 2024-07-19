@@ -27,4 +27,6 @@ data class ReminderDetailState(
     val isEditingTime: Boolean = false,
     val isEditingDate: Boolean = false,
     val isEditingNotificationDuration: Boolean = false,
+    val isShowingDeleteConfirmationDialog: Boolean = false,
+    val isShowingCloseConfirmationDialog: Boolean = false,
 )

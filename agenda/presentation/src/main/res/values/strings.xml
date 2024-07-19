@@ -7,6 +7,7 @@
     <string name="edit_date">Edit date</string>
     <string name="edit_time">Edit time</string>
     <string name="delete">Delete</string>
+    <string name="delete_dialog_title">Delete?</string>
     <string name="deleted">Deleted</string>
     <string name="select_date">Select date</string>
     <string name="selected_date">Selected date</string>
@@ -28,4 +29,7 @@
     <string name="go_back">Go back</string>
     <string name="edit_title">EDIT TITLE</string>
     <string name="edit_description">EDIT DESCRIPTION</string>
+    <string name="confirm_deletion">Are you sure you want to delete this item? This cannot be undone.</string>
+    <string name="close_dialog_title">Close?</string>
+    <string name="confirm_close">Are you sure you want to exit? Changes will not be saved.</string>
 </resources>
