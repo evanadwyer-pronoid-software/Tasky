@@ -81,7 +81,6 @@ fun AgendaDetailNotification(
             expanded = expanded,
             toggleExpanded = toggleExpanded,
             onMenuItemClick = { index ->
-                toggleExpanded()
                 onSelectNotificationDuration(
                     NotificationDuration.notificationDurationOptions()[index],
                 )

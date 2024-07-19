@@ -58,6 +58,44 @@ class ReminderDetailViewModel @Inject constructor(
                 }
             }
 
+            ReminderDetailAction.OnEditTitle -> {
+                state = state.copy(
+                    isEditingTitle = true,
+                )
+            }
+
+            ReminderDetailAction.OnCloseTitle -> {
+                state = state.copy(
+                    isEditingTitle = false,
+                )
+            }
+
+            is ReminderDetailAction.OnSaveTitle -> {
+                state = state.copy(
+                    isEditingTitle = false,
+                    title = action.newTitle,
+                )
+            }
+
+            ReminderDetailAction.OnEditDescription -> {
+                state = state.copy(
+                    isEditingDescription = true,
+                )
+            }
+
+            ReminderDetailAction.OnCloseDescription -> {
+                state = state.copy(
+                    isEditingDescription = false,
+                )
+            }
+
+            is ReminderDetailAction.OnSaveDescription -> {
+                state = state.copy(
+                    isEditingDescription = false,
+                    description = action.newDescription,
+                )
+            }
+
             is ReminderDetailAction.OnSelectDate -> {
                 val date = action.date
                 state = state.copy(

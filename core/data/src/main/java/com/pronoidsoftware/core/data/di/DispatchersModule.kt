@@ -13,6 +13,6 @@ object DispatchersModule {
 
     @Provides
     fun bindDispatcherProvider(): DispatcherProvider {
-        return StandardDispatchers()
+        return StandardDispatchers
     }
 }
