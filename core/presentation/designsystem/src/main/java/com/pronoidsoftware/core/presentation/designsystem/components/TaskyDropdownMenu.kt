@@ -58,6 +58,7 @@ fun TaskyDropdownMenu(
                         )
                     },
                     onClick = {
+                        toggleExpanded()
                         onMenuItemClick(index)
                     },
                 )

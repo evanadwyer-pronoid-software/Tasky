@@ -61,6 +61,10 @@ data class Dimensions(
     val agendaDetailSpaceMediumSmall: Dp = 15.dp,
     val agendaDetailSpaceMedium: Dp = 18.dp,
     val agendaDetailSpaceBottom: Dp = 35.dp,
+
+    // edit text
+    val editTextPaddingTop: Dp = 33.dp,
+    val editTextPaddingHorizontal: Dp = 17.dp,
 )
 
 val LocalSpacing = compositionLocalOf { Dimensions() }
