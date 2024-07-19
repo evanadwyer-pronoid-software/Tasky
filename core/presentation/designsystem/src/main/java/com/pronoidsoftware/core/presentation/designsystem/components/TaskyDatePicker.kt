@@ -6,10 +6,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -17,7 +17,6 @@ import com.pronoidsoftware.core.domain.util.toLocalDateFromUTC
 import com.pronoidsoftware.core.domain.util.toMillis
 import com.pronoidsoftware.core.domain.util.today
 import com.pronoidsoftware.core.presentation.designsystem.R
-import java.util.Locale
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 
@@ -31,12 +30,11 @@ fun TaskyDatePicker(
     clock: Clock = Clock.System,
     content: @Composable () -> Unit,
 ) {
-    // don't use rememberDatePickerState because we want to be able to set the selected date
-    // from the date widget on the agenda overview screen too
-    val datePickerState = DatePickerState(
-        locale = Locale.getDefault(),
+    val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = selectedDate.toMillis(),
     )
+    // set to support cancelling
+    datePickerState.selectedDateMillis = selectedDate.toMillis()
 
     content()
     if (expanded) {
