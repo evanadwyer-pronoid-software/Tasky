@@ -29,6 +29,7 @@ import com.pronoidsoftware.agenda.presentation.overview.components.AgendaOvervie
 import com.pronoidsoftware.agenda.presentation.overview.components.AgendaOverviewToolbar
 import com.pronoidsoftware.agenda.presentation.overview.components.TimeMarker
 import com.pronoidsoftware.core.domain.util.today
+import com.pronoidsoftware.core.presentation.designsystem.LocalClock
 import com.pronoidsoftware.core.presentation.designsystem.LocalSpacing
 import com.pronoidsoftware.core.presentation.designsystem.PlusIcon
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
