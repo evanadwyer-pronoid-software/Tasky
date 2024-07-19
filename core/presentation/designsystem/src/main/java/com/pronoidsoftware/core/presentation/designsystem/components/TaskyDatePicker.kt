@@ -30,14 +30,12 @@ fun TaskyDatePicker(
     clock: Clock = Clock.System,
     content: @Composable () -> Unit,
 ) {
-    val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = selectedDate.toMillis(),
-    )
-    // set to support cancelling
-    datePickerState.selectedDateMillis = selectedDate.toMillis()
-
     content()
     if (expanded) {
+        val datePickerState = rememberDatePickerState(
+            initialSelectedDateMillis = selectedDate.toMillis(),
+        )
+
         DatePickerDialog(
             modifier = modifier,
             onDismissRequest = toggleExpanded,
