@@ -8,6 +8,7 @@ import io.ktor.client.engine.mock.toByteArray
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
+import kotlinx.coroutines.delay
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
@@ -22,6 +23,7 @@ class MockHttpClientEngineFactory {
             val json = Json.parseToJsonElement(body).jsonObject
             var content = ""
             var status = HttpStatusCode.OK
+            delay(100)
             when (request.url.encodedPath) {
                 "/register" -> {
                     val email = json["email"]?.jsonPrimitive?.content
