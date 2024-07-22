@@ -13,6 +13,7 @@ dependencies {
 
     implementation(libs.timber)
     implementation(libs.kotlinx.datetime)
+    implementation(libs.coil)
 
     screenshotTestImplementation(projects.testUtil.jvmTest)
 }
