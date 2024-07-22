@@ -12,7 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TimePickerDefaults
-import androidx.compose.material3.TimePickerState
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
@@ -36,15 +36,14 @@ fun TaskyTimePicker(
     clock: Clock = Clock.System,
     content: @Composable () -> Unit,
 ) {
-    val timePickerState = TimePickerState(
-        initialHour = selectedTime.hour,
-        initialMinute = selectedTime.minute,
-        is24Hour = false,
-    )
-
     content()
     if (expanded) {
-        // TimePickerDialog not shipped with Material3...
+        val timePickerState = rememberTimePickerState(
+            initialHour = selectedTime.hour,
+            initialMinute = selectedTime.minute,
+        )
+
+        // TimePickerDialog not shipped with Material3, reusing DatePickerDialog
         // https://issuetracker.google.com/issues/288311426
         DatePickerDialog(
             modifier = modifier,

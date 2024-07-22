@@ -13,6 +13,8 @@ import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
 import com.pronoidsoftware.TaskyComposeRule
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 
 class LoginScreenRobot(
     private val composeRule: TaskyComposeRule,
@@ -87,7 +89,11 @@ class LoginScreenRobot(
     }
 
     fun assertLoggingIn(): LoginScreenRobot {
-        composeRule.onNodeWithText("LOG IN").assertIsNotDisplayed()
+        composeRule.onNodeWithContentDescription("Logging in…").assertIsDisplayed()
+        // allow for API to finish...
+        runBlocking {
+            delay(100)
+        }
         return this
     }
 }

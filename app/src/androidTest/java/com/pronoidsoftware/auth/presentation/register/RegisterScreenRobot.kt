@@ -12,6 +12,8 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import com.pronoidsoftware.TaskyComposeRule
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 
 class RegisterScreenRobot(
     private val composeRule: TaskyComposeRule,
@@ -104,7 +106,11 @@ class RegisterScreenRobot(
     }
 
     fun assertRegistering(): RegisterScreenRobot {
-        composeRule.onNodeWithText("GET STARTED").assertIsNotDisplayed()
+        composeRule.onNodeWithContentDescription("Registering…").assertIsDisplayed()
+        // allow for API to finish...
+        runBlocking {
+            delay(100)
+        }
         return this
     }
 

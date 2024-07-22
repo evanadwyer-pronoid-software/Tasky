@@ -160,6 +160,7 @@ internal fun LoginScreen(state: LoginState, onAction: (LoginAction) -> Unit) {
             TaskyActionButton(
                 text = stringResource(id = R.string.login),
                 isLoading = state.isLoggingIn,
+                isLoadingContentDescription = stringResource(id = R.string.logging_in),
                 modifier = Modifier.fillMaxWidth(),
                 onClick = { onAction(LoginAction.OnLoginClick) },
                 enabled = state.canLogin,
