@@ -64,7 +64,7 @@ data class Dimensions(
 
     // event photos
     val noPhotosRowHeight: Dp = 109.dp,
-    val photosRowHeight: Dp = 141.dp,
+    val photosRowHeight: Dp = 151.dp,
     val photosRowPaddingVertical: Dp = 21.dp,
 
     // edit text

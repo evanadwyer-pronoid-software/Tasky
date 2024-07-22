@@ -154,9 +154,9 @@ private fun PhotoCarousel(
                     lineHeight = 18.sp,
                 ),
                 color = TaskyBlack,
-                modifier = Modifier.padding(spacing.spaceMedium),
+                modifier = Modifier.padding(start = spacing.spaceMedium),
             )
-            Spacer(modifier = Modifier.height(21.dp))
+            Spacer(modifier = Modifier.height(spacing.photosRowPaddingVertical))
             LazyRow(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
