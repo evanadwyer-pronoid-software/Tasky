@@ -62,6 +62,10 @@ data class Dimensions(
     val agendaDetailSpaceMedium: Dp = 18.dp,
     val agendaDetailSpaceBottom: Dp = 35.dp,
 
+    // visitor detail
+    val visitorAddButtonSpacing: Dp = 18.dp,
+    val visitorAddButtonCornerRadius: Dp = 5.dp,
+
     // event photos
     val noPhotosRowHeight: Dp = 109.dp,
     val photosRowHeight: Dp = 151.dp,
