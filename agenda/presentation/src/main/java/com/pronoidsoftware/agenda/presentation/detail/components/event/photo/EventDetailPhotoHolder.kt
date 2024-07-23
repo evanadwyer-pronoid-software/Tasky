@@ -1,7 +1,7 @@
 package com.pronoidsoftware.agenda.presentation.detail.components.event.photo
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,12 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,29 +36,21 @@ private fun PhotoBorder(
     cornerRadius: Dp = 5.dp,
     content: @Composable () -> Unit = { },
 ) {
-    val density = LocalDensity.current
-    val cornerRadiusPx = with(density) { cornerRadius.toPx() }
     Box(
         modifier = modifier
             .size(size + strokeWidth)
             .clip(RoundedCornerShape(cornerRadius))
+            .border(
+                width = strokeWidth,
+                color = color,
+                shape = RoundedCornerShape(cornerRadius),
+            )
             .clickable {
                 onClick()
             },
         contentAlignment = Alignment.Center,
     ) {
         content()
-        Canvas(
-            modifier = Modifier.fillMaxSize(),
-        ) {
-            drawRoundRect(
-                color = color,
-                cornerRadius = CornerRadius(cornerRadiusPx, cornerRadiusPx),
-                style = Stroke(
-                    width = with(density) { strokeWidth.toPx() },
-                ),
-            )
-        }
     }
 }
 
