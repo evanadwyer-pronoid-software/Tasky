@@ -1,25 +1,37 @@
 package com.pronoidsoftware.agenda.presentation.detail.reminder
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.tooling.preview.Preview
+import com.pronoidsoftware.core.presentation.designsystem.LocalClock
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
+import com.pronoidsoftware.testutil.jvmtest.core.data.time.TestClock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
+
+private val selectedDate = LocalDate(2022, 3, 1)
+private val selectedNotificationTime = LocalDateTime(2022, 7, 21, 8, 0)
+private val today = LocalDate(2024, 7, 19)
+private val fixedClock = TestClock(today.atStartOfDayIn(TimeZone.currentSystemDefault()))
 
 @Preview
 @Composable
 private fun ReminderDetailScreenPreview_Read() {
     TaskyTheme {
-        ReminderDetailScreen(
-            state = ReminderDetailState(
-                title = "Project X",
-                description = "Weekly plan\nRole distribution",
-                selectedDate = LocalDate(2022, 3, 1),
-                atTime = LocalDateTime(2022, 7, 21, 8, 0),
-                isEditing = false,
-            ),
-            onAction = {},
-        )
+        CompositionLocalProvider(LocalClock provides fixedClock) {
+            ReminderDetailScreen(
+                state = ReminderDetailState(
+                    title = "Project X",
+                    description = "Weekly plan\nRole distribution",
+                    selectedDate = selectedDate,
+                    atTime = selectedNotificationTime,
+                    isEditing = false,
+                ),
+                onAction = {},
+            )
+        }
     }
 }
 
@@ -27,15 +39,17 @@ private fun ReminderDetailScreenPreview_Read() {
 @Composable
 private fun ReminderDetailScreenPreview_Read_EmptyDescription() {
     TaskyTheme {
-        ReminderDetailScreen(
-            state = ReminderDetailState(
-                title = "Project X",
-                selectedDate = LocalDate(2022, 3, 1),
-                atTime = LocalDateTime(2022, 7, 21, 8, 0),
-                isEditing = false,
-            ),
-            onAction = {},
-        )
+        CompositionLocalProvider(LocalClock provides fixedClock) {
+            ReminderDetailScreen(
+                state = ReminderDetailState(
+                    title = "Project X",
+                    selectedDate = selectedDate,
+                    atTime = selectedNotificationTime,
+                    isEditing = false,
+                ),
+                onAction = {},
+            )
+        }
     }
 }
 
@@ -43,16 +57,18 @@ private fun ReminderDetailScreenPreview_Read_EmptyDescription() {
 @Composable
 private fun ReminderDetailScreenPreview_Edit() {
     TaskyTheme {
-        ReminderDetailScreen(
-            state = ReminderDetailState(
-                title = "Project X",
-                description = "Weekly plan\nRole distribution",
-                selectedDate = LocalDate(2022, 3, 1),
-                atTime = LocalDateTime(2022, 7, 21, 8, 0),
-                isEditing = true,
-            ),
-            onAction = {},
-        )
+        CompositionLocalProvider(LocalClock provides fixedClock) {
+            ReminderDetailScreen(
+                state = ReminderDetailState(
+                    title = "Project X",
+                    description = "Weekly plan\nRole distribution",
+                    selectedDate = selectedDate,
+                    atTime = selectedNotificationTime,
+                    isEditing = true,
+                ),
+                onAction = {},
+            )
+        }
     }
 }
 
@@ -60,14 +76,16 @@ private fun ReminderDetailScreenPreview_Edit() {
 @Composable
 private fun ReminderDetailScreenPreview_Edit_EmptyDescription() {
     TaskyTheme {
-        ReminderDetailScreen(
-            state = ReminderDetailState(
-                title = "Project X",
-                selectedDate = LocalDate(2022, 3, 1),
-                atTime = LocalDateTime(2022, 7, 21, 8, 0),
-                isEditing = true,
-            ),
-            onAction = {},
-        )
+        CompositionLocalProvider(LocalClock provides fixedClock) {
+            ReminderDetailScreen(
+                state = ReminderDetailState(
+                    title = "Project X",
+                    selectedDate = selectedDate,
+                    atTime = selectedNotificationTime,
+                    isEditing = true,
+                ),
+                onAction = {},
+            )
+        }
     }
 }

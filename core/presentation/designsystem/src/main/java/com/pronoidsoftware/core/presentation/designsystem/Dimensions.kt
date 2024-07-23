@@ -1,6 +1,6 @@
 package com.pronoidsoftware.core.presentation.designsystem
 
-import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -72,4 +72,4 @@ data class Dimensions(
     val editTextPaddingHorizontal: Dp = 17.dp,
 )
 
-val LocalSpacing = compositionLocalOf { Dimensions() }
+val LocalSpacing = staticCompositionLocalOf { Dimensions() }
