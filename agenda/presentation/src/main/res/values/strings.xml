@@ -28,4 +28,7 @@
     <string name="go_back">Go back</string>
     <string name="edit_title">EDIT TITLE</string>
     <string name="edit_description">EDIT DESCRIPTION</string>
+    <string name="add_photos">Add photos</string>
+    <string name="no_photos">No photos</string>
+    <string name="photos">Photos</string>
 </resources>
