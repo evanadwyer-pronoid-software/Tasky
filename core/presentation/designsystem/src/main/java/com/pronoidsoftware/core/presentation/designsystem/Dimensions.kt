@@ -82,6 +82,9 @@ data class Dimensions(
     val noPhotosRowHeight: Dp = 109.dp,
     val photosRowHeight: Dp = 151.dp,
     val photosRowPaddingVertical: Dp = 21.dp,
+    val photoDetailPaddingHorizontal: Dp = 16.dp,
+    val photoDetailPaddingVertical: Dp = 50.dp,
+    val photoDetailCornerRadius: Dp = 5.dp,
 
     // edit text
     val editTextPaddingTop: Dp = 33.dp,
