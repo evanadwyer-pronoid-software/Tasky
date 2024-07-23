@@ -1,4 +1,4 @@
-package com.pronoidsoftware.agenda.presentation.detail.components.event.photo
+package com.pronoidsoftware.agenda.presentation.detail.components.event.photo.model
 
 import android.net.Uri
 import androidx.annotation.DrawableRes

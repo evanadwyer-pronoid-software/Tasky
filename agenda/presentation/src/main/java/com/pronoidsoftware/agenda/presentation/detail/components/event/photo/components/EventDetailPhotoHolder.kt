@@ -1,4 +1,4 @@
-package com.pronoidsoftware.agenda.presentation.detail.components.event.photo
+package com.pronoidsoftware.agenda.presentation.detail.components.event.photo.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.pronoidsoftware.agenda.presentation.R
+import com.pronoidsoftware.agenda.presentation.detail.components.event.photo.model.PhotoId
 import com.pronoidsoftware.core.presentation.designsystem.PlusIcon
 import com.pronoidsoftware.core.presentation.designsystem.TaskyLightBlue2
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme

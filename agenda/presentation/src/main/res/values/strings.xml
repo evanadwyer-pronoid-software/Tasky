@@ -31,4 +31,9 @@
     <string name="add_photos">Add photos</string>
     <string name="no_photos">No photos</string>
     <string name="photos">Photos</string>
+    <string name="remove_visitor">Remove visitor</string>
+    <string name="add_visitor">Add visitor</string>
+    <string name="adding_visitor">Adding visitor…</string>
+    <string name="email_address">Email address</string>
+    <string name="email_is_valid">Email is valid</string>
 </resources>
