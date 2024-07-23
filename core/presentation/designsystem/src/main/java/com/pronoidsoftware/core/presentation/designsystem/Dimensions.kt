@@ -72,6 +72,11 @@ data class Dimensions(
     val visitorDetailMiddlePadding: Dp = 15.dp,
     val visitorDetailEndPadding: Dp = 17.dp,
     val visitorDetailMaxTextWidth: Dp = 250.dp,
+    val visitorSectionTitlePaddingBottom: Dp = 28.dp,
+    val visitorSectionFilterPaddingBottom: Dp = 20.dp,
+    val visitorSectionListSpacingSmall: Dp = 5.dp,
+    val visitorSectionListSpacingLarge: Dp = 10.dp,
+    val visitorSectionListSpacingExtraLarge: Dp = 20.dp,
 
     // event photos
     val noPhotosRowHeight: Dp = 109.dp,
