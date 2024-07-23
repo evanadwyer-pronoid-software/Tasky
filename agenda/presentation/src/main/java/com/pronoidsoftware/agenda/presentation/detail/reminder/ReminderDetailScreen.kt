@@ -3,6 +3,7 @@
 package com.pronoidsoftware.agenda.presentation.detail.reminder
 
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -38,6 +39,7 @@ import com.pronoidsoftware.core.presentation.designsystem.TaskyGray
 import com.pronoidsoftware.core.presentation.designsystem.TaskyLightGray
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
 import com.pronoidsoftware.core.presentation.designsystem.TaskyWhite2
+import com.pronoidsoftware.core.presentation.designsystem.components.TaskyDialog
 import com.pronoidsoftware.core.presentation.designsystem.components.TaskyScaffold
 import com.pronoidsoftware.core.presentation.ui.ObserveAsEvents
 import com.pronoidsoftware.core.presentation.ui.formatFullDate
@@ -68,17 +70,16 @@ fun ReminderDetailScreenRoot(
                     Toast.LENGTH_LONG,
                 ).show()
             }
+
+            ReminderDetailEvent.OnClosed -> {
+                onCloseClick()
+            }
         }
     }
 
     ReminderDetailScreen(
         state = viewModel.state,
-        onAction = { action ->
-            when (action) {
-                is ReminderDetailAction.OnClose -> onCloseClick()
-                else -> viewModel.onAction(action)
-            }
-        },
+        onAction = viewModel::onAction,
     )
 }
 
@@ -90,6 +91,25 @@ internal fun ReminderDetailScreen(
     val spacing = LocalSpacing.current
     val clock = LocalClock.current
     val dividerColor = TaskyWhite2
+
+    if (state.isShowingCloseConfirmationDialog) {
+        val onCancelAction = when {
+            state.isEditingTitle -> ReminderDetailAction.OnCancelCloseTitle
+            state.isEditingDescription -> ReminderDetailAction.OnCancelCloseDescription
+            else -> ReminderDetailAction.OnCancelClose
+        }
+        val onConfirmAction = when {
+            state.isEditingTitle -> ReminderDetailAction.OnConfirmCloseTitle
+            state.isEditingDescription -> ReminderDetailAction.OnConfirmCloseDescription
+            else -> ReminderDetailAction.OnConfirmClose
+        }
+        TaskyDialog(
+            title = stringResource(id = R.string.close_dialog_title),
+            description = stringResource(id = R.string.confirm_close),
+            onCancel = { onAction(onCancelAction) },
+            onConfirm = { onAction(onConfirmAction) },
+        )
+    }
 
     if (state.isEditingTitle) {
         AgendaDetailEditTextScreen(
@@ -114,6 +134,18 @@ internal fun ReminderDetailScreen(
             },
         )
     } else {
+        BackHandler(enabled = state.isEditing && !state.isShowingCloseConfirmationDialog) {
+            onAction(ReminderDetailAction.OnClose)
+        }
+
+        if (state.isShowingDeleteConfirmationDialog) {
+            TaskyDialog(
+                title = stringResource(id = R.string.delete_dialog_title),
+                description = stringResource(id = R.string.confirm_deletion),
+                onCancel = { onAction(ReminderDetailAction.OnCancelDelete) },
+                onConfirm = { onAction(ReminderDetailAction.OnConfirmDelete) },
+            )
+        }
         TaskyScaffold(
             topAppBar = {
                 AgendaDetailToolbar(
@@ -122,7 +154,13 @@ internal fun ReminderDetailScreen(
                     } else {
                         state.selectedDate.formatFullDate(clock).asString()
                     },
-                    onCloseClick = { onAction(ReminderDetailAction.OnClose) },
+                    onCloseClick = {
+                        if (state.isEditing) {
+                            onAction(ReminderDetailAction.OnClose)
+                        } else {
+                            onAction(ReminderDetailAction.OnConfirmClose)
+                        }
+                    },
                     isEditing = state.isEditing,
                     onEditClick = { onAction(ReminderDetailAction.OnEnableEdit) },
                     onSaveClick = { onAction(ReminderDetailAction.OnSave) },
@@ -278,6 +316,44 @@ private fun ReminderDetailScreenPreview_EditDescription() {
                 atTime = LocalDateTime(2022, 7, 21, 8, 0),
                 isEditing = true,
                 isEditingDescription = true,
+            ),
+            onAction = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun ReminderDetailScreenPreview_DeleteDialog() {
+    TaskyTheme {
+        ReminderDetailScreen(
+            state = ReminderDetailState(
+                title = "Project X",
+                description = "Amet minim mollit non deserunt ullamco " +
+                    "est sit aliqua dolor do amet sint. ",
+                selectedDate = LocalDate(2022, 3, 1),
+                atTime = LocalDateTime(2022, 7, 21, 8, 0),
+                isEditing = true,
+                isShowingDeleteConfirmationDialog = true,
+            ),
+            onAction = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun ReminderDetailScreenPreview_CloseDialog() {
+    TaskyTheme {
+        ReminderDetailScreen(
+            state = ReminderDetailState(
+                title = "Project X",
+                description = "Amet minim mollit non deserunt ullamco " +
+                    "est sit aliqua dolor do amet sint. ",
+                selectedDate = LocalDate(2022, 3, 1),
+                atTime = LocalDateTime(2022, 7, 21, 8, 0),
+                isEditing = true,
+                isShowingCloseConfirmationDialog = true,
             ),
             onAction = {},
         )

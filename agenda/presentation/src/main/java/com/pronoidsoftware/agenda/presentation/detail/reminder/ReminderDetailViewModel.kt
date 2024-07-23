@@ -66,7 +66,20 @@ class ReminderDetailViewModel @Inject constructor(
 
             ReminderDetailAction.OnCloseTitle -> {
                 state = state.copy(
+                    isShowingCloseConfirmationDialog = true,
+                )
+            }
+
+            ReminderDetailAction.OnConfirmCloseTitle -> {
+                state = state.copy(
+                    isShowingCloseConfirmationDialog = false,
                     isEditingTitle = false,
+                )
+            }
+
+            ReminderDetailAction.OnCancelCloseTitle -> {
+                state = state.copy(
+                    isShowingCloseConfirmationDialog = false,
                 )
             }
 
@@ -85,7 +98,20 @@ class ReminderDetailViewModel @Inject constructor(
 
             ReminderDetailAction.OnCloseDescription -> {
                 state = state.copy(
+                    isShowingCloseConfirmationDialog = true,
+                )
+            }
+
+            ReminderDetailAction.OnConfirmCloseDescription -> {
+                state = state.copy(
+                    isShowingCloseConfirmationDialog = false,
                     isEditingDescription = false,
+                )
+            }
+
+            ReminderDetailAction.OnCancelCloseDescription -> {
+                state = state.copy(
+                    isShowingCloseConfirmationDialog = false,
                 )
             }
 
@@ -146,10 +172,46 @@ class ReminderDetailViewModel @Inject constructor(
                 )
             }
 
-            is ReminderDetailAction.OnDelete -> {
+            ReminderDetailAction.OnDelete -> {
+                state = state.copy(
+                    isShowingDeleteConfirmationDialog = true,
+                )
+            }
+
+            ReminderDetailAction.OnConfirmDelete -> {
+                state = state.copy(
+                    isShowingDeleteConfirmationDialog = false,
+                )
                 viewModelScope.launch {
                     eventChannel.send(ReminderDetailEvent.OnDeleted)
                 }
+            }
+
+            ReminderDetailAction.OnCancelDelete -> {
+                state = state.copy(
+                    isShowingDeleteConfirmationDialog = false,
+                )
+            }
+
+            ReminderDetailAction.OnClose -> {
+                state = state.copy(
+                    isShowingCloseConfirmationDialog = true,
+                )
+            }
+
+            ReminderDetailAction.OnConfirmClose -> {
+                state = state.copy(
+                    isShowingCloseConfirmationDialog = false,
+                )
+                viewModelScope.launch {
+                    eventChannel.send(ReminderDetailEvent.OnClosed)
+                }
+            }
+
+            ReminderDetailAction.OnCancelClose -> {
+                state = state.copy(
+                    isShowingCloseConfirmationDialog = false,
+                )
             }
 
             else -> {
