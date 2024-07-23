@@ -29,6 +29,7 @@ import com.pronoidsoftware.agenda.presentation.overview.components.AgendaOvervie
 import com.pronoidsoftware.agenda.presentation.overview.components.AgendaOverviewToolbar
 import com.pronoidsoftware.agenda.presentation.overview.components.TimeMarker
 import com.pronoidsoftware.core.domain.util.today
+import com.pronoidsoftware.core.presentation.designsystem.LocalClock
 import com.pronoidsoftware.core.presentation.designsystem.LocalSpacing
 import com.pronoidsoftware.core.presentation.designsystem.PlusIcon
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
@@ -62,6 +63,7 @@ internal fun AgendaOverviewScreen(
     onAction: (AgendaOverviewAction) -> Unit,
 ) {
     val spacing = LocalSpacing.current
+    val clock = LocalClock.current
 
     TaskyScaffold(
         topAppBar = {
@@ -71,7 +73,7 @@ internal fun AgendaOverviewScreen(
                 onSelectDate = { date ->
                     onAction(AgendaOverviewAction.OnSelectDate(date))
                 },
-                clock = state.clock,
+                clock = clock,
                 profileDropdownMenuExpanded = state.profileDropdownMenuExpanded,
                 toggleProfileDropdownMenuExpanded = {
                     onAction(AgendaOverviewAction.OnToggleProfileDropdownMenu)
@@ -148,7 +150,7 @@ internal fun AgendaOverviewScreen(
             ) {
                 item {
                     Text(
-                        text = state.selectedDate.toRelativeDate(state.clock).asString(),
+                        text = state.selectedDate.toRelativeDate(clock).asString(),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurface,
                     )

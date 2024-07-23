@@ -32,4 +32,7 @@
     <string name="confirm_deletion">Are you sure you want to delete this item? This cannot be undone.</string>
     <string name="close_dialog_title">Close?</string>
     <string name="confirm_close">Are you sure you want to exit? Changes will not be saved.</string>
+    <string name="add_photos">Add photos</string>
+    <string name="no_photos">No photos</string>
+    <string name="photos">Photos</string>
 </resources>

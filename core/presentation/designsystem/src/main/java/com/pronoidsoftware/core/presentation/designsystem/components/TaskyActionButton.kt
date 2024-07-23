@@ -14,6 +14,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -27,6 +29,7 @@ import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
 fun TaskyActionButton(
     text: String,
     isLoading: Boolean,
+    isLoadingContentDescription: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
@@ -56,7 +59,10 @@ fun TaskyActionButton(
         if (isLoading) {
             CircularProgressIndicator(
                 modifier = Modifier
-                    .size(15.dp),
+                    .size(15.dp)
+                    .semantics {
+                        contentDescription = isLoadingContentDescription
+                    },
                 strokeWidth = spacing.strokeBold,
             )
         } else {
@@ -81,6 +87,7 @@ private fun TaskyActionButtonPreview(
         TaskyActionButton(
             text = "GET STARTED",
             isLoading = isLoading,
+            isLoadingContentDescription = "Loading...",
             onClick = {},
             enabled = !isLoading,
         )

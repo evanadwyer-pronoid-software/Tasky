@@ -33,6 +33,7 @@ import com.pronoidsoftware.agenda.presentation.detail.components.AgendaDetailToo
 import com.pronoidsoftware.agenda.presentation.detail.components.AgendaDetailType
 import com.pronoidsoftware.agenda.presentation.detail.components.edittext.AgendaDetailEditTextScreen
 import com.pronoidsoftware.agenda.presentation.detail.components.edittext.EditTextType
+import com.pronoidsoftware.core.presentation.designsystem.LocalClock
 import com.pronoidsoftware.core.presentation.designsystem.LocalSpacing
 import com.pronoidsoftware.core.presentation.designsystem.TaskyGray
 import com.pronoidsoftware.core.presentation.designsystem.TaskyLightGray
@@ -88,6 +89,7 @@ internal fun ReminderDetailScreen(
     onAction: (ReminderDetailAction) -> Unit,
 ) {
     val spacing = LocalSpacing.current
+    val clock = LocalClock.current
     val dividerColor = TaskyWhite2
 
     if (state.isShowingCloseConfirmationDialog) {
@@ -150,7 +152,7 @@ internal fun ReminderDetailScreen(
                     title = if (state.isEditing) {
                         stringResource(id = R.string.edit_reminder)
                     } else {
-                        state.selectedDate.formatFullDate(state.clock).asString()
+                        state.selectedDate.formatFullDate(clock).asString()
                     },
                     onCloseClick = {
                         if (state.isEditing) {
@@ -230,7 +232,7 @@ internal fun ReminderDetailScreen(
                     toggleDatePickerExpanded = {
                         onAction(ReminderDetailAction.OnToggleDatePickerExpanded)
                     },
-                    clock = state.clock,
+                    clock = clock,
                 )
                 Spacer(modifier = Modifier.height(spacing.spaceMedium))
                 HorizontalDivider(color = dividerColor)

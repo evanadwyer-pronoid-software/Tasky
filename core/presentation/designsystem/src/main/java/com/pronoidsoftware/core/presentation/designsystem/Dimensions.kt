@@ -1,6 +1,6 @@
 package com.pronoidsoftware.core.presentation.designsystem
 
-import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -62,9 +62,14 @@ data class Dimensions(
     val agendaDetailSpaceMedium: Dp = 18.dp,
     val agendaDetailSpaceBottom: Dp = 35.dp,
 
+    // event photos
+    val noPhotosRowHeight: Dp = 109.dp,
+    val photosRowHeight: Dp = 151.dp,
+    val photosRowPaddingVertical: Dp = 21.dp,
+
     // edit text
     val editTextPaddingTop: Dp = 33.dp,
     val editTextPaddingHorizontal: Dp = 17.dp,
 )
 
-val LocalSpacing = compositionLocalOf { Dimensions() }
+val LocalSpacing = staticCompositionLocalOf { Dimensions() }

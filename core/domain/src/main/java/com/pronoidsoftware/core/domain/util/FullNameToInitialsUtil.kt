@@ -1,6 +1,8 @@
 package com.pronoidsoftware.core.domain.util
 
-fun String.toInitials(): String {
+import java.util.Locale
+
+private fun String.toInitials(): String {
     val words = this
         .replace('\t', ' ')
         .replace('\n', ' ')
@@ -41,4 +43,12 @@ private fun getCharacters(word: String, need: Int): String {
         count++
     }
     return result.toString()
+}
+
+private fun String.capitalizeInitials(): String {
+    return this.uppercase(Locale.getDefault())
+}
+
+fun String.initializeAndCapitalize(): String {
+    return this.toInitials().capitalizeInitials()
 }

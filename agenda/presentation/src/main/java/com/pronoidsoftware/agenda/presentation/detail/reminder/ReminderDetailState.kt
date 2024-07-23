@@ -4,7 +4,6 @@ import com.pronoidsoftware.agenda.presentation.detail.model.NotificationDuration
 import com.pronoidsoftware.core.domain.util.now
 import com.pronoidsoftware.core.domain.util.today
 import kotlin.time.Duration.Companion.minutes
-import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
@@ -12,11 +11,10 @@ import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 
 data class ReminderDetailState(
-    val clock: Clock = Clock.System,
-    val selectedDate: LocalDate = today(clock),
+    val selectedDate: LocalDate = today(),
     val title: String = "",
     val description: String? = null,
-    val atTime: LocalDateTime = now(clock)
+    val atTime: LocalDateTime = now()
         .toInstant(TimeZone.currentSystemDefault())
         .plus(60.minutes)
         .toLocalDateTime(TimeZone.currentSystemDefault()),

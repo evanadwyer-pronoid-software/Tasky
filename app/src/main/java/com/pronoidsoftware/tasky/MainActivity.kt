@@ -5,8 +5,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.rememberNavController
+import com.pronoidsoftware.core.presentation.designsystem.LocalClock
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -27,12 +29,14 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TaskyTheme {
-                if (!viewModel.state.isCheckingAuth) {
-                    val navController = rememberNavController()
-                    NavigationRoot(
-                        navController = navController,
-                        isLoggedIn = viewModel.state.isLoggedIn,
-                    )
+                CompositionLocalProvider(LocalClock provides viewModel.clock) {
+                    if (!viewModel.state.isCheckingAuth) {
+                        val navController = rememberNavController()
+                        NavigationRoot(
+                            navController = navController,
+                            isLoggedIn = viewModel.state.isLoggedIn,
+                        )
+                    }
                 }
             }
         }

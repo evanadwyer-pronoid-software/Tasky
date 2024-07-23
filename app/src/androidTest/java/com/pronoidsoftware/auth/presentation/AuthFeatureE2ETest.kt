@@ -93,7 +93,7 @@ class AuthFeatureE2ETest : TaskyAndroidTest() {
             .assertLoggingIn()
 
         composeRule.onNodeWithText("Today").assertIsDisplayed()
-        composeRule.onNodeWithText("TE").assertIsDisplayed()
+        composeRule.onNodeWithText("TE").assertIsDisplayed() // profile badge
     }
 
     @Test
