@@ -1,4 +1,4 @@
-package com.pronoidsoftware.agenda.presentation.detail.components.event.photo
+package com.pronoidsoftware.agenda.presentation.detail.components.event.photo.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pronoidsoftware.agenda.presentation.R
+import com.pronoidsoftware.agenda.presentation.detail.components.event.photo.model.PhotoId
 import com.pronoidsoftware.core.presentation.designsystem.Inter
 import com.pronoidsoftware.core.presentation.designsystem.LocalSpacing
 import com.pronoidsoftware.core.presentation.designsystem.PlusIcon
