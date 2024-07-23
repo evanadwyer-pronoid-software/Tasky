@@ -44,4 +44,5 @@
     <string name="all">All</string>
     <string name="going">Going</string>
     <string name="not_going">Not going</string>
+    <string name="visitors">Visitors</string>
 </resources>
