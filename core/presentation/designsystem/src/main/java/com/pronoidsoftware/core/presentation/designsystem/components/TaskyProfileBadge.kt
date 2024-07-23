@@ -33,15 +33,9 @@ fun TaskyProfileBadge(
             .size(34.dp)
             .clip(CircleShape)
             .background(backgroundColor)
-            .then(
-                if (onClick != null) {
-                    Modifier.clickable {
-                        onClick()
-                    }
-                } else {
-                    Modifier
-                },
-            ),
+            .clickable(enabled = onClick != null) {
+                onClick?.invoke()
+            },
         contentAlignment = Alignment.Center,
     ) {
         Text(

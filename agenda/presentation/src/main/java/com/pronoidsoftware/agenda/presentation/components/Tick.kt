@@ -45,15 +45,9 @@ fun Tick(
         modifier = modifier
             .size(radius * 2 + strokeWidth)
             .clip(CircleShape)
-            .then(
-                if (onClick != null) {
-                    Modifier.clickable {
-                        onClick()
-                    }
-                } else {
-                    Modifier
-                },
-            ),
+            .clickable(enabled = onClick != null) {
+                onClick?.invoke()
+            },
         contentAlignment = Alignment.Center,
     ) {
         Canvas(

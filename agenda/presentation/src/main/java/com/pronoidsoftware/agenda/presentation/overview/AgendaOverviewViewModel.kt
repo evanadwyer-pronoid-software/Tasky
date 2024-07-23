@@ -6,8 +6,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pronoidsoftware.core.domain.SessionStorage
-import com.pronoidsoftware.core.domain.util.toInitials
-import com.pronoidsoftware.core.presentation.ui.capitalizeInitials
+import com.pronoidsoftware.core.domain.util.initializeAndCapitalize
+import com.pronoidsoftware.core.domain.util.today
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.channels.Channel
@@ -22,11 +22,7 @@ class AgendaOverviewViewModel @Inject constructor(
     clock: Clock,
 ) : ViewModel() {
 
-    var state by mutableStateOf(
-        AgendaOverviewState(
-            clock = clock,
-        ),
-    )
+    var state by mutableStateOf(AgendaOverviewState(selectedDate = today(clock)))
         private set
 
     private val eventChannel = Channel<AgendaOverviewEvent>()
@@ -34,11 +30,9 @@ class AgendaOverviewViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            state = AgendaOverviewState(
-                // TODO: provide user initials another way to avoid initializing state twice?
-                userInitials = sessionStorage.get()?.fullName?.toInitials()?.capitalizeInitials()
-                    ?: "",
-                clock = clock,
+            state = state.copy(
+                userInitials = sessionStorage.get()?.fullName?.initializeAndCapitalize()
+                    ?: error("User initials not available. Has the user logged out?"),
             )
         }
     }

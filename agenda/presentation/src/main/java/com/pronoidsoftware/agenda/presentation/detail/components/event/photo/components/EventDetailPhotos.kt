@@ -75,15 +75,9 @@ private fun NoPhotosCarousel(
             .fillMaxWidth()
             .height(spacing.noPhotosRowHeight)
             .background(MaterialTheme.colorScheme.surfaceVariant)
-            .then(
-                if (editEnabled) {
-                    Modifier.clickable {
-                        onAddClick()
-                    }
-                } else {
-                    Modifier
-                },
-            ),
+            .clickable(enabled = editEnabled) {
+                onAddClick()
+            },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
     ) {
