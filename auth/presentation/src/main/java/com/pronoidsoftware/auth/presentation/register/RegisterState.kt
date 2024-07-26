@@ -3,7 +3,7 @@ package com.pronoidsoftware.auth.presentation.register
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import com.pronoidsoftware.auth.domain.PasswordValidationState
+import com.pronoidsoftware.core.domain.validation.PasswordValidationState
 
 data class RegisterState(
     val name: TextFieldState = TextFieldState(),

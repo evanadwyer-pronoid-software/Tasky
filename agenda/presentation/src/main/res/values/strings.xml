@@ -13,18 +13,20 @@
     <string name="selected_date">Selected date</string>
     <string name="logout">Logout</string>
     <string name="create_agenda_item">Create an agenda item</string>
+    <string name="event">Event</string>
+    <string name="task">Task</string>
     <string name="reminder">Reminder</string>
     <string name="go_back_to_agenda_overview">Go back to Agenda Overview</string>
     <string name="save">Save</string>
     <string name="saved">Saved</string>
-    <string name="edit_reminder">EDIT REMINDER</string>
+    <string name="edit_agenda_item">EDIT %s</string>
     <string name="minutes10">10 minutes before</string>
     <string name="minutes30">30 minutes before</string>
     <string name="hours1">1 hour before</string>
     <string name="hours6">6 hours before</string>
     <string name="days1">1 day before</string>
     <string name="at">At</string>
-    <string name="delete_reminder">DELETE REMINDER</string>
+    <string name="delete_agenda_item">DELETE %s</string>
     <string name="enter_description">Enter description…</string>
     <string name="go_back">Go back</string>
     <string name="edit_title">EDIT TITLE</string>
@@ -46,4 +48,7 @@
     <string name="not_going">Not going</string>
     <string name="visitors">Visitors</string>
     <string name="photo">Photo</string>
+    <string name="new_agenda_item">New %s</string>
+    <string name="to">To</string>
+    <string name="add">Add</string>
 </resources>

@@ -14,7 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.sp
-import com.pronoidsoftware.agenda.domain.AgendaItem
+import com.pronoidsoftware.agenda.presentation.overview.model.AgendaOverviewItemUi
 import com.pronoidsoftware.agenda.presentation.util.AgendaOverviewItemUiParameterProvider
 import com.pronoidsoftware.core.presentation.designsystem.Inter
 import com.pronoidsoftware.core.presentation.designsystem.TaskyGray
@@ -54,14 +54,14 @@ fun AgendaDetailActionText(
 @Preview(showBackground = true)
 @Composable
 private fun AgendaDetailActionTextPreview(
-    @PreviewParameter(AgendaOverviewItemUiParameterProvider::class) type: AgendaItem,
+    @PreviewParameter(AgendaOverviewItemUiParameterProvider::class) type: AgendaOverviewItemUi,
 ) {
     TaskyTheme {
         Column(
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
             when (type) {
-                AgendaItem.EVENT -> {
+                is AgendaOverviewItemUi.EventOverviewUi -> {
                     AgendaDetailActionText(text = "DELETE EVENT")
                     AgendaDetailActionText(text = "DELETE EVENT", enabled = true)
                     AgendaDetailActionText(text = "LEAVE EVENT")
@@ -70,12 +70,12 @@ private fun AgendaDetailActionTextPreview(
                     AgendaDetailActionText(text = "JOIN EVENT", enabled = true)
                 }
 
-                AgendaItem.TASK -> {
+                is AgendaOverviewItemUi.TaskOverviewUi -> {
                     AgendaDetailActionText(text = "DELETE TASK")
                     AgendaDetailActionText(text = "DELETE TASK", enabled = true)
                 }
 
-                AgendaItem.REMINDER -> {
+                is AgendaOverviewItemUi.ReminderOverviewUi -> {
                     AgendaDetailActionText(text = "DELETE REMINDER")
                     AgendaDetailActionText(text = "DELETE REMINDER", enabled = true)
                 }

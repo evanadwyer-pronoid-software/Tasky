@@ -40,8 +40,8 @@ fun EventDetailPhotos(
     arePhotosFull: Boolean,
     editEnabled: Boolean,
     onAddClick: () -> Unit,
-    onOpenClick: () -> Unit,
-    onEditClick: () -> Unit,
+    onOpenClick: (PhotoId) -> Unit,
+//    onEditClick: (PhotoId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (photos.isEmpty()) {
@@ -57,7 +57,7 @@ fun EventDetailPhotos(
             editEnabled = editEnabled,
             onAddClick = onAddClick,
             onOpenClick = onOpenClick,
-            onEditClick = onEditClick,
+//            onEditClick = onEditClick,
             modifier = modifier,
         )
     }
@@ -120,8 +120,8 @@ private fun PhotoCarousel(
     arePhotosFull: Boolean,
     editEnabled: Boolean,
     onAddClick: () -> Unit,
-    onOpenClick: () -> Unit,
-    onEditClick: () -> Unit,
+    onOpenClick: (PhotoId) -> Unit,
+//    onEditClick: (PhotoId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val spacing = LocalSpacing.current
@@ -163,11 +163,11 @@ private fun PhotoCarousel(
                     PhotoThumbnail(
                         photoId = photo,
                         onClick = {
-                            if (editEnabled) {
-                                onEditClick()
-                            } else {
-                                onOpenClick()
-                            }
+//                            if (editEnabled) {
+//                                onEditClick(photo)
+//                            } else {
+                            onOpenClick(photo)
+//                            }
                         },
                         modifier = Modifier
                             .then(
@@ -204,7 +204,7 @@ private fun EventDetailPhotosPreview_Empty_NotEditable() {
             arePhotosFull = false,
             editEnabled = false,
             onAddClick = { },
-            onEditClick = { },
+//            onEditClick = { },
             onOpenClick = { },
         )
     }
@@ -219,7 +219,7 @@ private fun EventDetailPhotosPreview_Empty_Editable() {
             arePhotosFull = false,
             editEnabled = true,
             onAddClick = { },
-            onEditClick = { },
+//            onEditClick = { },
             onOpenClick = { },
         )
     }
@@ -236,7 +236,7 @@ private fun EventDetailPhotosPreview_NotEmpty_NotEditable() {
             arePhotosFull = false,
             editEnabled = false,
             onAddClick = { },
-            onEditClick = { },
+//            onEditClick = { },
             onOpenClick = { },
         )
     }
@@ -253,7 +253,7 @@ private fun EventDetailPhotosPreview_NotEmpty_Editable() {
             arePhotosFull = false,
             editEnabled = true,
             onAddClick = { },
-            onEditClick = { },
+//            onEditClick = { },
             onOpenClick = { },
         )
     }
@@ -281,7 +281,7 @@ private fun EventDetailPhotosPreview_NotEmpty_Editable_NearFull() {
             arePhotosFull = false,
             editEnabled = true,
             onAddClick = { },
-            onEditClick = { },
+//            onEditClick = { },
             onOpenClick = { },
         )
     }
@@ -308,7 +308,7 @@ private fun EventDetailPhotosPreview_NotEmpty_Editable_Full() {
             arePhotosFull = true,
             editEnabled = true,
             onAddClick = { },
-            onEditClick = { },
+//            onEditClick = { },
             onOpenClick = { },
         )
     }

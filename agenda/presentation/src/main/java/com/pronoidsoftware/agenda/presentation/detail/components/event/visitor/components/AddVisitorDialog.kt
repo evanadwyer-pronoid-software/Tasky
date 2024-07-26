@@ -33,7 +33,7 @@ import com.pronoidsoftware.core.presentation.designsystem.components.TaskyTextFi
 fun AddVisitorDialog(
     title: String,
     buttonText: String,
-    onAddClick: () -> Unit,
+    onAddClick: (String) -> Unit,
     onCancel: () -> Unit,
     isAddingAttendee: Boolean,
     emailTextFieldState: TextFieldState,
@@ -108,7 +108,9 @@ fun AddVisitorDialog(
                 text = buttonText,
                 isLoading = isAddingAttendee,
                 isLoadingContentDescription = stringResource(id = R.string.adding_visitor),
-                onClick = onAddClick,
+                onClick = {
+                    onAddClick(emailTextFieldState.text.toString())
+                },
                 enabled = !isAddingAttendee && isEmailValid,
             )
         },

@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.tasky.android.feature.ui)
     alias(libs.plugins.tasky.android.hilt.compose)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -14,6 +15,7 @@ dependencies {
     implementation(libs.timber)
     implementation(libs.kotlinx.datetime)
     implementation(libs.coil)
+    implementation(libs.kotlinx.serialization.json)
 
     screenshotTestImplementation(projects.testUtil.jvmTest)
 }

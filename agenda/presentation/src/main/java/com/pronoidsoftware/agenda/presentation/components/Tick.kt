@@ -19,8 +19,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
-import com.pronoidsoftware.agenda.domain.AgendaItem
 import com.pronoidsoftware.agenda.presentation.R
+import com.pronoidsoftware.agenda.presentation.overview.model.AgendaOverviewItemUi
 import com.pronoidsoftware.agenda.presentation.util.AgendaOverviewItemUiParameterProvider
 import com.pronoidsoftware.core.presentation.designsystem.CheckIcon
 import com.pronoidsoftware.core.presentation.designsystem.LocalSpacing
@@ -76,18 +76,18 @@ fun Tick(
 @Preview
 @Composable
 private fun TickPreview(
-    @PreviewParameter(AgendaOverviewItemUiParameterProvider::class) type: AgendaItem,
+    @PreviewParameter(AgendaOverviewItemUiParameterProvider::class) type: AgendaOverviewItemUi,
 ) {
     val backgroundColor = when (type) {
-        AgendaItem.REMINDER -> TaskyLightGray
-        AgendaItem.TASK -> TaskyGreen
-        AgendaItem.EVENT -> TaskyLightGreen
+        is AgendaOverviewItemUi.EventOverviewUi -> TaskyLightGreen
+        is AgendaOverviewItemUi.ReminderOverviewUi -> TaskyLightGray
+        is AgendaOverviewItemUi.TaskOverviewUi -> TaskyGreen
     }
     val spacing = LocalSpacing.current
     TaskyTheme {
         Tick(
-            color = if (type == AgendaItem.TASK) TaskyWhite else TaskyBlack,
-            ticked = type == AgendaItem.TASK,
+            color = if (type is AgendaOverviewItemUi.TaskOverviewUi) TaskyWhite else TaskyBlack,
+            ticked = type is AgendaOverviewItemUi.TaskOverviewUi,
             radius = spacing.agendaItemTickRadius,
             strokeWidth = spacing.agendaItemTickStrokeWidth,
             modifier = Modifier

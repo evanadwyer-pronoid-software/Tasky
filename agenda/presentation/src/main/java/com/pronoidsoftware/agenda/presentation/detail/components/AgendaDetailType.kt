@@ -22,9 +22,13 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.pronoidsoftware.agenda.domain.AgendaItem
+import com.pronoidsoftware.agenda.domain.detail.model.EVENT
+import com.pronoidsoftware.agenda.domain.detail.model.REMINDER
+import com.pronoidsoftware.agenda.domain.detail.model.TASK
+import com.pronoidsoftware.agenda.presentation.overview.model.AgendaOverviewItemUi
 import com.pronoidsoftware.agenda.presentation.util.AgendaOverviewItemUiParameterProvider
 import com.pronoidsoftware.core.presentation.designsystem.Inter
+import com.pronoidsoftware.core.presentation.designsystem.TaskyBlack
 import com.pronoidsoftware.core.presentation.designsystem.TaskyDarkGray
 import com.pronoidsoftware.core.presentation.designsystem.TaskyGray
 import com.pronoidsoftware.core.presentation.designsystem.TaskyGreen
@@ -35,9 +39,17 @@ import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
 @Composable
 fun AgendaDetailType(
     type: String,
-    fillColor: Color,
     modifier: Modifier = Modifier,
-    borderColor: Color = Color.Transparent,
+    fillColor: Color = when (type) {
+        TASK -> TaskyGreen
+        EVENT -> TaskyLightGreen
+        REMINDER -> TaskyLightGray
+        else -> TaskyBlack
+    },
+    borderColor: Color = when (type) {
+        "Reminder" -> TaskyGray
+        else -> Color.Transparent
+    },
     boxSize: Dp = 20.dp,
     boxCornerRadius: Dp = 2.dp,
 ) {
@@ -78,24 +90,20 @@ fun AgendaDetailType(
 @Preview(showBackground = true)
 @Composable
 private fun AgendaDetailTypePreview(
-    @PreviewParameter(AgendaOverviewItemUiParameterProvider::class) type: AgendaItem,
+    @PreviewParameter(AgendaOverviewItemUiParameterProvider::class) type: AgendaOverviewItemUi,
 ) {
     TaskyTheme {
         when (type) {
-            AgendaItem.EVENT -> {
-                AgendaDetailType(type = "Event", fillColor = TaskyLightGreen)
+            is AgendaOverviewItemUi.EventOverviewUi -> {
+                AgendaDetailType(type = EVENT)
             }
 
-            AgendaItem.TASK -> {
-                AgendaDetailType(type = "Task", fillColor = TaskyGreen)
+            is AgendaOverviewItemUi.TaskOverviewUi -> {
+                AgendaDetailType(type = TASK)
             }
 
-            AgendaItem.REMINDER -> {
-                AgendaDetailType(
-                    type = "Reminder",
-                    fillColor = TaskyLightGray,
-                    borderColor = TaskyGray,
-                )
+            is AgendaOverviewItemUi.ReminderOverviewUi -> {
+                AgendaDetailType(type = REMINDER)
             }
         }
     }

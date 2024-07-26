@@ -19,8 +19,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.sp
-import com.pronoidsoftware.agenda.domain.AgendaItem
 import com.pronoidsoftware.agenda.presentation.R
+import com.pronoidsoftware.agenda.presentation.overview.model.AgendaOverviewItemUi
 import com.pronoidsoftware.agenda.presentation.util.AgendaOverviewItemUiParameterProvider
 import com.pronoidsoftware.core.presentation.designsystem.ForwardChevronIcon
 import com.pronoidsoftware.core.presentation.designsystem.Inter
@@ -71,14 +71,14 @@ fun AgendaDetailDescription(
 @Preview(showBackground = true)
 @Composable
 private fun AgendaDetailDescriptionPreview(
-    @PreviewParameter(AgendaOverviewItemUiParameterProvider::class) type: AgendaItem,
+    @PreviewParameter(AgendaOverviewItemUiParameterProvider::class) type: AgendaOverviewItemUi,
 ) {
     TaskyTheme {
         Column(
             verticalArrangement = Arrangement.SpaceEvenly,
         ) {
             when (type) {
-                AgendaItem.EVENT -> {
+                is AgendaOverviewItemUi.EventOverviewUi -> {
                     AgendaDetailDescription(
                         description = "Amet minim mollit non deserunt ullamco " +
                             "est sit aliqua dolor do amet sint. ",
@@ -101,7 +101,7 @@ private fun AgendaDetailDescriptionPreview(
                     )
                 }
 
-                AgendaItem.TASK -> {
+                is AgendaOverviewItemUi.TaskOverviewUi -> {
                     AgendaDetailDescription(
                         description = "Weekly plan\n" +
                             "Role distribution",
@@ -124,7 +124,7 @@ private fun AgendaDetailDescriptionPreview(
                     )
                 }
 
-                AgendaItem.REMINDER -> {
+                is AgendaOverviewItemUi.ReminderOverviewUi -> {
                     AgendaDetailDescription(
                         description = "Weekly plan\nRole distribution",
                         onEdit = { },
