@@ -14,6 +14,8 @@
     <string name="logout">Logout</string>
     <string name="create_agenda_item">Create an agenda item</string>
     <string name="reminder">Reminder</string>
+    <string name="task">Task</string>
+    <string name="event">Event</string>
     <string name="go_back_to_agenda_overview">Go back to Agenda Overview</string>
     <string name="save">Save</string>
     <string name="saved">Saved</string>

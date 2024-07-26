@@ -10,6 +10,7 @@ sealed interface ReminderDetailAction {
     data object OnConfirmClose : ReminderDetailAction
     data object OnCancelClose : ReminderDetailAction
     data object OnEnableEdit : ReminderDetailAction
+    data object OnDisableEdit : ReminderDetailAction
     data object OnSave : ReminderDetailAction
 
     // title actions

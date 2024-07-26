@@ -22,7 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.pronoidsoftware.agenda.domain.AgendaItem
+import com.pronoidsoftware.agenda.domain.model.AgendaItemType
 import com.pronoidsoftware.agenda.presentation.R
 import com.pronoidsoftware.agenda.presentation.overview.components.AgendaOverviewDateWidget
 import com.pronoidsoftware.agenda.presentation.overview.components.AgendaOverviewItem
@@ -38,11 +38,13 @@ import com.pronoidsoftware.core.presentation.designsystem.components.TaskyFloati
 import com.pronoidsoftware.core.presentation.designsystem.components.TaskyScaffold
 import com.pronoidsoftware.core.presentation.ui.ObserveAsEvents
 import com.pronoidsoftware.core.presentation.ui.toRelativeDate
-import java.util.Locale
 import timber.log.Timber
 
 @Composable
-fun AgendaOverviewScreenRoot(viewModel: AgendaOverviewViewModel = hiltViewModel()) {
+fun AgendaOverviewScreenRoot(
+    onCreateAgendaItem: (AgendaItemType, Boolean) -> Unit,
+    viewModel: AgendaOverviewViewModel = hiltViewModel(),
+) {
     ObserveAsEvents(flow = viewModel.events) { event ->
         when (event) {
             else -> {
@@ -53,7 +55,18 @@ fun AgendaOverviewScreenRoot(viewModel: AgendaOverviewViewModel = hiltViewModel(
 
     AgendaOverviewScreen(
         state = viewModel.state,
-        onAction = viewModel::onAction,
+        onAction = { action ->
+            when (action) {
+                is AgendaOverviewAction.OnCreateClick -> {
+                    onCreateAgendaItem(
+                        action.type,
+                        true,
+                    )
+                }
+
+                else -> viewModel.onAction(action)
+            }
+        },
     )
 }
 
@@ -89,18 +102,19 @@ internal fun AgendaOverviewScreen(
         },
         floatingActionButton = {
             TaskyDropdownMenu(
-                items = AgendaItem.entries.map {
-                    it.name.lowercase(Locale.getDefault())
-                        .replaceFirstChar { character ->
-                            character.titlecase(Locale.getDefault())
-                        }
+                items = AgendaItemType.entries.map {
+                    when (it) {
+                        AgendaItemType.EVENT -> stringResource(id = R.string.event)
+                        AgendaItemType.TASK -> stringResource(id = R.string.task)
+                        AgendaItemType.REMINDER -> stringResource(id = R.string.reminder)
+                    }
                 },
                 expanded = state.fabDropdownMenuExpanded,
                 toggleExpanded = {
                     onAction(AgendaOverviewAction.OnToggleFABDropdownMenuExpanded)
                 },
                 onMenuItemClick = { index ->
-                    onAction(AgendaOverviewAction.OnCreateClick(AgendaItem.entries[index]))
+                    onAction(AgendaOverviewAction.OnCreateClick(AgendaItemType.entries[index]))
                 },
             ) {
                 TaskyFloatingActionButton(

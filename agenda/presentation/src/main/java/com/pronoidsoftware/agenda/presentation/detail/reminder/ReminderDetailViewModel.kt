@@ -49,6 +49,12 @@ class ReminderDetailViewModel @Inject constructor(
                 )
             }
 
+            ReminderDetailAction.OnDisableEdit -> {
+                state = state.copy(
+                    isEditing = false,
+                )
+            }
+
             ReminderDetailAction.OnSave -> {
                 viewModelScope.launch {
                     state = state.copy(

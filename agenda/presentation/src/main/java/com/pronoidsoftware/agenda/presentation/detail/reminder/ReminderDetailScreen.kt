@@ -17,12 +17,14 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.pronoidsoftware.agenda.domain.model.AgendaItemType
 import com.pronoidsoftware.agenda.presentation.R
 import com.pronoidsoftware.agenda.presentation.detail.components.AgendaDetailActionText
 import com.pronoidsoftware.agenda.presentation.detail.components.AgendaDetailDescription
@@ -35,8 +37,6 @@ import com.pronoidsoftware.agenda.presentation.detail.components.edittext.Agenda
 import com.pronoidsoftware.agenda.presentation.detail.components.edittext.EditTextType
 import com.pronoidsoftware.core.presentation.designsystem.LocalClock
 import com.pronoidsoftware.core.presentation.designsystem.LocalSpacing
-import com.pronoidsoftware.core.presentation.designsystem.TaskyGray
-import com.pronoidsoftware.core.presentation.designsystem.TaskyLightGray
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
 import com.pronoidsoftware.core.presentation.designsystem.TaskyWhite2
 import com.pronoidsoftware.core.presentation.designsystem.components.TaskyDialog
@@ -48,9 +48,19 @@ import kotlinx.datetime.LocalDateTime
 
 @Composable
 fun ReminderDetailScreenRoot(
+    type: AgendaItemType,
+    isEditing: Boolean,
     onCloseClick: () -> Unit,
     viewModel: ReminderDetailViewModel = hiltViewModel(),
 ) {
+    LaunchedEffect(isEditing) {
+        if (isEditing) {
+            viewModel.onAction(ReminderDetailAction.OnEnableEdit)
+        } else {
+            viewModel.onAction(ReminderDetailAction.OnDisableEdit)
+        }
+    }
+
     val context = LocalContext.current
     ObserveAsEvents(flow = viewModel.events) { event ->
         when (event) {
@@ -78,6 +88,7 @@ fun ReminderDetailScreenRoot(
     }
 
     ReminderDetailScreen(
+        type = type,
         state = viewModel.state,
         onAction = viewModel::onAction,
     )
@@ -85,6 +96,7 @@ fun ReminderDetailScreenRoot(
 
 @Composable
 internal fun ReminderDetailScreen(
+    type: AgendaItemType,
     state: ReminderDetailState,
     onAction: (ReminderDetailAction) -> Unit,
 ) {
@@ -189,9 +201,7 @@ internal fun ReminderDetailScreen(
                     .padding(horizontal = spacing.spaceMedium),
             ) {
                 AgendaDetailType(
-                    type = stringResource(id = R.string.reminder),
-                    fillColor = TaskyLightGray,
-                    borderColor = TaskyGray,
+                    type = type,
                 )
                 Spacer(modifier = Modifier.height(spacing.agendaDetailSpaceMedium))
                 AgendaDetailTitle(
@@ -273,6 +283,7 @@ internal fun ReminderDetailScreen(
 private fun ReminderDetailScreenPreview() {
     TaskyTheme {
         ReminderDetailScreen(
+            type = AgendaItemType.REMINDER,
             state = ReminderDetailState(
                 title = "Project X",
                 description = "Weekly plan\nRole distribution",
@@ -290,6 +301,7 @@ private fun ReminderDetailScreenPreview() {
 private fun ReminderDetailScreenPreview_EditTitle() {
     TaskyTheme {
         ReminderDetailScreen(
+            type = AgendaItemType.REMINDER,
             state = ReminderDetailState(
                 title = "Project X",
                 description = "Weekly plan\nRole distribution",
@@ -308,6 +320,7 @@ private fun ReminderDetailScreenPreview_EditTitle() {
 private fun ReminderDetailScreenPreview_EditDescription() {
     TaskyTheme {
         ReminderDetailScreen(
+            type = AgendaItemType.REMINDER,
             state = ReminderDetailState(
                 title = "Project X",
                 description = "Amet minim mollit non deserunt ullamco " +
@@ -327,6 +340,7 @@ private fun ReminderDetailScreenPreview_EditDescription() {
 private fun ReminderDetailScreenPreview_DeleteDialog() {
     TaskyTheme {
         ReminderDetailScreen(
+            type = AgendaItemType.REMINDER,
             state = ReminderDetailState(
                 title = "Project X",
                 description = "Amet minim mollit non deserunt ullamco " +
@@ -346,6 +360,7 @@ private fun ReminderDetailScreenPreview_DeleteDialog() {
 private fun ReminderDetailScreenPreview_CloseDialog() {
     TaskyTheme {
         ReminderDetailScreen(
+            type = AgendaItemType.REMINDER,
             state = ReminderDetailState(
                 title = "Project X",
                 description = "Amet minim mollit non deserunt ullamco " +

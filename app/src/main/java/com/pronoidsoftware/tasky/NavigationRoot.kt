@@ -6,6 +6,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import androidx.navigation.toRoute
+import com.pronoidsoftware.agenda.domain.model.AgendaItemType
+import com.pronoidsoftware.agenda.presentation.detail.reminder.ReminderDetailScreenRoot
 import com.pronoidsoftware.agenda.presentation.overview.AgendaOverviewScreenRoot
 import com.pronoidsoftware.auth.presentation.login.LoginScreenRoot
 import com.pronoidsoftware.auth.presentation.register.RegisterScreenRoot
@@ -70,7 +73,26 @@ private fun NavGraphBuilder.agendaGraph(navController: NavHostController) {
         startDestination = AgendaScreen,
     ) {
         composable<AgendaScreen> {
-            AgendaOverviewScreenRoot()
+            AgendaOverviewScreenRoot(
+                onCreateAgendaItem = { type, isEditing ->
+                    navController.navigate(
+                        DetailScreen(
+                            type = type.toString(),
+                            isEditing = isEditing,
+                        ),
+                    )
+                },
+            )
+        }
+        composable<DetailScreen> {
+            val args = it.toRoute<DetailScreen>()
+            ReminderDetailScreenRoot(
+                type = AgendaItemType.from(args.type),
+                isEditing = args.isEditing,
+                onCloseClick = {
+                    navController.navigateUp()
+                },
+            )
         }
     }
 }
@@ -91,3 +113,9 @@ object AgendaFeature
 
 @Serializable
 object AgendaScreen
+
+@Serializable
+data class DetailScreen(
+    val type: String,
+    val isEditing: Boolean,
+)

@@ -19,7 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.sp
-import com.pronoidsoftware.agenda.domain.AgendaItem
+import com.pronoidsoftware.agenda.domain.model.AgendaItemType
 import com.pronoidsoftware.agenda.presentation.R
 import com.pronoidsoftware.agenda.presentation.util.AgendaOverviewItemUiParameterProvider
 import com.pronoidsoftware.core.presentation.designsystem.ForwardChevronIcon
@@ -71,14 +71,14 @@ fun AgendaDetailDescription(
 @Preview(showBackground = true)
 @Composable
 private fun AgendaDetailDescriptionPreview(
-    @PreviewParameter(AgendaOverviewItemUiParameterProvider::class) type: AgendaItem,
+    @PreviewParameter(AgendaOverviewItemUiParameterProvider::class) type: AgendaItemType,
 ) {
     TaskyTheme {
         Column(
             verticalArrangement = Arrangement.SpaceEvenly,
         ) {
             when (type) {
-                AgendaItem.EVENT -> {
+                AgendaItemType.EVENT -> {
                     AgendaDetailDescription(
                         description = "Amet minim mollit non deserunt ullamco " +
                             "est sit aliqua dolor do amet sint. ",
@@ -101,7 +101,7 @@ private fun AgendaDetailDescriptionPreview(
                     )
                 }
 
-                AgendaItem.TASK -> {
+                AgendaItemType.TASK -> {
                     AgendaDetailDescription(
                         description = "Weekly plan\n" +
                             "Role distribution",
@@ -124,7 +124,7 @@ private fun AgendaDetailDescriptionPreview(
                     )
                 }
 
-                AgendaItem.REMINDER -> {
+                AgendaItemType.REMINDER -> {
                     AgendaDetailDescription(
                         description = "Weekly plan\nRole distribution",
                         onEdit = { },

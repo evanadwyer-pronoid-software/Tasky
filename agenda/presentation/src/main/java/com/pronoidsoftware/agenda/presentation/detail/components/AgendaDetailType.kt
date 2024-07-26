@@ -15,6 +15,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -22,7 +23,8 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.pronoidsoftware.agenda.domain.AgendaItem
+import com.pronoidsoftware.agenda.domain.model.AgendaItemType
+import com.pronoidsoftware.agenda.presentation.R
 import com.pronoidsoftware.agenda.presentation.util.AgendaOverviewItemUiParameterProvider
 import com.pronoidsoftware.core.presentation.designsystem.Inter
 import com.pronoidsoftware.core.presentation.designsystem.TaskyDarkGray
@@ -34,10 +36,17 @@ import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
 
 @Composable
 fun AgendaDetailType(
-    type: String,
-    fillColor: Color,
+    type: AgendaItemType,
     modifier: Modifier = Modifier,
-    borderColor: Color = Color.Transparent,
+    fillColor: Color = when (type) {
+        AgendaItemType.TASK -> TaskyGreen
+        AgendaItemType.EVENT -> TaskyLightGreen
+        AgendaItemType.REMINDER -> TaskyLightGray
+    },
+    borderColor: Color = when (type) {
+        AgendaItemType.REMINDER -> TaskyGray
+        else -> Color.Transparent
+    },
     boxSize: Dp = 20.dp,
     boxCornerRadius: Dp = 2.dp,
 ) {
@@ -63,7 +72,11 @@ fun AgendaDetailType(
         }
         Spacer(modifier = Modifier.width(10.dp))
         Text(
-            text = type,
+            text = when (type) {
+                AgendaItemType.EVENT -> stringResource(id = R.string.event)
+                AgendaItemType.TASK -> stringResource(id = R.string.task)
+                AgendaItemType.REMINDER -> stringResource(id = R.string.reminder)
+            },
             style = TextStyle(
                 fontFamily = Inter,
                 fontWeight = FontWeight.W600,
@@ -78,24 +91,20 @@ fun AgendaDetailType(
 @Preview(showBackground = true)
 @Composable
 private fun AgendaDetailTypePreview(
-    @PreviewParameter(AgendaOverviewItemUiParameterProvider::class) type: AgendaItem,
+    @PreviewParameter(AgendaOverviewItemUiParameterProvider::class) type: AgendaItemType,
 ) {
     TaskyTheme {
         when (type) {
-            AgendaItem.EVENT -> {
-                AgendaDetailType(type = "Event", fillColor = TaskyLightGreen)
+            AgendaItemType.EVENT -> {
+                AgendaDetailType(type = AgendaItemType.EVENT)
             }
 
-            AgendaItem.TASK -> {
-                AgendaDetailType(type = "Task", fillColor = TaskyGreen)
+            AgendaItemType.TASK -> {
+                AgendaDetailType(type = AgendaItemType.TASK)
             }
 
-            AgendaItem.REMINDER -> {
-                AgendaDetailType(
-                    type = "Reminder",
-                    fillColor = TaskyLightGray,
-                    borderColor = TaskyGray,
-                )
+            AgendaItemType.REMINDER -> {
+                AgendaDetailType(type = AgendaItemType.REMINDER)
             }
         }
     }
