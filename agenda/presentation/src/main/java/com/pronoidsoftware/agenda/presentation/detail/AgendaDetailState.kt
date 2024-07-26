@@ -1,4 +1,4 @@
-package com.pronoidsoftware.agenda.presentation.detail.reminder
+package com.pronoidsoftware.agenda.presentation.detail
 
 import com.pronoidsoftware.agenda.presentation.detail.model.NotificationDuration
 import com.pronoidsoftware.core.domain.util.now
@@ -10,7 +10,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 
-data class ReminderDetailState(
+data class AgendaDetailState(
     val selectedDate: LocalDate = today(),
     val title: String = "",
     val description: String? = null,
