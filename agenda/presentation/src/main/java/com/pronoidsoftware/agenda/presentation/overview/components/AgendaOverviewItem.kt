@@ -24,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
@@ -35,10 +36,16 @@ import androidx.compose.ui.unit.dp
 import com.pronoidsoftware.agenda.domain.model.AgendaItemType
 import com.pronoidsoftware.agenda.presentation.R
 import com.pronoidsoftware.agenda.presentation.components.Tick
-import com.pronoidsoftware.agenda.presentation.overview.model.AgendaOverviewItemUi
-import com.pronoidsoftware.agenda.presentation.util.AgendaOverviewItemUiParameterProvider
+import com.pronoidsoftware.agenda.presentation.overview.model.AgendaOverviewItemContents
+import com.pronoidsoftware.agenda.presentation.util.AgendaItemTypeParameterProvider
 import com.pronoidsoftware.core.presentation.designsystem.EllipsesIcon
 import com.pronoidsoftware.core.presentation.designsystem.LocalSpacing
+import com.pronoidsoftware.core.presentation.designsystem.TaskyBlack
+import com.pronoidsoftware.core.presentation.designsystem.TaskyBrown
+import com.pronoidsoftware.core.presentation.designsystem.TaskyDarkGray
+import com.pronoidsoftware.core.presentation.designsystem.TaskyGreen
+import com.pronoidsoftware.core.presentation.designsystem.TaskyLightGray
+import com.pronoidsoftware.core.presentation.designsystem.TaskyLightGreen
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
 import com.pronoidsoftware.core.presentation.designsystem.TaskyWhite
 import com.pronoidsoftware.core.presentation.designsystem.components.TaskyDropdownMenu
@@ -46,7 +53,7 @@ import timber.log.Timber
 
 @Composable
 fun AgendaOverviewItem(
-    agendaOverviewItemUi: AgendaOverviewItemUi,
+    agendaOverviewItemContents: AgendaOverviewItemContents,
     onOpenClick: (String) -> Unit,
     onEditClick: (String) -> Unit,
     onDeleteClick: (String) -> Unit,
@@ -54,6 +61,14 @@ fun AgendaOverviewItem(
     onTickClick: (() -> Unit)? = null,
 ) {
     val spacing = LocalSpacing.current
+    val completed =
+        if (agendaOverviewItemContents is AgendaOverviewItemContents.TaskOverviewUiContents) {
+            agendaOverviewItemContents.completed
+        } else {
+            false
+        }
+    val backgroundColor = getBackgroundColor(agendaOverviewItemContents)
+    val contentColors = getContentColors(agendaOverviewItemContents)
 
     var dropdownExpanded by rememberSaveable {
         mutableStateOf(false)
@@ -67,10 +82,10 @@ fun AgendaOverviewItem(
             .fillMaxWidth()
             .height(spacing.agendaItemHeight)
             .clip(RoundedCornerShape(spacing.agendaItemCornerRadius))
-            .background(agendaOverviewItemUi.backgroundColor)
+            .background(backgroundColor)
             .padding(start = spacing.agendaItemPaddingHorizontal)
             .clickable {
-                onOpenClick(agendaOverviewItemUi.id)
+                onOpenClick(agendaOverviewItemContents.id)
             },
     ) {
         Row(
@@ -78,8 +93,8 @@ fun AgendaOverviewItem(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Tick(
-                color = agendaOverviewItemUi.contentColor.tick,
-                ticked = agendaOverviewItemUi.completed,
+                color = contentColors.tick,
+                ticked = completed,
                 radius = spacing.agendaItemTickRadius,
                 strokeWidth = spacing.agendaItemTickStrokeWidth,
                 onClick = onTickClick,
@@ -90,19 +105,19 @@ fun AgendaOverviewItem(
             val title = buildAnnotatedString {
                 withStyle(
                     style = MaterialTheme.typography.titleMedium.toSpanStyle().copy(
-                        textDecoration = if (agendaOverviewItemUi.completed) {
+                        textDecoration = if (completed) {
                             TextDecoration.LineThrough
                         } else {
                             TextDecoration.None
                         },
                     ),
                 ) {
-                    append(agendaOverviewItemUi.title)
+                    append(agendaOverviewItemContents.title)
                 }
             }
             Text(
                 text = title,
-                color = agendaOverviewItemUi.contentColor.title,
+                color = contentColors.title,
                 style = MaterialTheme.typography.titleMedium,
             )
             Spacer(modifier = Modifier.weight(1f))
@@ -117,15 +132,15 @@ fun AgendaOverviewItem(
                 onMenuItemClick = { index ->
                     when (index) {
                         0 -> onOpenClick(
-                            agendaOverviewItemUi.id,
+                            agendaOverviewItemContents.id,
                         )
 
                         1 -> onEditClick(
-                            agendaOverviewItemUi.id,
+                            agendaOverviewItemContents.id,
                         )
 
                         2 -> onDeleteClick(
-                            agendaOverviewItemUi.id,
+                            agendaOverviewItemContents.id,
                         )
 
                         else -> Timber.wtf("Unknown AgendaOverviewItem menu click")
@@ -140,7 +155,7 @@ fun AgendaOverviewItem(
                     Icon(
                         imageVector = EllipsesIcon,
                         contentDescription = stringResource(id = R.string.more),
-                        tint = agendaOverviewItemUi.contentColor.menu,
+                        tint = contentColors.menu,
                     )
                 }
             }
@@ -150,8 +165,8 @@ fun AgendaOverviewItem(
         ) {
             Spacer(modifier = Modifier.width(spacing.agendaItemDescriptionPaddingStart))
             Text(
-                text = agendaOverviewItemUi.description,
-                color = agendaOverviewItemUi.contentColor.description,
+                text = agendaOverviewItemContents.description,
+                color = contentColors.description,
                 style = MaterialTheme.typography.bodySmall,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
@@ -164,12 +179,14 @@ fun AgendaOverviewItem(
             horizontalArrangement = Arrangement.End,
         ) {
             Text(
-                text = if (agendaOverviewItemUi.toTime != null) {
-                    "${agendaOverviewItemUi.fromTime} - ${agendaOverviewItemUi.toTime}"
+                text = if (
+                    agendaOverviewItemContents is AgendaOverviewItemContents.EventOverviewUiContents
+                ) {
+                    "${agendaOverviewItemContents.fromTime} - ${agendaOverviewItemContents.toTime}"
                 } else {
-                    agendaOverviewItemUi.fromTime
+                    agendaOverviewItemContents.fromTime
                 },
-                color = agendaOverviewItemUi.contentColor.time,
+                color = contentColors.time,
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.padding(vertical = spacing.agendaItemTimePaddingVertical),
             )
@@ -178,42 +195,156 @@ fun AgendaOverviewItem(
     }
 }
 
+private fun getContentColors(agendaOverviewItemContents: AgendaOverviewItemContents) =
+    when (agendaOverviewItemContents) {
+        is AgendaOverviewItemContents.EventOverviewUiContents -> {
+            ContentColors(
+                tick = TaskyBlack,
+                title = TaskyBlack,
+                menu = TaskyBrown,
+                description = TaskyDarkGray,
+                time = TaskyDarkGray,
+            )
+        }
+
+        is AgendaOverviewItemContents.ReminderOverviewUiContents -> {
+            ContentColors(
+                tick = TaskyBlack,
+                title = TaskyBlack,
+                menu = TaskyBrown,
+                description = TaskyDarkGray,
+                time = TaskyDarkGray,
+            )
+        }
+
+        is AgendaOverviewItemContents.TaskOverviewUiContents -> {
+            ContentColors(
+                tick = TaskyWhite,
+                title = TaskyWhite,
+                menu = TaskyWhite,
+                description = TaskyWhite,
+                time = TaskyWhite,
+            )
+        }
+    }
+
+private fun getBackgroundColor(agendaOverviewItemContents: AgendaOverviewItemContents) =
+    when (agendaOverviewItemContents) {
+        is AgendaOverviewItemContents.EventOverviewUiContents -> {
+            TaskyLightGreen
+        }
+
+        is AgendaOverviewItemContents.ReminderOverviewUiContents -> {
+            TaskyLightGray
+        }
+
+        is AgendaOverviewItemContents.TaskOverviewUiContents -> {
+            TaskyGreen
+        }
+    }
+
+private data class ContentColors(
+    val tick: Color,
+    val title: Color,
+    val menu: Color,
+    val description: Color,
+    val time: Color,
+)
+
 @Preview
 @Composable
 private fun AgendaOverviewItemUiPreview(
-    @PreviewParameter(AgendaOverviewItemUiParameterProvider::class) type: AgendaItemType,
+    @PreviewParameter(AgendaItemTypeParameterProvider::class) type: AgendaItemType,
 ) {
     TaskyTheme {
         var completed by remember {
             mutableStateOf(false)
         }
         val spacing = LocalSpacing.current
-        AgendaOverviewItem(
-            agendaOverviewItemUi = AgendaOverviewItemUi(
-                id = "",
-                type = type,
-                title = type.name,
-                description = "Lorem ipsum dolor sit amet, consectetur adipi scing elit, " +
-                    "sed do eiusmod tempor incididunt ut labore",
-                fromTime = "Mar 5, 10:30",
-                toTime = "Mar 5, 11:00",
-                completed = completed,
-            ),
-            onTickClick = {
-                completed = !completed
-            },
-            onOpenClick = { },
-            onEditClick = { },
-            onDeleteClick = { },
-            modifier = Modifier
-                .background(TaskyWhite)
-                .fillMaxWidth()
-                .padding(
-                    start = spacing.overviewStartPadding,
-                    end = spacing.overviewEndPadding,
-                    top = 7.5.dp,
-                    bottom = 7.5.dp,
-                ),
-        )
+        when (type) {
+            AgendaItemType.EVENT -> {
+                AgendaOverviewItem(
+                    agendaOverviewItemContents = AgendaOverviewItemContents.EventOverviewUiContents(
+                        id = "",
+                        title = type.name,
+                        description = "Lorem ipsum dolor sit amet, consectetur adipi scing elit, " +
+                            "sed do eiusmod tempor incididunt ut labore",
+                        fromTime = "Mar 5, 10:30",
+                        toTime = "Mar 5, 11:00",
+                    ),
+                    onTickClick = {
+                        completed = !completed
+                    },
+                    onOpenClick = { },
+                    onEditClick = { },
+                    onDeleteClick = { },
+                    modifier = Modifier
+                        .background(TaskyWhite)
+                        .fillMaxWidth()
+                        .padding(
+                            start = spacing.overviewStartPadding,
+                            end = spacing.overviewEndPadding,
+                            top = 7.5.dp,
+                            bottom = 7.5.dp,
+                        ),
+                )
+            }
+
+            AgendaItemType.TASK -> {
+                AgendaOverviewItem(
+                    agendaOverviewItemContents = AgendaOverviewItemContents.TaskOverviewUiContents(
+                        id = "",
+                        title = type.name,
+                        description = "Lorem ipsum dolor sit amet, consectetur adipi scing elit, " +
+                            "sed do eiusmod tempor incididunt ut labore",
+                        fromTime = "Mar 5, 10:30",
+                        completed = true,
+                    ),
+                    onTickClick = {
+                        completed = !completed
+                    },
+                    onOpenClick = { },
+                    onEditClick = { },
+                    onDeleteClick = { },
+                    modifier = Modifier
+                        .background(TaskyWhite)
+                        .fillMaxWidth()
+                        .padding(
+                            start = spacing.overviewStartPadding,
+                            end = spacing.overviewEndPadding,
+                            top = 7.5.dp,
+                            bottom = 7.5.dp,
+                        ),
+                )
+            }
+
+            AgendaItemType.REMINDER -> {
+                AgendaOverviewItem(
+                    agendaOverviewItemContents =
+                    AgendaOverviewItemContents.ReminderOverviewUiContents(
+                        id = "",
+                        title = type.name,
+                        description = "Lorem ipsum dolor sit amet, consectetur adipi scing elit, " +
+                            "sed do eiusmod tempor incididunt ut labore",
+                        fromTime = "Mar 5, 10:30",
+                    ),
+                    onTickClick = {
+                        completed = !completed
+                    },
+                    onOpenClick = { },
+                    onEditClick = { },
+                    onDeleteClick = { },
+                    modifier = Modifier
+                        .background(TaskyWhite)
+                        .fillMaxWidth()
+                        .padding(
+                            start = spacing.overviewStartPadding,
+                            end = spacing.overviewEndPadding,
+                            top = 7.5.dp,
+                            bottom = 7.5.dp,
+                        ),
+                )
+            }
+        }
     }
 }

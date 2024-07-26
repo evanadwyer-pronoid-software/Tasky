@@ -12,7 +12,7 @@ import kotlinx.datetime.format.char
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 
-fun LocalDate.toRelativeDate(clock: Clock = Clock.System): UiText {
+fun LocalDate.formatRelativeDate(clock: Clock = Clock.System): UiText {
     return when (this) {
         today(clock).plus(1, DateTimeUnit.DAY) -> UiText.StringResource(R.string.tomorrow)
         today(clock).minus(1, DateTimeUnit.DAY) -> UiText.StringResource(R.string.yesterday)

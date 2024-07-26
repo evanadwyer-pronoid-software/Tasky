@@ -3,6 +3,7 @@ package com.pronoidsoftware.agenda.presentation.detail.reminder
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.tooling.preview.Preview
+import com.pronoidsoftware.agenda.domain.model.AgendaItemType
 import com.pronoidsoftware.agenda.presentation.detail.AgendaDetailScreen
 import com.pronoidsoftware.agenda.presentation.detail.AgendaDetailState
 import com.pronoidsoftware.core.presentation.designsystem.LocalClock
@@ -24,6 +25,7 @@ private fun ReminderDetailScreenPreview_Read() {
     TaskyTheme {
         CompositionLocalProvider(LocalClock provides fixedClock) {
             AgendaDetailScreen(
+                type = AgendaItemType.REMINDER,
                 state = AgendaDetailState(
                     title = "Project X",
                     description = "Weekly plan\nRole distribution",
@@ -43,6 +45,7 @@ private fun ReminderDetailScreenPreview_Read_EmptyDescription() {
     TaskyTheme {
         CompositionLocalProvider(LocalClock provides fixedClock) {
             AgendaDetailScreen(
+                type = AgendaItemType.REMINDER,
                 state = AgendaDetailState(
                     title = "Project X",
                     selectedDate = selectedDate,
@@ -61,6 +64,7 @@ private fun ReminderDetailScreenPreview_Edit() {
     TaskyTheme {
         CompositionLocalProvider(LocalClock provides fixedClock) {
             AgendaDetailScreen(
+                type = AgendaItemType.REMINDER,
                 state = AgendaDetailState(
                     title = "Project X",
                     description = "Weekly plan\nRole distribution",
@@ -80,6 +84,7 @@ private fun ReminderDetailScreenPreview_Edit_EmptyDescription() {
     TaskyTheme {
         CompositionLocalProvider(LocalClock provides fixedClock) {
             AgendaDetailScreen(
+                type = AgendaItemType.REMINDER,
                 state = AgendaDetailState(
                     title = "Project X",
                     selectedDate = selectedDate,
