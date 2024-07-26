@@ -3,7 +3,7 @@ package com.pronoidsoftware.agenda.presentation.overview
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.tooling.preview.Preview
-import com.pronoidsoftware.agenda.domain.AgendaItem
+import com.pronoidsoftware.agenda.domain.model.AgendaItemType
 import com.pronoidsoftware.agenda.presentation.overview.model.AgendaOverviewItemUi
 import com.pronoidsoftware.core.domain.util.today
 import com.pronoidsoftware.core.presentation.designsystem.LocalClock
@@ -27,7 +27,7 @@ private fun AgendaOverviewScreenPreview_Figma() {
                     items = listOf(
                         AgendaOverviewItemUi(
                             id = "1",
-                            type = AgendaItem.TASK,
+                            type = AgendaItemType.TASK,
                             title = "Project X",
                             description = "Just work",
                             fromTime = "Mar 5, 10:00",
@@ -35,7 +35,7 @@ private fun AgendaOverviewScreenPreview_Figma() {
                         ),
                         AgendaOverviewItemUi(
                             id = "2",
-                            type = AgendaItem.EVENT,
+                            type = AgendaItemType.EVENT,
                             title = "Meeting",
                             description = "Amet minim mollit non deserunt",
                             fromTime = "Mar 5, 10:30",
@@ -43,14 +43,14 @@ private fun AgendaOverviewScreenPreview_Figma() {
                         ),
                         AgendaOverviewItemUi(
                             id = "3",
-                            type = AgendaItem.REMINDER,
+                            type = AgendaItemType.REMINDER,
                             title = "Lunch break",
                             description = "Just work",
                             fromTime = "Mar 5, 14:00",
                         ),
                         AgendaOverviewItemUi(
                             id = "4",
-                            type = AgendaItem.REMINDER,
+                            type = AgendaItemType.REMINDER,
                             title = "Meeting",
                             description = "Amet minim mollit non deserunt ullamco est",
                             fromTime = "Mar 5, 15:00",

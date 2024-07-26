@@ -1,13 +1,13 @@
 package com.pronoidsoftware.agenda.presentation.util
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.pronoidsoftware.agenda.domain.AgendaItem
+import com.pronoidsoftware.agenda.domain.model.AgendaItemType
 
-internal class AgendaOverviewItemUiParameterProvider : PreviewParameterProvider<AgendaItem> {
-    override val values: Sequence<AgendaItem> =
+internal class AgendaOverviewItemUiParameterProvider : PreviewParameterProvider<AgendaItemType> {
+    override val values: Sequence<AgendaItemType> =
         sequenceOf(
-            AgendaItem.TASK,
-            AgendaItem.EVENT,
-            AgendaItem.REMINDER,
+            AgendaItemType.TASK,
+            AgendaItemType.EVENT,
+            AgendaItemType.REMINDER,
         )
 }

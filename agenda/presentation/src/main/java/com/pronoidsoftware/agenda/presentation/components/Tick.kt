@@ -19,7 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
-import com.pronoidsoftware.agenda.domain.AgendaItem
+import com.pronoidsoftware.agenda.domain.model.AgendaItemType
 import com.pronoidsoftware.agenda.presentation.R
 import com.pronoidsoftware.agenda.presentation.util.AgendaOverviewItemUiParameterProvider
 import com.pronoidsoftware.core.presentation.designsystem.CheckIcon
@@ -76,18 +76,18 @@ fun Tick(
 @Preview
 @Composable
 private fun TickPreview(
-    @PreviewParameter(AgendaOverviewItemUiParameterProvider::class) type: AgendaItem,
+    @PreviewParameter(AgendaOverviewItemUiParameterProvider::class) type: AgendaItemType,
 ) {
     val backgroundColor = when (type) {
-        AgendaItem.REMINDER -> TaskyLightGray
-        AgendaItem.TASK -> TaskyGreen
-        AgendaItem.EVENT -> TaskyLightGreen
+        AgendaItemType.REMINDER -> TaskyLightGray
+        AgendaItemType.TASK -> TaskyGreen
+        AgendaItemType.EVENT -> TaskyLightGreen
     }
     val spacing = LocalSpacing.current
     TaskyTheme {
         Tick(
-            color = if (type == AgendaItem.TASK) TaskyWhite else TaskyBlack,
-            ticked = type == AgendaItem.TASK,
+            color = if (type == AgendaItemType.TASK) TaskyWhite else TaskyBlack,
+            ticked = type == AgendaItemType.TASK,
             radius = spacing.agendaItemTickRadius,
             strokeWidth = spacing.agendaItemTickStrokeWidth,
             modifier = Modifier

@@ -24,7 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.pronoidsoftware.agenda.domain.AgendaItem
+import com.pronoidsoftware.agenda.domain.model.AgendaItemType
 import com.pronoidsoftware.agenda.presentation.R
 import com.pronoidsoftware.agenda.presentation.components.Tick
 import com.pronoidsoftware.agenda.presentation.util.AgendaOverviewItemUiParameterProvider
@@ -94,19 +94,19 @@ fun AgendaDetailTitle(
 @Preview(showBackground = true)
 @Composable
 private fun AgendaDetailTitlePreview(
-    @PreviewParameter(AgendaOverviewItemUiParameterProvider::class) type: AgendaItem,
+    @PreviewParameter(AgendaOverviewItemUiParameterProvider::class) type: AgendaItemType,
 ) {
     TaskyTheme {
         Column(
             verticalArrangement = Arrangement.SpaceEvenly,
         ) {
             when (type) {
-                AgendaItem.EVENT -> {
+                AgendaItemType.EVENT -> {
                     AgendaDetailTitle(title = "Meeting", onEdit = { })
                     AgendaDetailTitle(title = "Meeting", onEdit = { }, editEnabled = true)
                 }
 
-                AgendaItem.TASK -> {
+                AgendaItemType.TASK -> {
                     AgendaDetailTitle(title = "Project X", onEdit = { })
                     AgendaDetailTitle(title = "Project X", editEnabled = true, onEdit = { })
                     AgendaDetailTitle(title = "Project X", isCompleted = true, onEdit = { })
@@ -118,7 +118,7 @@ private fun AgendaDetailTitlePreview(
                     )
                 }
 
-                AgendaItem.REMINDER -> {
+                AgendaItemType.REMINDER -> {
                     AgendaDetailTitle(title = "Project X", onEdit = { })
                     AgendaDetailTitle(title = "Project X", editEnabled = true, onEdit = { })
                 }
