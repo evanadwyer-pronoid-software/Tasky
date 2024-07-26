@@ -1,4 +1,4 @@
-package com.pronoidsoftware.auth.domain
+package com.pronoidsoftware.core.domain.validation
 
 data class PasswordValidationState(
     val hasMinimumLength: Boolean = false,

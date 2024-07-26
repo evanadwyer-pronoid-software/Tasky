@@ -1,7 +1,7 @@
-package com.pronoidsoftware.auth.presentation.di
+package com.pronoidsoftware.core.presentation.ui.di
 
-import com.pronoidsoftware.auth.domain.PatternValidator
-import com.pronoidsoftware.auth.domain.UserDataValidator
+import com.pronoidsoftware.core.domain.validation.PatternValidator
+import com.pronoidsoftware.core.domain.validation.UserDataValidator
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -10,7 +10,7 @@ import dagger.hilt.android.scopes.ViewModelScoped
 
 @Module
 @InstallIn(ViewModelComponent::class)
-object AuthPresentationModule {
+object UserDataValidatorModule {
 
     @Provides
     @ViewModelScoped

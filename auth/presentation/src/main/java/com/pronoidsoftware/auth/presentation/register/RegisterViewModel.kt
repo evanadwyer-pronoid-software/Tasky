@@ -7,11 +7,11 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pronoidsoftware.auth.domain.AuthRepository
-import com.pronoidsoftware.auth.domain.UserDataValidator
 import com.pronoidsoftware.auth.presentation.R
 import com.pronoidsoftware.core.domain.util.DataError
 import com.pronoidsoftware.core.domain.util.onError
 import com.pronoidsoftware.core.domain.util.onSuccess
+import com.pronoidsoftware.core.domain.validation.UserDataValidator
 import com.pronoidsoftware.core.presentation.ui.UiText
 import com.pronoidsoftware.core.presentation.ui.asUiText
 import dagger.hilt.android.lifecycle.HiltViewModel

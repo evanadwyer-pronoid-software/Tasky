@@ -1,7 +1,7 @@
-package com.pronoidsoftware.auth.data
+package com.pronoidsoftware.core.data.validation
 
 import android.util.Patterns
-import com.pronoidsoftware.auth.domain.PatternValidator
+import com.pronoidsoftware.core.domain.validation.PatternValidator
 import javax.inject.Inject
 
 class EmailPatternValidator @Inject constructor() : PatternValidator {
