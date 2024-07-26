@@ -1,4 +1,4 @@
-package com.pronoidsoftware.auth.domain
+package com.pronoidsoftware.core.domain.validation
 
 interface PatternValidator {
 

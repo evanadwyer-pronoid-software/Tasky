@@ -3,7 +3,7 @@ package com.pronoidsoftware.auth.presentation.register
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.pronoidsoftware.auth.domain.PasswordValidationState
+import com.pronoidsoftware.core.domain.validation.PasswordValidationState
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
 
 @Preview

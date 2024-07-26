@@ -1,7 +1,7 @@
-package com.pronoidsoftware.auth.data.di
+package com.pronoidsoftware.core.data.di
 
-import com.pronoidsoftware.auth.data.EmailPatternValidator
-import com.pronoidsoftware.auth.domain.PatternValidator
+import com.pronoidsoftware.core.data.validation.EmailPatternValidator
+import com.pronoidsoftware.core.domain.validation.PatternValidator
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
