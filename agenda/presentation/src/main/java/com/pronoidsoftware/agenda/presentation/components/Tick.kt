@@ -21,7 +21,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
 import com.pronoidsoftware.agenda.domain.model.AgendaItemType
 import com.pronoidsoftware.agenda.presentation.R
-import com.pronoidsoftware.agenda.presentation.util.AgendaOverviewItemUiParameterProvider
+import com.pronoidsoftware.agenda.presentation.util.AgendaItemTypeParameterProvider
 import com.pronoidsoftware.core.presentation.designsystem.CheckIcon
 import com.pronoidsoftware.core.presentation.designsystem.LocalSpacing
 import com.pronoidsoftware.core.presentation.designsystem.TaskyBlack
@@ -76,7 +76,7 @@ fun Tick(
 @Preview
 @Composable
 private fun TickPreview(
-    @PreviewParameter(AgendaOverviewItemUiParameterProvider::class) type: AgendaItemType,
+    @PreviewParameter(AgendaItemTypeParameterProvider::class) type: AgendaItemType,
 ) {
     val backgroundColor = when (type) {
         AgendaItemType.REMINDER -> TaskyLightGray

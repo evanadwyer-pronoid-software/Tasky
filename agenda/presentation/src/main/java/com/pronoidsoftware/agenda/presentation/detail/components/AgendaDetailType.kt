@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pronoidsoftware.agenda.domain.model.AgendaItemType
 import com.pronoidsoftware.agenda.presentation.R
-import com.pronoidsoftware.agenda.presentation.util.AgendaOverviewItemUiParameterProvider
+import com.pronoidsoftware.agenda.presentation.util.AgendaItemTypeParameterProvider
 import com.pronoidsoftware.core.presentation.designsystem.Inter
 import com.pronoidsoftware.core.presentation.designsystem.TaskyDarkGray
 import com.pronoidsoftware.core.presentation.designsystem.TaskyGray
@@ -91,7 +91,7 @@ fun AgendaDetailType(
 @Preview(showBackground = true)
 @Composable
 private fun AgendaDetailTypePreview(
-    @PreviewParameter(AgendaOverviewItemUiParameterProvider::class) type: AgendaItemType,
+    @PreviewParameter(AgendaItemTypeParameterProvider::class) type: AgendaItemType,
 ) {
     TaskyTheme {
         when (type) {

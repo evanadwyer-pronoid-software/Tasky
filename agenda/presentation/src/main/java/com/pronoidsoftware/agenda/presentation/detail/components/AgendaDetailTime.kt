@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.sp
 import com.pronoidsoftware.core.presentation.designsystem.Inter
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
 import com.pronoidsoftware.core.presentation.ui.formatHours
-import com.pronoidsoftware.core.presentation.ui.toRelativeDate
+import com.pronoidsoftware.core.presentation.ui.formatRelativeDate
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
@@ -72,7 +72,7 @@ fun AgendaDetailTime(
             contentColor = contentColor,
         )
         Text(
-            text = localDateTime.date.toRelativeDate(clock = clock).asString(),
+            text = localDateTime.date.formatRelativeDate(clock = clock).asString(),
             style = textStyle,
             color = contentColor,
         )

@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.sp
 import com.pronoidsoftware.agenda.domain.model.AgendaItemType
 import com.pronoidsoftware.agenda.presentation.R
 import com.pronoidsoftware.agenda.presentation.components.Tick
-import com.pronoidsoftware.agenda.presentation.util.AgendaOverviewItemUiParameterProvider
+import com.pronoidsoftware.agenda.presentation.util.AgendaItemTypeParameterProvider
 import com.pronoidsoftware.core.presentation.designsystem.ForwardChevronIcon
 import com.pronoidsoftware.core.presentation.designsystem.Inter
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
@@ -94,7 +94,7 @@ fun AgendaDetailTitle(
 @Preview(showBackground = true)
 @Composable
 private fun AgendaDetailTitlePreview(
-    @PreviewParameter(AgendaOverviewItemUiParameterProvider::class) type: AgendaItemType,
+    @PreviewParameter(AgendaItemTypeParameterProvider::class) type: AgendaItemType,
 ) {
     TaskyTheme {
         Column(
