@@ -1,4 +1,4 @@
-package com.pronoidsoftware.agenda.presentation.detail.reminder
+package com.pronoidsoftware.agenda.presentation.detail
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,12 +21,12 @@ import kotlinx.datetime.toLocalDateTime
 import timber.log.Timber
 
 @HiltViewModel
-class ReminderDetailViewModel @Inject constructor(
+class AgendaDetailViewModel @Inject constructor(
     clock: Clock,
 ) : ViewModel() {
 
     var state by mutableStateOf(
-        ReminderDetailState(
+        AgendaDetailState(
             selectedDate = today(clock),
             atTime = now(clock)
                 .toInstant(TimeZone.currentSystemDefault())
@@ -38,97 +38,97 @@ class ReminderDetailViewModel @Inject constructor(
     )
         private set
 
-    private val eventChannel = Channel<ReminderDetailEvent>()
+    private val eventChannel = Channel<AgendaDetailEvent>()
     val events = eventChannel.receiveAsFlow()
 
-    fun onAction(action: ReminderDetailAction) {
+    fun onAction(action: AgendaDetailAction) {
         when (action) {
-            ReminderDetailAction.OnEnableEdit -> {
+            AgendaDetailAction.OnEnableEdit -> {
                 state = state.copy(
                     isEditing = true,
                 )
             }
 
-            ReminderDetailAction.OnDisableEdit -> {
+            AgendaDetailAction.OnDisableEdit -> {
                 state = state.copy(
                     isEditing = false,
                 )
             }
 
-            ReminderDetailAction.OnSave -> {
+            AgendaDetailAction.OnSave -> {
                 viewModelScope.launch {
                     state = state.copy(
                         isEditing = false,
                     )
-                    eventChannel.send(ReminderDetailEvent.OnSaved)
+                    eventChannel.send(AgendaDetailEvent.OnSaved)
                 }
             }
 
-            ReminderDetailAction.OnEditTitle -> {
+            AgendaDetailAction.OnEditTitle -> {
                 state = state.copy(
                     isEditingTitle = true,
                 )
             }
 
-            ReminderDetailAction.OnCloseTitle -> {
+            AgendaDetailAction.OnCloseTitle -> {
                 state = state.copy(
                     isShowingCloseConfirmationDialog = true,
                 )
             }
 
-            ReminderDetailAction.OnConfirmCloseTitle -> {
+            AgendaDetailAction.OnConfirmCloseTitle -> {
                 state = state.copy(
                     isShowingCloseConfirmationDialog = false,
                     isEditingTitle = false,
                 )
             }
 
-            ReminderDetailAction.OnCancelCloseTitle -> {
+            AgendaDetailAction.OnCancelCloseTitle -> {
                 state = state.copy(
                     isShowingCloseConfirmationDialog = false,
                 )
             }
 
-            is ReminderDetailAction.OnSaveTitle -> {
+            is AgendaDetailAction.OnSaveTitle -> {
                 state = state.copy(
                     isEditingTitle = false,
                     title = action.newTitle,
                 )
             }
 
-            ReminderDetailAction.OnEditDescription -> {
+            AgendaDetailAction.OnEditDescription -> {
                 state = state.copy(
                     isEditingDescription = true,
                 )
             }
 
-            ReminderDetailAction.OnCloseDescription -> {
+            AgendaDetailAction.OnCloseDescription -> {
                 state = state.copy(
                     isShowingCloseConfirmationDialog = true,
                 )
             }
 
-            ReminderDetailAction.OnConfirmCloseDescription -> {
+            AgendaDetailAction.OnConfirmCloseDescription -> {
                 state = state.copy(
                     isShowingCloseConfirmationDialog = false,
                     isEditingDescription = false,
                 )
             }
 
-            ReminderDetailAction.OnCancelCloseDescription -> {
+            AgendaDetailAction.OnCancelCloseDescription -> {
                 state = state.copy(
                     isShowingCloseConfirmationDialog = false,
                 )
             }
 
-            is ReminderDetailAction.OnSaveDescription -> {
+            is AgendaDetailAction.OnSaveDescription -> {
                 state = state.copy(
                     isEditingDescription = false,
                     description = action.newDescription,
                 )
             }
 
-            is ReminderDetailAction.OnSelectDate -> {
+            is AgendaDetailAction.OnSelectDate -> {
                 val date = action.date
                 state = state.copy(
                     atTime = LocalDateTime(
@@ -141,7 +141,7 @@ class ReminderDetailViewModel @Inject constructor(
                 )
             }
 
-            is ReminderDetailAction.OnSelectTime -> {
+            is AgendaDetailAction.OnSelectTime -> {
                 val time = action.time
                 state = state.copy(
                     atTime = LocalDateTime(
@@ -154,74 +154,74 @@ class ReminderDetailViewModel @Inject constructor(
                 )
             }
 
-            ReminderDetailAction.OnToggleTimePickerExpanded -> {
+            AgendaDetailAction.OnToggleTimePickerExpanded -> {
                 state = state.copy(
                     isEditingTime = !state.isEditingTime,
                 )
             }
 
-            ReminderDetailAction.OnToggleDatePickerExpanded -> {
+            AgendaDetailAction.OnToggleDatePickerExpanded -> {
                 state = state.copy(
                     isEditingDate = !state.isEditingDate,
                 )
             }
 
-            ReminderDetailAction.OnToggleNotificationDurationExpanded -> {
+            AgendaDetailAction.OnToggleNotificationDurationExpanded -> {
                 state = state.copy(
                     isEditingNotificationDuration = !state.isEditingNotificationDuration,
                 )
             }
 
-            is ReminderDetailAction.OnSelectNotificationDuration -> {
+            is AgendaDetailAction.OnSelectNotificationDuration -> {
                 state = state.copy(
                     notificationDuration = action.notificationDuration,
                 )
             }
 
-            ReminderDetailAction.OnDelete -> {
+            AgendaDetailAction.OnDelete -> {
                 state = state.copy(
                     isShowingDeleteConfirmationDialog = true,
                 )
             }
 
-            ReminderDetailAction.OnConfirmDelete -> {
+            AgendaDetailAction.OnConfirmDelete -> {
                 state = state.copy(
                     isShowingDeleteConfirmationDialog = false,
                 )
                 viewModelScope.launch {
-                    eventChannel.send(ReminderDetailEvent.OnDeleted)
+                    eventChannel.send(AgendaDetailEvent.OnDeleted)
                 }
             }
 
-            ReminderDetailAction.OnCancelDelete -> {
+            AgendaDetailAction.OnCancelDelete -> {
                 state = state.copy(
                     isShowingDeleteConfirmationDialog = false,
                 )
             }
 
-            ReminderDetailAction.OnClose -> {
+            AgendaDetailAction.OnClose -> {
                 state = state.copy(
                     isShowingCloseConfirmationDialog = true,
                 )
             }
 
-            ReminderDetailAction.OnConfirmClose -> {
+            AgendaDetailAction.OnConfirmClose -> {
                 state = state.copy(
                     isShowingCloseConfirmationDialog = false,
                 )
                 viewModelScope.launch {
-                    eventChannel.send(ReminderDetailEvent.OnClosed)
+                    eventChannel.send(AgendaDetailEvent.OnClosed)
                 }
             }
 
-            ReminderDetailAction.OnCancelClose -> {
+            AgendaDetailAction.OnCancelClose -> {
                 state = state.copy(
                     isShowingCloseConfirmationDialog = false,
                 )
             }
 
             else -> {
-                Timber.wtf("Unknown ReminderDetailAction in VM")
+                Timber.wtf("Unknown AgendaDetailAction in VM")
             }
         }
     }

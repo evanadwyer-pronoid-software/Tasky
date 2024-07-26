@@ -41,7 +41,7 @@ import com.pronoidsoftware.core.presentation.designsystem.components.TaskyDropdo
 
 @Composable
 fun AgendaDetailNotification(
-    reminderDescription: String,
+    notificationDescription: String,
     expanded: Boolean,
     toggleExpanded: () -> Unit,
     onSelectNotificationDuration: (NotificationDuration) -> Unit,
@@ -57,7 +57,7 @@ fun AgendaDetailNotification(
         Icon(
             imageVector = icon,
             tint = TaskyGray,
-            contentDescription = stringResource(id = R.string.reminder),
+            contentDescription = stringResource(id = R.string.notification),
             modifier = Modifier
                 .size(30.dp)
                 .clip(RoundedCornerShape(5.dp))
@@ -65,7 +65,7 @@ fun AgendaDetailNotification(
         )
         Spacer(modifier = Modifier.width(13.dp))
         Text(
-            text = reminderDescription,
+            text = notificationDescription,
             style = TextStyle(
                 fontFamily = Inter,
                 fontWeight = FontWeight.W400,
@@ -115,13 +115,13 @@ private fun AgendaDetailReminderPreview() {
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
             AgendaDetailNotification(
-                reminderDescription = "30 minutes before",
+                notificationDescription = "30 minutes before",
                 expanded = expanded,
                 toggleExpanded = toggleExpanded,
                 onSelectNotificationDuration = { },
             )
             AgendaDetailNotification(
-                reminderDescription = "30 minutes before",
+                notificationDescription = "30 minutes before",
                 expanded = expanded,
                 toggleExpanded = toggleExpanded,
                 onSelectNotificationDuration = { },

@@ -3,6 +3,8 @@ package com.pronoidsoftware.agenda.presentation.detail.reminder
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.tooling.preview.Preview
+import com.pronoidsoftware.agenda.presentation.detail.AgendaDetailScreen
+import com.pronoidsoftware.agenda.presentation.detail.AgendaDetailState
 import com.pronoidsoftware.core.presentation.designsystem.LocalClock
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
 import com.pronoidsoftware.testutil.jvmtest.core.data.time.TestClock
@@ -21,8 +23,8 @@ private val fixedClock = TestClock(today.atStartOfDayIn(TimeZone.currentSystemDe
 private fun ReminderDetailScreenPreview_Read() {
     TaskyTheme {
         CompositionLocalProvider(LocalClock provides fixedClock) {
-            ReminderDetailScreen(
-                state = ReminderDetailState(
+            AgendaDetailScreen(
+                state = AgendaDetailState(
                     title = "Project X",
                     description = "Weekly plan\nRole distribution",
                     selectedDate = selectedDate,
@@ -40,8 +42,8 @@ private fun ReminderDetailScreenPreview_Read() {
 private fun ReminderDetailScreenPreview_Read_EmptyDescription() {
     TaskyTheme {
         CompositionLocalProvider(LocalClock provides fixedClock) {
-            ReminderDetailScreen(
-                state = ReminderDetailState(
+            AgendaDetailScreen(
+                state = AgendaDetailState(
                     title = "Project X",
                     selectedDate = selectedDate,
                     atTime = selectedNotificationTime,
@@ -58,8 +60,8 @@ private fun ReminderDetailScreenPreview_Read_EmptyDescription() {
 private fun ReminderDetailScreenPreview_Edit() {
     TaskyTheme {
         CompositionLocalProvider(LocalClock provides fixedClock) {
-            ReminderDetailScreen(
-                state = ReminderDetailState(
+            AgendaDetailScreen(
+                state = AgendaDetailState(
                     title = "Project X",
                     description = "Weekly plan\nRole distribution",
                     selectedDate = selectedDate,
@@ -77,8 +79,8 @@ private fun ReminderDetailScreenPreview_Edit() {
 private fun ReminderDetailScreenPreview_Edit_EmptyDescription() {
     TaskyTheme {
         CompositionLocalProvider(LocalClock provides fixedClock) {
-            ReminderDetailScreen(
-                state = ReminderDetailState(
+            AgendaDetailScreen(
+                state = AgendaDetailState(
                     title = "Project X",
                     selectedDate = selectedDate,
                     atTime = selectedNotificationTime,

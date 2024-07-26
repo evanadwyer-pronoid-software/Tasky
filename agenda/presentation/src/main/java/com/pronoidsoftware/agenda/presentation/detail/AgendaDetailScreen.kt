@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.pronoidsoftware.agenda.presentation.detail.reminder
+package com.pronoidsoftware.agenda.presentation.detail
 
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -47,24 +47,24 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 
 @Composable
-fun ReminderDetailScreenRoot(
+fun AgendaDetailScreenRoot(
     type: AgendaItemType,
     isEditing: Boolean,
     onCloseClick: () -> Unit,
-    viewModel: ReminderDetailViewModel = hiltViewModel(),
+    viewModel: AgendaDetailViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(isEditing) {
         if (isEditing) {
-            viewModel.onAction(ReminderDetailAction.OnEnableEdit)
+            viewModel.onAction(AgendaDetailAction.OnEnableEdit)
         } else {
-            viewModel.onAction(ReminderDetailAction.OnDisableEdit)
+            viewModel.onAction(AgendaDetailAction.OnDisableEdit)
         }
     }
 
     val context = LocalContext.current
     ObserveAsEvents(flow = viewModel.events) { event ->
         when (event) {
-            ReminderDetailEvent.OnDeleted -> {
+            AgendaDetailEvent.OnDeleted -> {
                 Toast.makeText(
                     context,
                     R.string.deleted,
@@ -73,7 +73,7 @@ fun ReminderDetailScreenRoot(
                 onCloseClick()
             }
 
-            ReminderDetailEvent.OnSaved -> {
+            AgendaDetailEvent.OnSaved -> {
                 Toast.makeText(
                     context,
                     R.string.saved,
@@ -81,13 +81,13 @@ fun ReminderDetailScreenRoot(
                 ).show()
             }
 
-            ReminderDetailEvent.OnClosed -> {
+            AgendaDetailEvent.OnClosed -> {
                 onCloseClick()
             }
         }
     }
 
-    ReminderDetailScreen(
+    AgendaDetailScreen(
         type = type,
         state = viewModel.state,
         onAction = viewModel::onAction,
@@ -95,10 +95,10 @@ fun ReminderDetailScreenRoot(
 }
 
 @Composable
-internal fun ReminderDetailScreen(
+internal fun AgendaDetailScreen(
     type: AgendaItemType,
-    state: ReminderDetailState,
-    onAction: (ReminderDetailAction) -> Unit,
+    state: AgendaDetailState,
+    onAction: (AgendaDetailAction) -> Unit,
 ) {
     val spacing = LocalSpacing.current
     val clock = LocalClock.current
@@ -106,14 +106,14 @@ internal fun ReminderDetailScreen(
 
     if (state.isShowingCloseConfirmationDialog) {
         val onCancelAction = when {
-            state.isEditingTitle -> ReminderDetailAction.OnCancelCloseTitle
-            state.isEditingDescription -> ReminderDetailAction.OnCancelCloseDescription
-            else -> ReminderDetailAction.OnCancelClose
+            state.isEditingTitle -> AgendaDetailAction.OnCancelCloseTitle
+            state.isEditingDescription -> AgendaDetailAction.OnCancelCloseDescription
+            else -> AgendaDetailAction.OnCancelClose
         }
         val onConfirmAction = when {
-            state.isEditingTitle -> ReminderDetailAction.OnConfirmCloseTitle
-            state.isEditingDescription -> ReminderDetailAction.OnConfirmCloseDescription
-            else -> ReminderDetailAction.OnConfirmClose
+            state.isEditingTitle -> AgendaDetailAction.OnConfirmCloseTitle
+            state.isEditingDescription -> AgendaDetailAction.OnConfirmCloseDescription
+            else -> AgendaDetailAction.OnConfirmClose
         }
         TaskyDialog(
             title = stringResource(id = R.string.close_dialog_title),
@@ -128,10 +128,10 @@ internal fun ReminderDetailScreen(
             type = EditTextType.Title,
             value = state.title,
             onBackClick = {
-                onAction(ReminderDetailAction.OnCloseTitle)
+                onAction(AgendaDetailAction.OnCloseTitle)
             },
             onSaveClick = { newTitle ->
-                onAction(ReminderDetailAction.OnSaveTitle(newTitle))
+                onAction(AgendaDetailAction.OnSaveTitle(newTitle))
             },
         )
     } else if (state.isEditingDescription) {
@@ -139,23 +139,23 @@ internal fun ReminderDetailScreen(
             type = EditTextType.Description,
             value = state.description ?: "",
             onBackClick = {
-                onAction(ReminderDetailAction.OnCloseDescription)
+                onAction(AgendaDetailAction.OnCloseDescription)
             },
             onSaveClick = { newDescription ->
-                onAction(ReminderDetailAction.OnSaveDescription(newDescription))
+                onAction(AgendaDetailAction.OnSaveDescription(newDescription))
             },
         )
     } else {
         BackHandler(enabled = state.isEditing && !state.isShowingCloseConfirmationDialog) {
-            onAction(ReminderDetailAction.OnClose)
+            onAction(AgendaDetailAction.OnClose)
         }
 
         if (state.isShowingDeleteConfirmationDialog) {
             TaskyDialog(
                 title = stringResource(id = R.string.delete_dialog_title),
                 description = stringResource(id = R.string.confirm_deletion),
-                onCancel = { onAction(ReminderDetailAction.OnCancelDelete) },
-                onConfirm = { onAction(ReminderDetailAction.OnConfirmDelete) },
+                onCancel = { onAction(AgendaDetailAction.OnCancelDelete) },
+                onConfirm = { onAction(AgendaDetailAction.OnConfirmDelete) },
             )
         }
         TaskyScaffold(
@@ -168,14 +168,14 @@ internal fun ReminderDetailScreen(
                     },
                     onCloseClick = {
                         if (state.isEditing) {
-                            onAction(ReminderDetailAction.OnClose)
+                            onAction(AgendaDetailAction.OnClose)
                         } else {
-                            onAction(ReminderDetailAction.OnConfirmClose)
+                            onAction(AgendaDetailAction.OnConfirmClose)
                         }
                     },
                     isEditing = state.isEditing,
-                    onEditClick = { onAction(ReminderDetailAction.OnEnableEdit) },
-                    onSaveClick = { onAction(ReminderDetailAction.OnSave) },
+                    onEditClick = { onAction(AgendaDetailAction.OnEnableEdit) },
+                    onSaveClick = { onAction(AgendaDetailAction.OnSave) },
                 )
             },
         ) { innerPadding ->
@@ -208,7 +208,7 @@ internal fun ReminderDetailScreen(
                     title = state.title,
                     editEnabled = state.isEditing,
                     onEdit = {
-                        onAction(ReminderDetailAction.OnEditTitle)
+                        onAction(AgendaDetailAction.OnEditTitle)
                     },
                 )
                 Spacer(modifier = Modifier.height(spacing.spaceSmallMedium))
@@ -218,7 +218,7 @@ internal fun ReminderDetailScreen(
                     description = state.description,
                     editEnabled = state.isEditing,
                     onEdit = {
-                        onAction(ReminderDetailAction.OnEditDescription)
+                        onAction(AgendaDetailAction.OnEditDescription)
                     },
                 )
                 Spacer(modifier = Modifier.height(spacing.spaceSmall))
@@ -229,18 +229,18 @@ internal fun ReminderDetailScreen(
                     localDateTime = state.atTime,
                     editEnabled = state.isEditing,
                     onSelectTime = { time ->
-                        onAction(ReminderDetailAction.OnSelectTime(time))
+                        onAction(AgendaDetailAction.OnSelectTime(time))
                     },
                     timePickerExpanded = state.isEditingTime,
                     toggleTimePickerExpanded = {
-                        onAction(ReminderDetailAction.OnToggleTimePickerExpanded)
+                        onAction(AgendaDetailAction.OnToggleTimePickerExpanded)
                     },
                     onSelectDate = { date ->
-                        onAction(ReminderDetailAction.OnSelectDate(date))
+                        onAction(AgendaDetailAction.OnSelectDate(date))
                     },
                     datePickerExpanded = state.isEditingDate,
                     toggleDatePickerExpanded = {
-                        onAction(ReminderDetailAction.OnToggleDatePickerExpanded)
+                        onAction(AgendaDetailAction.OnToggleDatePickerExpanded)
                     },
                     clock = clock,
                 )
@@ -248,15 +248,15 @@ internal fun ReminderDetailScreen(
                 HorizontalDivider(color = dividerColor)
                 Spacer(modifier = Modifier.height(spacing.agendaDetailNotificationPaddingTop))
                 AgendaDetailNotification(
-                    reminderDescription = state.notificationDuration.text.asString(),
+                    notificationDescription = state.notificationDuration.text.asString(),
                     editEnabled = state.isEditing,
                     expanded = state.isEditingNotificationDuration,
                     toggleExpanded = {
-                        onAction(ReminderDetailAction.OnToggleNotificationDurationExpanded)
+                        onAction(AgendaDetailAction.OnToggleNotificationDurationExpanded)
                     },
                     onSelectNotificationDuration = { notificationDuration ->
                         onAction(
-                            ReminderDetailAction.OnSelectNotificationDuration(notificationDuration),
+                            AgendaDetailAction.OnSelectNotificationDuration(notificationDuration),
                         )
                     },
                 )
@@ -269,7 +269,7 @@ internal fun ReminderDetailScreen(
                     enabled = true,
                     text = stringResource(id = R.string.delete_reminder),
                     onClick = {
-                        onAction(ReminderDetailAction.OnDelete)
+                        onAction(AgendaDetailAction.OnDelete)
                     },
                 )
                 Spacer(modifier = Modifier.height(spacing.agendaDetailSpaceBottom))
@@ -282,9 +282,9 @@ internal fun ReminderDetailScreen(
 @Composable
 private fun ReminderDetailScreenPreview() {
     TaskyTheme {
-        ReminderDetailScreen(
+        AgendaDetailScreen(
             type = AgendaItemType.REMINDER,
-            state = ReminderDetailState(
+            state = AgendaDetailState(
                 title = "Project X",
                 description = "Weekly plan\nRole distribution",
                 selectedDate = LocalDate(2022, 3, 1),
@@ -300,9 +300,9 @@ private fun ReminderDetailScreenPreview() {
 @Composable
 private fun ReminderDetailScreenPreview_EditTitle() {
     TaskyTheme {
-        ReminderDetailScreen(
+        AgendaDetailScreen(
             type = AgendaItemType.REMINDER,
-            state = ReminderDetailState(
+            state = AgendaDetailState(
                 title = "Project X",
                 description = "Weekly plan\nRole distribution",
                 selectedDate = LocalDate(2022, 3, 1),
@@ -319,9 +319,9 @@ private fun ReminderDetailScreenPreview_EditTitle() {
 @Composable
 private fun ReminderDetailScreenPreview_EditDescription() {
     TaskyTheme {
-        ReminderDetailScreen(
+        AgendaDetailScreen(
             type = AgendaItemType.REMINDER,
-            state = ReminderDetailState(
+            state = AgendaDetailState(
                 title = "Project X",
                 description = "Amet minim mollit non deserunt ullamco " +
                     "est sit aliqua dolor do amet sint. ",
@@ -339,9 +339,9 @@ private fun ReminderDetailScreenPreview_EditDescription() {
 @Composable
 private fun ReminderDetailScreenPreview_DeleteDialog() {
     TaskyTheme {
-        ReminderDetailScreen(
+        AgendaDetailScreen(
             type = AgendaItemType.REMINDER,
-            state = ReminderDetailState(
+            state = AgendaDetailState(
                 title = "Project X",
                 description = "Amet minim mollit non deserunt ullamco " +
                     "est sit aliqua dolor do amet sint. ",
@@ -359,9 +359,9 @@ private fun ReminderDetailScreenPreview_DeleteDialog() {
 @Composable
 private fun ReminderDetailScreenPreview_CloseDialog() {
     TaskyTheme {
-        ReminderDetailScreen(
+        AgendaDetailScreen(
             type = AgendaItemType.REMINDER,
-            state = ReminderDetailState(
+            state = AgendaDetailState(
                 title = "Project X",
                 description = "Amet minim mollit non deserunt ullamco " +
                     "est sit aliqua dolor do amet sint. ",
