@@ -32,7 +32,7 @@ sealed interface AgendaDetailAction {
     // photo actions
     data class OnAddPhotoClick(val photo: PhotoId) : AgendaDetailAction
     data class OnOpenPhotoClick(val photo: PhotoId) : AgendaDetailAction
-    data object OnClockPhotoClick : AgendaDetailAction
+    data object OnClosePhotoClick : AgendaDetailAction
     data class OnDeletePhotoClick(val photo: PhotoId) : AgendaDetailAction
 
     // time picker actions
