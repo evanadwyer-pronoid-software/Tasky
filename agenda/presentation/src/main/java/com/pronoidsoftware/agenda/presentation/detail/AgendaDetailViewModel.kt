@@ -35,7 +35,7 @@ class AgendaDetailViewModel @Inject constructor(
     var state by mutableStateOf(
         AgendaDetailState(
             selectedDate = today(clock),
-            fromTime = now(clock)
+            fromDateTime = now(clock)
                 .toInstant(TimeZone.currentSystemDefault())
                 .plus(60.minutes)
                 .toLocalDateTime(TimeZone.currentSystemDefault()),
@@ -155,7 +155,7 @@ class AgendaDetailViewModel @Inject constructor(
                 )
             }
 
-            AgendaDetailAction.OnClockPhotoClick -> {
+            AgendaDetailAction.OnClosePhotoClick -> {
                 state = state.copy(
                     selectedPhotoToView = null,
                 )
@@ -174,43 +174,43 @@ class AgendaDetailViewModel @Inject constructor(
                     date.year,
                     date.month,
                     date.dayOfMonth,
-                    state.fromTime.hour,
-                    state.fromTime.minute,
+                    state.fromDateTime.hour,
+                    state.fromDateTime.minute,
                 )
-                val newToTime = if (newFromTime > state.toTime) {
+                val newToTime = if (newFromTime > state.toDateTime) {
                     newFromTime
                         .toInstant(TimeZone.currentSystemDefault())
                         .plus(30.minutes)
                         .toLocalDateTime(TimeZone.currentSystemDefault())
                 } else {
-                    state.toTime
+                    state.toDateTime
                 }
                 state = state.copy(
-                    fromTime = newFromTime,
-                    toTime = newToTime,
+                    fromDateTime = newFromTime,
+                    toDateTime = newToTime,
                 )
             }
 
             is AgendaDetailAction.OnSelectFromTime -> {
                 val time = action.fromTime
                 val newFromTime = LocalDateTime(
-                    state.fromTime.year,
-                    state.fromTime.month,
-                    state.fromTime.dayOfMonth,
+                    state.fromDateTime.year,
+                    state.fromDateTime.month,
+                    state.fromDateTime.dayOfMonth,
                     time.hour,
                     time.minute,
                 )
-                val newToTime = if (newFromTime > state.toTime) {
+                val newToTime = if (newFromTime > state.toDateTime) {
                     newFromTime
                         .toInstant(TimeZone.currentSystemDefault())
                         .plus(30.minutes)
                         .toLocalDateTime(TimeZone.currentSystemDefault())
                 } else {
-                    state.toTime
+                    state.toDateTime
                 }
                 state = state.copy(
-                    fromTime = newFromTime,
-                    toTime = newToTime,
+                    fromDateTime = newFromTime,
+                    toDateTime = newToTime,
                 )
             }
 
@@ -220,43 +220,43 @@ class AgendaDetailViewModel @Inject constructor(
                     date.year,
                     date.month,
                     date.dayOfMonth,
-                    state.fromTime.hour,
-                    state.fromTime.minute,
+                    state.fromDateTime.hour,
+                    state.fromDateTime.minute,
                 )
-                val newFromTime = if (newToTime < state.fromTime) {
+                val newFromTime = if (newToTime < state.fromDateTime) {
                     newToTime
                         .toInstant(TimeZone.currentSystemDefault())
                         .minus(30.minutes)
                         .toLocalDateTime(TimeZone.currentSystemDefault())
                 } else {
-                    state.fromTime
+                    state.fromDateTime
                 }
                 state = state.copy(
-                    fromTime = newFromTime,
-                    toTime = newToTime,
+                    fromDateTime = newFromTime,
+                    toDateTime = newToTime,
                 )
             }
 
             is AgendaDetailAction.OnSelectToTime -> {
                 val time = action.toTime
                 val newToTime = LocalDateTime(
-                    state.fromTime.year,
-                    state.fromTime.month,
-                    state.fromTime.dayOfMonth,
+                    state.fromDateTime.year,
+                    state.fromDateTime.month,
+                    state.fromDateTime.dayOfMonth,
                     time.hour,
                     time.minute,
                 )
-                val newFromTime = if (newToTime < state.fromTime) {
+                val newFromTime = if (newToTime < state.fromDateTime) {
                     newToTime
                         .toInstant(TimeZone.currentSystemDefault())
                         .minus(30.minutes)
                         .toLocalDateTime(TimeZone.currentSystemDefault())
                 } else {
-                    state.fromTime
+                    state.fromDateTime
                 }
                 state = state.copy(
-                    fromTime = newFromTime,
-                    toTime = newToTime,
+                    fromDateTime = newFromTime,
+                    toDateTime = newToTime,
                 )
             }
 
