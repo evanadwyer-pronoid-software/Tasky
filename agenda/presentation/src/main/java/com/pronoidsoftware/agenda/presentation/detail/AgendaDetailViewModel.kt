@@ -1,16 +1,22 @@
 package com.pronoidsoftware.agenda.presentation.detail
 
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.model.VisitorFilterType
 import com.pronoidsoftware.core.domain.util.now
 import com.pronoidsoftware.core.domain.util.today
+import com.pronoidsoftware.core.domain.validation.UserDataValidator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
@@ -23,23 +29,32 @@ import timber.log.Timber
 @HiltViewModel
 class AgendaDetailViewModel @Inject constructor(
     clock: Clock,
+    userDataValidator: UserDataValidator,
 ) : ViewModel() {
 
     var state by mutableStateOf(
         AgendaDetailState(
             selectedDate = today(clock),
-            atTime = now(clock)
+            fromTime = now(clock)
                 .toInstant(TimeZone.currentSystemDefault())
                 .plus(60.minutes)
                 .toLocalDateTime(TimeZone.currentSystemDefault()),
-            title = "Project X",
-            description = "Weekly plan\nRole distribution",
         ),
     )
         private set
 
     private val eventChannel = Channel<AgendaDetailEvent>()
     val events = eventChannel.receiveAsFlow()
+
+    init {
+        snapshotFlow { state.visitorToAddEmail.text }
+            .onEach { email ->
+                state = state.copy(
+                    isVisitorToAddEmailValid = userDataValidator.validateEmail(email.toString()),
+                )
+            }
+            .launchIn(viewModelScope)
+    }
 
     fun onAction(action: AgendaDetailAction) {
         when (action) {
@@ -128,41 +143,144 @@ class AgendaDetailViewModel @Inject constructor(
                 )
             }
 
-            is AgendaDetailAction.OnSelectDate -> {
-                val date = action.date
+            is AgendaDetailAction.OnAddPhotoClick -> {
                 state = state.copy(
-                    atTime = LocalDateTime(
-                        date.year,
-                        date.month,
-                        date.dayOfMonth,
-                        state.atTime.hour,
-                        state.atTime.minute,
-                    ),
+                    photos = state.photos + action.photo,
                 )
             }
 
-            is AgendaDetailAction.OnSelectTime -> {
-                val time = action.time
+            is AgendaDetailAction.OnOpenPhotoClick -> {
                 state = state.copy(
-                    atTime = LocalDateTime(
-                        state.atTime.year,
-                        state.atTime.month,
-                        state.atTime.dayOfMonth,
-                        time.hour,
-                        time.minute,
-                    ),
+                    selectedPhotoToView = action.photo,
                 )
             }
 
-            AgendaDetailAction.OnToggleTimePickerExpanded -> {
+            AgendaDetailAction.OnClockPhotoClick -> {
                 state = state.copy(
-                    isEditingTime = !state.isEditingTime,
+                    selectedPhotoToView = null,
                 )
             }
 
-            AgendaDetailAction.OnToggleDatePickerExpanded -> {
+            is AgendaDetailAction.OnDeletePhotoClick -> {
                 state = state.copy(
-                    isEditingDate = !state.isEditingDate,
+                    photos = state.photos.filterNot { it == action.photo },
+                    selectedPhotoToView = null,
+                )
+            }
+
+            is AgendaDetailAction.OnSelectFromDate -> {
+                val date = action.fromDate
+                val newFromTime = LocalDateTime(
+                    date.year,
+                    date.month,
+                    date.dayOfMonth,
+                    state.fromTime.hour,
+                    state.fromTime.minute,
+                )
+                val newToTime = if (newFromTime > state.toTime) {
+                    newFromTime
+                        .toInstant(TimeZone.currentSystemDefault())
+                        .plus(30.minutes)
+                        .toLocalDateTime(TimeZone.currentSystemDefault())
+                } else {
+                    state.toTime
+                }
+                state = state.copy(
+                    fromTime = newFromTime,
+                    toTime = newToTime,
+                )
+            }
+
+            is AgendaDetailAction.OnSelectFromTime -> {
+                val time = action.fromTime
+                val newFromTime = LocalDateTime(
+                    state.fromTime.year,
+                    state.fromTime.month,
+                    state.fromTime.dayOfMonth,
+                    time.hour,
+                    time.minute,
+                )
+                val newToTime = if (newFromTime > state.toTime) {
+                    newFromTime
+                        .toInstant(TimeZone.currentSystemDefault())
+                        .plus(30.minutes)
+                        .toLocalDateTime(TimeZone.currentSystemDefault())
+                } else {
+                    state.toTime
+                }
+                state = state.copy(
+                    fromTime = newFromTime,
+                    toTime = newToTime,
+                )
+            }
+
+            is AgendaDetailAction.OnSelectToDate -> {
+                val date = action.toDate
+                val newToTime = LocalDateTime(
+                    date.year,
+                    date.month,
+                    date.dayOfMonth,
+                    state.fromTime.hour,
+                    state.fromTime.minute,
+                )
+                val newFromTime = if (newToTime < state.fromTime) {
+                    newToTime
+                        .toInstant(TimeZone.currentSystemDefault())
+                        .minus(30.minutes)
+                        .toLocalDateTime(TimeZone.currentSystemDefault())
+                } else {
+                    state.fromTime
+                }
+                state = state.copy(
+                    fromTime = newFromTime,
+                    toTime = newToTime,
+                )
+            }
+
+            is AgendaDetailAction.OnSelectToTime -> {
+                val time = action.toTime
+                val newToTime = LocalDateTime(
+                    state.fromTime.year,
+                    state.fromTime.month,
+                    state.fromTime.dayOfMonth,
+                    time.hour,
+                    time.minute,
+                )
+                val newFromTime = if (newToTime < state.fromTime) {
+                    newToTime
+                        .toInstant(TimeZone.currentSystemDefault())
+                        .minus(30.minutes)
+                        .toLocalDateTime(TimeZone.currentSystemDefault())
+                } else {
+                    state.fromTime
+                }
+                state = state.copy(
+                    fromTime = newFromTime,
+                    toTime = newToTime,
+                )
+            }
+
+            AgendaDetailAction.OnToggleFromTimePickerExpanded -> {
+                state = state.copy(
+                    isEditingFromTime = !state.isEditingFromTime,
+                )
+            }
+
+            AgendaDetailAction.OnToggleFromDatePickerExpanded -> {
+                state = state.copy(
+                    isEditingFromDate = !state.isEditingFromDate,
+                )
+            }
+
+            AgendaDetailAction.OnToggleToTimePickerExpanded -> {
+                state = state.copy(
+                    isEditingToTime = !state.isEditingToTime,
+                )
+            }
+
+            AgendaDetailAction.OnToggleToDatePickerExpanded -> {
+                state = state.copy(
+                    isEditingToDate = !state.isEditingToDate,
                 )
             }
 
@@ -175,6 +293,50 @@ class AgendaDetailViewModel @Inject constructor(
             is AgendaDetailAction.OnSelectNotificationDuration -> {
                 state = state.copy(
                     notificationDuration = action.notificationDuration,
+                )
+            }
+
+            AgendaDetailAction.OnAllVisitorsClick -> {
+                state = state.copy(
+                    selectedVisitorFilter = VisitorFilterType.ALL,
+                )
+            }
+
+            AgendaDetailAction.OnGoingVisitorsClick -> {
+                state = state.copy(
+                    selectedVisitorFilter = VisitorFilterType.GOING,
+                )
+            }
+
+            AgendaDetailAction.OnNotGoingVisitorsClick -> {
+                state = state.copy(
+                    selectedVisitorFilter = VisitorFilterType.NOT_GOING,
+                )
+            }
+
+            AgendaDetailAction.OnToggleAddVisitorDialog -> {
+                state = state.copy(
+                    visitorToAddEmail = TextFieldState(),
+                    isShowingAddVisitorDialog = !state.isShowingAddVisitorDialog,
+                )
+            }
+
+            is AgendaDetailAction.OnAddVisitorClick -> {
+                viewModelScope.launch {
+                    state = state.copy(
+                        isAddingVisitor = true,
+                    )
+                    state = state.copy(
+                        visitorToAddEmail = TextFieldState(),
+                        isAddingVisitor = false,
+                        isShowingAddVisitorDialog = false,
+                    )
+                }
+            }
+
+            is AgendaDetailAction.OnDeleteVisitorClick -> {
+                state = state.copy(
+                    visitors = state.visitors.filterNot { it == action.visitor },
                 )
             }
 
