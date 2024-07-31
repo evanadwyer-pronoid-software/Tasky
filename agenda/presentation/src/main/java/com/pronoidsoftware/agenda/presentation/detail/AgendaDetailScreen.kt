@@ -226,21 +226,21 @@ internal fun AgendaDetailScreen(
                 Spacer(modifier = Modifier.height(spacing.agendaDetailSpaceMediumSmall))
                 AgendaDetailTime(
                     timeDescription = stringResource(id = R.string.at),
-                    localDateTime = state.atTime,
+                    localDateTime = state.fromTime,
                     editEnabled = state.isEditing,
                     onSelectTime = { time ->
-                        onAction(AgendaDetailAction.OnSelectTime(time))
+                        onAction(AgendaDetailAction.OnSelectFromTime(time))
                     },
-                    timePickerExpanded = state.isEditingTime,
+                    timePickerExpanded = state.isEditingFromTime,
                     toggleTimePickerExpanded = {
-                        onAction(AgendaDetailAction.OnToggleTimePickerExpanded)
+                        onAction(AgendaDetailAction.OnToggleFromTimePickerExpanded)
                     },
                     onSelectDate = { date ->
-                        onAction(AgendaDetailAction.OnSelectDate(date))
+                        onAction(AgendaDetailAction.OnSelectFromDate(date))
                     },
-                    datePickerExpanded = state.isEditingDate,
+                    datePickerExpanded = state.isEditingFromDate,
                     toggleDatePickerExpanded = {
-                        onAction(AgendaDetailAction.OnToggleDatePickerExpanded)
+                        onAction(AgendaDetailAction.OnToggleFromDatePickerExpanded)
                     },
                     clock = clock,
                 )
@@ -288,7 +288,7 @@ private fun ReminderDetailScreenPreview() {
                 title = "Project X",
                 description = "Weekly plan\nRole distribution",
                 selectedDate = LocalDate(2022, 3, 1),
-                atTime = LocalDateTime(2022, 7, 21, 8, 0),
+                fromTime = LocalDateTime(2022, 7, 21, 8, 0),
                 isEditing = false,
             ),
             onAction = {},
@@ -306,7 +306,7 @@ private fun ReminderDetailScreenPreview_EditTitle() {
                 title = "Project X",
                 description = "Weekly plan\nRole distribution",
                 selectedDate = LocalDate(2022, 3, 1),
-                atTime = LocalDateTime(2022, 7, 21, 8, 0),
+                fromTime = LocalDateTime(2022, 7, 21, 8, 0),
                 isEditing = true,
                 isEditingTitle = true,
             ),
@@ -326,7 +326,7 @@ private fun ReminderDetailScreenPreview_EditDescription() {
                 description = "Amet minim mollit non deserunt ullamco " +
                     "est sit aliqua dolor do amet sint. ",
                 selectedDate = LocalDate(2022, 3, 1),
-                atTime = LocalDateTime(2022, 7, 21, 8, 0),
+                fromTime = LocalDateTime(2022, 7, 21, 8, 0),
                 isEditing = true,
                 isEditingDescription = true,
             ),
@@ -346,7 +346,7 @@ private fun ReminderDetailScreenPreview_DeleteDialog() {
                 description = "Amet minim mollit non deserunt ullamco " +
                     "est sit aliqua dolor do amet sint. ",
                 selectedDate = LocalDate(2022, 3, 1),
-                atTime = LocalDateTime(2022, 7, 21, 8, 0),
+                fromTime = LocalDateTime(2022, 7, 21, 8, 0),
                 isEditing = true,
                 isShowingDeleteConfirmationDialog = true,
             ),
@@ -366,7 +366,7 @@ private fun ReminderDetailScreenPreview_CloseDialog() {
                 description = "Amet minim mollit non deserunt ullamco " +
                     "est sit aliqua dolor do amet sint. ",
                 selectedDate = LocalDate(2022, 3, 1),
-                atTime = LocalDateTime(2022, 7, 21, 8, 0),
+                fromTime = LocalDateTime(2022, 7, 21, 8, 0),
                 isEditing = true,
                 isShowingCloseConfirmationDialog = true,
             ),
