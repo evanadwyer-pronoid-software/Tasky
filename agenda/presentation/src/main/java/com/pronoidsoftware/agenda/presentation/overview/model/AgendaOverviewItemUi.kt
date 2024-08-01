@@ -1,16 +1,13 @@
 package com.pronoidsoftware.agenda.presentation.overview.model
 
 sealed class AgendaOverviewItemUi(
-    open val id: String,
+    val id: String,
 ) {
-    data class TimeMarker(
-        override val id: String = "TimeMarker",
-    ) : AgendaOverviewItemUi(id = id)
+    data object TimeMarker : AgendaOverviewItemUi(id = "TimeMarker")
 
     data class Item(
         val item: AgendaOverviewItemContents,
-        override val id: String,
-    ) : AgendaOverviewItemUi(id = id)
+    ) : AgendaOverviewItemUi(id = item.id)
 }
 
 sealed class AgendaOverviewItemContents(

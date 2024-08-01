@@ -1,5 +1,6 @@
 package com.pronoidsoftware.agenda.presentation.detail
 
+import com.pronoidsoftware.agenda.domain.model.AgendaItemType
 import com.pronoidsoftware.agenda.presentation.detail.components.event.photo.model.PhotoId
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.model.VisitorUI
 import com.pronoidsoftware.agenda.presentation.detail.model.NotificationDuration
@@ -7,6 +8,8 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 
 sealed interface AgendaDetailAction {
+    data class OnSetAgendaItemType(val type: AgendaItemType) : AgendaDetailAction
+
     // toolbar actions
     data object OnClose : AgendaDetailAction
     data object OnConfirmClose : AgendaDetailAction

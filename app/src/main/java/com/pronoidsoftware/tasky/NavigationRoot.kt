@@ -77,7 +77,7 @@ private fun NavGraphBuilder.agendaGraph(navController: NavHostController) {
                 onCreateAgendaItem = { type, isEditing ->
                     navController.navigate(
                         DetailScreen(
-                            type = type.toString(),
+                            type = type.name,
                             isEditing = isEditing,
                         ),
                     )
@@ -87,7 +87,7 @@ private fun NavGraphBuilder.agendaGraph(navController: NavHostController) {
         composable<DetailScreen> {
             val args = it.toRoute<DetailScreen>()
             AgendaDetailScreenRoot(
-                type = AgendaItemType.from(args.type),
+                type = AgendaItemType.valueOf(args.type),
                 isEditing = args.isEditing,
                 onCloseClick = {
                     navController.navigateUp()

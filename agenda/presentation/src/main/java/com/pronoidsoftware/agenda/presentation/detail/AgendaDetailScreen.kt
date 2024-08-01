@@ -71,6 +71,9 @@ fun AgendaDetailScreenRoot(
             viewModel.onAction(AgendaDetailAction.OnDisableEdit)
         }
     }
+    LaunchedEffect(type) {
+        viewModel.onAction(AgendaDetailAction.OnSetAgendaItemType(type))
+    }
 
     val context = LocalContext.current
     ObserveAsEvents(flow = viewModel.events) { event ->
@@ -99,7 +102,7 @@ fun AgendaDetailScreenRoot(
     }
 
     AgendaDetailScreen(
-        type = type,
+//        type = type,
         state = viewModel.state,
         onAction = viewModel::onAction,
     )
@@ -107,7 +110,7 @@ fun AgendaDetailScreenRoot(
 
 @Composable
 internal fun AgendaDetailScreen(
-    type: AgendaItemType,
+//    type: AgendaItemType,
     state: AgendaDetailState,
     onAction: (AgendaDetailAction) -> Unit,
 ) {
@@ -164,17 +167,19 @@ internal fun AgendaDetailScreen(
                 onAction(AgendaDetailAction.OnSaveDescription(newDescription))
             },
         )
-    } else if (state.selectedPhotoToView != null) {
-        EventDetailPhotoDetail(
-            photo = state.selectedPhotoToView,
-            editEnabled = state.isEditing,
-            onCloseClick = {
-                onAction(AgendaDetailAction.OnClosePhotoClick)
-            },
-            onDeleteClick = {
-                onAction(AgendaDetailAction.OnDeletePhotoClick(state.selectedPhotoToView))
-            },
-        )
+    } else if (getDetailAsEvent(state)?.selectedPhotoToView != null) {
+        getDetailAsEvent(state)?.selectedPhotoToView?.let { photo ->
+            EventDetailPhotoDetail(
+                photo = photo,
+                editEnabled = state.isEditing,
+                onCloseClick = {
+                    onAction(AgendaDetailAction.OnClosePhotoClick)
+                },
+                onDeleteClick = {
+                    onAction(AgendaDetailAction.OnDeletePhotoClick(photo))
+                },
+            )
+        }
     } else {
         BackHandler(enabled = state.isEditing && !state.isShowingCloseConfirmationDialog) {
             onAction(AgendaDetailAction.OnClose)
@@ -188,21 +193,23 @@ internal fun AgendaDetailScreen(
                 onConfirm = { onAction(AgendaDetailAction.OnConfirmDelete) },
             )
         }
-        if (state.isShowingAddVisitorDialog) {
-            AddVisitorDialog(
-                title = stringResource(id = R.string.add_visitor),
-                buttonText = stringResource(id = R.string.add),
-                onAddClick = { email ->
-                    onAction(AgendaDetailAction.OnAddVisitorClick(email))
-                },
-                onCancel = {
-                    onAction(AgendaDetailAction.OnToggleAddVisitorDialog)
-                },
-                isAddingAttendee = state.isAddingVisitor,
-                emailTextFieldState = state.visitorToAddEmail,
-                isEmailValid = state.isVisitorToAddEmailValid,
-                errorMessage = state.addVisitorErrorMessage,
-            )
+        if (getDetailAsEvent(state)?.isShowingAddVisitorDialog == true) {
+            getDetailAsEvent(state)?.let { eventDetails ->
+                AddVisitorDialog(
+                    title = stringResource(id = R.string.add_visitor),
+                    buttonText = stringResource(id = R.string.add),
+                    onAddClick = { email ->
+                        onAction(AgendaDetailAction.OnAddVisitorClick(email))
+                    },
+                    onCancel = {
+                        onAction(AgendaDetailAction.OnToggleAddVisitorDialog)
+                    },
+                    isAddingAttendee = eventDetails.isAddingVisitor,
+                    emailTextFieldState = eventDetails.visitorToAddEmail,
+                    isEmailValid = eventDetails.isVisitorToAddEmailValid,
+                    errorMessage = eventDetails.addVisitorErrorMessage,
+                )
+            }
         }
         TaskyScaffold(
             topAppBar = {
@@ -210,19 +217,7 @@ internal fun AgendaDetailScreen(
                     title = if (state.isEditing) {
                         stringResource(
                             id = R.string.edit_agenda_item,
-                            when (type) {
-                                AgendaItemType.EVENT -> {
-                                    stringResource(id = R.string.event).uppercase()
-                                }
-
-                                AgendaItemType.TASK -> {
-                                    stringResource(id = R.string.task).uppercase()
-                                }
-
-                                AgendaItemType.REMINDER -> {
-                                    stringResource(id = R.string.reminder).uppercase()
-                                }
-                            },
+                            getTypeString(type = state.agendaItemType, isUppercase = true),
                         )
                     } else {
                         state.selectedDate.formatFullDate(clock).asString()
@@ -261,26 +256,24 @@ internal fun AgendaDetailScreen(
                     .padding(top = spacing.scaffoldPaddingTop)
                     .padding(horizontal = spacing.spaceMedium),
             ) {
-                AgendaDetailType(
-                    type = type,
-                )
+                state.agendaItemType?.let { type ->
+                    AgendaDetailType(
+                        type = type,
+                    )
+                }
                 Spacer(modifier = Modifier.height(spacing.agendaDetailSpaceMedium))
                 AgendaDetailTitle(
                     title = state.title.ifEmpty {
                         stringResource(
                             id = R.string.new_agenda_item,
-                            when (type) {
-                                AgendaItemType.EVENT -> stringResource(id = R.string.event)
-                                AgendaItemType.TASK -> stringResource(id = R.string.task)
-                                AgendaItemType.REMINDER -> stringResource(id = R.string.reminder)
-                            },
+                            getTypeString(type = state.agendaItemType),
                         )
                     },
                     editEnabled = state.isEditing,
                     onEdit = {
                         onAction(AgendaDetailAction.OnEditTitle)
                     },
-                    isCompleted = type == AgendaItemType.TASK && state.completed,
+                    isCompleted = getDetailAsTask(state)?.completed == true,
                 )
                 Spacer(modifier = Modifier.height(spacing.spaceSmallMedium))
                 HorizontalDivider(color = dividerColor)
@@ -293,10 +286,10 @@ internal fun AgendaDetailScreen(
                     },
                 )
                 Spacer(modifier = Modifier.height(spacing.spaceSmall))
-                if (type == AgendaItemType.EVENT) {
+                getDetailAsEvent(state)?.let { eventDetails ->
                     EventDetailPhotos(
-                        photos = state.photos,
-                        arePhotosFull = state.arePhotosFull,
+                        photos = eventDetails.photos,
+                        arePhotosFull = eventDetails.arePhotosFull,
                         editEnabled = state.isEditing,
                         onAddClick = {
                             photoPickerLauncher.launch(
@@ -316,7 +309,7 @@ internal fun AgendaDetailScreen(
                 HorizontalDivider(color = dividerColor)
                 Spacer(modifier = Modifier.height(spacing.agendaDetailSpaceMediumSmall))
                 AgendaDetailTime(
-                    timeDescription = if (type == AgendaItemType.EVENT) {
+                    timeDescription = if (state.agendaItemType == AgendaItemType.EVENT) {
                         stringResource(id = R.string.from)
                     } else {
                         stringResource(id = R.string.at)
@@ -341,22 +334,22 @@ internal fun AgendaDetailScreen(
                 )
                 Spacer(modifier = Modifier.height(spacing.spaceMedium))
                 HorizontalDivider(color = dividerColor)
-                if (type == AgendaItemType.EVENT) {
+                getDetailAsEvent(state)?.let { eventDetails ->
                     AgendaDetailTime(
                         timeDescription = stringResource(id = R.string.to),
-                        localDateTime = state.endDateTime,
+                        localDateTime = eventDetails.endDateTime,
                         editEnabled = state.isEditing,
                         onSelectTime = { time ->
                             onAction(AgendaDetailAction.OnSelectEndTime(time))
                         },
-                        timePickerExpanded = state.isEditingEndTime,
+                        timePickerExpanded = eventDetails.isEditingEndTime,
                         toggleTimePickerExpanded = {
                             onAction(AgendaDetailAction.OnToggleEndTimePickerExpanded)
                         },
                         onSelectDate = { date ->
                             onAction(AgendaDetailAction.OnSelectEndDate(date))
                         },
-                        datePickerExpanded = state.isEditingEndDate,
+                        datePickerExpanded = eventDetails.isEditingEndDate,
                         toggleDatePickerExpanded = {
                             onAction(AgendaDetailAction.OnToggleEndDatePickerExpanded)
                         },
@@ -381,7 +374,7 @@ internal fun AgendaDetailScreen(
                 )
                 Spacer(modifier = Modifier.height(spacing.spaceSmall))
                 HorizontalDivider(color = dividerColor)
-                if (type == AgendaItemType.EVENT) {
+                getDetailAsEvent(state)?.let { eventDetails ->
                     Spacer(modifier = Modifier.height(spacing.scaffoldPaddingTop))
                     EventDetailVisitorList(
                         onAllClick = {
@@ -399,14 +392,14 @@ internal fun AgendaDetailScreen(
                         onDeleteVisitorClick = { visitor ->
                             onAction(AgendaDetailAction.OnDeleteVisitorClick(visitor))
                         },
-                        selectedFilterType = state.selectedVisitorFilter,
-                        goingVisitors = state.visitors.filter { it.isGoing },
-                        notGoingVisitors = state.visitors.filterNot { it.isGoing },
+                        selectedFilterType = eventDetails.selectedVisitorFilter,
+                        goingVisitors = eventDetails.visitors.filter { it.isGoing },
+                        notGoingVisitors = eventDetails.visitors.filterNot { it.isGoing },
                         editEnabled = state.isEditing,
                     )
                 }
                 Spacer(modifier = Modifier.weight(1f))
-                if (type == AgendaItemType.EVENT) {
+                if (state.agendaItemType == AgendaItemType.EVENT) {
                     Spacer(modifier = Modifier.height(spacing.agendaDetailSpaceBottom))
                 } else {
                     HorizontalDivider(color = dividerColor)
@@ -416,19 +409,7 @@ internal fun AgendaDetailScreen(
                     enabled = true,
                     text = stringResource(
                         id = R.string.delete_agenda_item,
-                        when (type) {
-                            AgendaItemType.EVENT -> {
-                                stringResource(id = R.string.event).uppercase()
-                            }
-
-                            AgendaItemType.TASK -> {
-                                stringResource(id = R.string.task).uppercase()
-                            }
-
-                            AgendaItemType.REMINDER -> {
-                                stringResource(id = R.string.reminder).uppercase()
-                            }
-                        },
+                        getTypeString(type = state.agendaItemType, isUppercase = true),
                     ),
                     onClick = {
                         onAction(AgendaDetailAction.OnDelete)
@@ -440,14 +421,41 @@ internal fun AgendaDetailScreen(
     }
 }
 
+@Composable
+private fun getTypeString(type: AgendaItemType?, isUppercase: Boolean = false): String {
+    val result = when (type) {
+        AgendaItemType.EVENT -> stringResource(id = R.string.event)
+        AgendaItemType.TASK -> stringResource(id = R.string.task)
+        AgendaItemType.REMINDER -> stringResource(id = R.string.reminder)
+        null -> ""
+    }
+    return if (isUppercase) {
+        result.uppercase()
+    } else {
+        result
+    }
+}
+
+private fun getDetailAsEvent(state: AgendaDetailState): AgendaItemDetails.Event? {
+    return (state.typeSpecificDetails as? AgendaItemDetails.Event)
+}
+
+private fun getDetailAsTask(state: AgendaDetailState): AgendaItemDetails.Task? {
+    return (state.typeSpecificDetails as? AgendaItemDetails.Task)
+}
+
+private fun getDetailAsReminder(state: AgendaDetailState): AgendaItemDetails.Reminder? {
+    return (state.typeSpecificDetails as? AgendaItemDetails.Reminder)
+}
+
 @Preview
 @Composable
 private fun ReminderDetailScreenPreview() {
     TaskyTheme {
         CompositionLocalProvider(LocalClock provides Clock.System) {
             AgendaDetailScreen(
-                type = AgendaItemType.REMINDER,
                 state = AgendaDetailState(
+                    agendaItemType = AgendaItemType.REMINDER,
                     title = "Project X",
                     description = "Weekly plan\nRole distribution",
                     selectedDate = LocalDate(2022, 3, 1),
@@ -466,8 +474,8 @@ private fun ReminderDetailScreenPreview_EditTitle() {
     TaskyTheme {
         CompositionLocalProvider(LocalClock provides Clock.System) {
             AgendaDetailScreen(
-                type = AgendaItemType.REMINDER,
                 state = AgendaDetailState(
+                    agendaItemType = AgendaItemType.REMINDER,
                     title = "Project X",
                     description = "Weekly plan\nRole distribution",
                     selectedDate = LocalDate(2022, 3, 1),
@@ -487,8 +495,8 @@ private fun ReminderDetailScreenPreview_EditDescription() {
     TaskyTheme {
         CompositionLocalProvider(LocalClock provides Clock.System) {
             AgendaDetailScreen(
-                type = AgendaItemType.REMINDER,
                 state = AgendaDetailState(
+                    agendaItemType = AgendaItemType.REMINDER,
                     title = "Project X",
                     description = "Amet minim mollit non deserunt ullamco " +
                         "est sit aliqua dolor do amet sint. ",
@@ -509,8 +517,8 @@ private fun ReminderDetailScreenPreview_DeleteDialog() {
     TaskyTheme {
         CompositionLocalProvider(LocalClock provides Clock.System) {
             AgendaDetailScreen(
-                type = AgendaItemType.REMINDER,
                 state = AgendaDetailState(
+                    agendaItemType = AgendaItemType.REMINDER,
                     title = "Project X",
                     description = "Amet minim mollit non deserunt ullamco " +
                         "est sit aliqua dolor do amet sint. ",
@@ -531,8 +539,8 @@ private fun ReminderDetailScreenPreview_CloseDialog() {
     TaskyTheme {
         CompositionLocalProvider(LocalClock provides Clock.System) {
             AgendaDetailScreen(
-                type = AgendaItemType.REMINDER,
                 state = AgendaDetailState(
+                    agendaItemType = AgendaItemType.REMINDER,
                     title = "Project X",
                     description = "Amet minim mollit non deserunt ullamco " +
                         "est sit aliqua dolor do amet sint. ",
