@@ -24,11 +24,9 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.pronoidsoftware.agenda.domain.model.AgendaItemType
 import com.pronoidsoftware.agenda.presentation.R
@@ -52,6 +50,7 @@ import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
 import com.pronoidsoftware.core.presentation.designsystem.TaskyWhite2
 import com.pronoidsoftware.core.presentation.designsystem.components.TaskyDialog
 import com.pronoidsoftware.core.presentation.designsystem.components.TaskyScaffold
+import com.pronoidsoftware.core.presentation.designsystem.util.ignoreColumnPadding
 import com.pronoidsoftware.core.presentation.ui.ObserveAsEvents
 import com.pronoidsoftware.core.presentation.ui.formatFullDate
 import kotlinx.datetime.Clock
@@ -310,16 +309,7 @@ internal fun AgendaDetailScreen(
                             onAction(AgendaDetailAction.OnOpenPhotoClick(photo))
                         },
                         modifier = Modifier
-                            .layout { measurable, constraints ->
-                                val placeable = measurable.measure(
-                                    constraints.copy(
-                                        maxWidth = constraints.maxWidth + 32.dp.roundToPx(),
-                                    ),
-                                )
-                                layout(placeable.width, placeable.height) {
-                                    placeable.place(0, 0)
-                                }
-                            },
+                            .ignoreColumnPadding(spacing.spaceMedium),
                     )
                     Spacer(modifier = Modifier.height(spacing.scaffoldPaddingTop))
                 }
