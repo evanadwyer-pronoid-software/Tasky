@@ -102,18 +102,13 @@ fun AgendaDetailScreenRoot(
     }
 
     AgendaDetailScreen(
-//        type = type,
         state = viewModel.state,
         onAction = viewModel::onAction,
     )
 }
 
 @Composable
-internal fun AgendaDetailScreen(
-//    type: AgendaItemType,
-    state: AgendaDetailState,
-    onAction: (AgendaDetailAction) -> Unit,
-) {
+internal fun AgendaDetailScreen(state: AgendaDetailState, onAction: (AgendaDetailAction) -> Unit) {
     val spacing = LocalSpacing.current
     val clock = LocalClock.current
     val dividerColor = TaskyWhite2
