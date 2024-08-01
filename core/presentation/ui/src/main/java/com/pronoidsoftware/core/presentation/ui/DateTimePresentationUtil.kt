@@ -4,6 +4,7 @@ import com.pronoidsoftware.core.domain.util.today
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.format
 import kotlinx.datetime.format.MonthNames
@@ -58,6 +59,22 @@ fun LocalTime.formatHours(): UiText {
         this.format(
             LocalTime.Format {
                 hour()
+                char(':')
+                minute()
+            },
+        ),
+    )
+}
+
+fun LocalDateTime.formatOverview(): UiText {
+    return UiText.DynamicString(
+        this.format(
+            LocalDateTime.Format {
+                monthName(MonthNames.ENGLISH_ABBREVIATED)
+                char(' ')
+                dayOfMonth(padding = Padding.NONE)
+                chars(", ")
+                hour(padding = Padding.NONE)
                 char(':')
                 minute()
             },

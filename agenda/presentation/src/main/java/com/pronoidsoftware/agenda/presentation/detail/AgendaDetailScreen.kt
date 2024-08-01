@@ -331,21 +331,21 @@ internal fun AgendaDetailScreen(
                     } else {
                         stringResource(id = R.string.at)
                     },
-                    localDateTime = state.fromDateTime,
+                    localDateTime = state.startDateTime,
                     editEnabled = state.isEditing,
                     onSelectTime = { time ->
-                        onAction(AgendaDetailAction.OnSelectFromTime(time))
+                        onAction(AgendaDetailAction.OnSelectStartTime(time))
                     },
-                    timePickerExpanded = state.isEditingFromTime,
+                    timePickerExpanded = state.isEditingStartTime,
                     toggleTimePickerExpanded = {
-                        onAction(AgendaDetailAction.OnToggleFromTimePickerExpanded)
+                        onAction(AgendaDetailAction.OnToggleStartTimePickerExpanded)
                     },
                     onSelectDate = { date ->
-                        onAction(AgendaDetailAction.OnSelectFromDate(date))
+                        onAction(AgendaDetailAction.OnSelectStartDate(date))
                     },
-                    datePickerExpanded = state.isEditingFromDate,
+                    datePickerExpanded = state.isEditingStartDate,
                     toggleDatePickerExpanded = {
-                        onAction(AgendaDetailAction.OnToggleFromDatePickerExpanded)
+                        onAction(AgendaDetailAction.OnToggleStartDatePickerExpanded)
                     },
                     clock = clock,
                 )
@@ -354,21 +354,21 @@ internal fun AgendaDetailScreen(
                 if (type == AgendaItemType.EVENT) {
                     AgendaDetailTime(
                         timeDescription = stringResource(id = R.string.to),
-                        localDateTime = state.toDateTime,
+                        localDateTime = state.endDateTime,
                         editEnabled = state.isEditing,
                         onSelectTime = { time ->
-                            onAction(AgendaDetailAction.OnSelectToTime(time))
+                            onAction(AgendaDetailAction.OnSelectEndTime(time))
                         },
-                        timePickerExpanded = state.isEditingToTime,
+                        timePickerExpanded = state.isEditingEndTime,
                         toggleTimePickerExpanded = {
-                            onAction(AgendaDetailAction.OnToggleToTimePickerExpanded)
+                            onAction(AgendaDetailAction.OnToggleEndTimePickerExpanded)
                         },
                         onSelectDate = { date ->
-                            onAction(AgendaDetailAction.OnSelectToDate(date))
+                            onAction(AgendaDetailAction.OnSelectEndDate(date))
                         },
-                        datePickerExpanded = state.isEditingToDate,
+                        datePickerExpanded = state.isEditingEndDate,
                         toggleDatePickerExpanded = {
-                            onAction(AgendaDetailAction.OnToggleToDatePickerExpanded)
+                            onAction(AgendaDetailAction.OnToggleEndDatePickerExpanded)
                         },
                         clock = clock,
                     )
@@ -461,7 +461,7 @@ private fun ReminderDetailScreenPreview() {
                     title = "Project X",
                     description = "Weekly plan\nRole distribution",
                     selectedDate = LocalDate(2022, 3, 1),
-                    fromDateTime = LocalDateTime(2022, 7, 21, 8, 0),
+                    startDateTime = LocalDateTime(2022, 7, 21, 8, 0),
                     isEditing = false,
                 ),
                 onAction = {},
@@ -481,7 +481,7 @@ private fun ReminderDetailScreenPreview_EditTitle() {
                     title = "Project X",
                     description = "Weekly plan\nRole distribution",
                     selectedDate = LocalDate(2022, 3, 1),
-                    fromDateTime = LocalDateTime(2022, 7, 21, 8, 0),
+                    startDateTime = LocalDateTime(2022, 7, 21, 8, 0),
                     isEditing = true,
                     isEditingTitle = true,
                 ),
@@ -503,7 +503,7 @@ private fun ReminderDetailScreenPreview_EditDescription() {
                     description = "Amet minim mollit non deserunt ullamco " +
                         "est sit aliqua dolor do amet sint. ",
                     selectedDate = LocalDate(2022, 3, 1),
-                    fromDateTime = LocalDateTime(2022, 7, 21, 8, 0),
+                    startDateTime = LocalDateTime(2022, 7, 21, 8, 0),
                     isEditing = true,
                     isEditingDescription = true,
                 ),
@@ -525,7 +525,7 @@ private fun ReminderDetailScreenPreview_DeleteDialog() {
                     description = "Amet minim mollit non deserunt ullamco " +
                         "est sit aliqua dolor do amet sint. ",
                     selectedDate = LocalDate(2022, 3, 1),
-                    fromDateTime = LocalDateTime(2022, 7, 21, 8, 0),
+                    startDateTime = LocalDateTime(2022, 7, 21, 8, 0),
                     isEditing = true,
                     isShowingDeleteConfirmationDialog = true,
                 ),
@@ -547,7 +547,7 @@ private fun ReminderDetailScreenPreview_CloseDialog() {
                     description = "Amet minim mollit non deserunt ullamco " +
                         "est sit aliqua dolor do amet sint. ",
                     selectedDate = LocalDate(2022, 3, 1),
-                    fromDateTime = LocalDateTime(2022, 7, 21, 8, 0),
+                    startDateTime = LocalDateTime(2022, 7, 21, 8, 0),
                     isEditing = true,
                     isShowingCloseConfirmationDialog = true,
                 ),

@@ -32,18 +32,18 @@ data class AgendaDetailState(
     val selectedPhotoToView: PhotoId? = null,
 
     // date time
-    val fromDateTime: LocalDateTime = now()
+    val startDateTime: LocalDateTime = now()
         .toInstant(TimeZone.currentSystemDefault())
         .plus(60.minutes)
         .toLocalDateTime(TimeZone.currentSystemDefault()),
-    val toDateTime: LocalDateTime = now()
+    val endDateTime: LocalDateTime = now()
         .toInstant(TimeZone.currentSystemDefault())
         .plus(90.minutes)
         .toLocalDateTime(TimeZone.currentSystemDefault()),
-    val isEditingFromTime: Boolean = false,
-    val isEditingToTime: Boolean = false,
-    val isEditingFromDate: Boolean = false,
-    val isEditingToDate: Boolean = false,
+    val isEditingStartTime: Boolean = false,
+    val isEditingEndTime: Boolean = false,
+    val isEditingStartDate: Boolean = false,
+    val isEditingEndDate: Boolean = false,
 
     // notification
     val notificationDuration: NotificationDuration = NotificationDuration.Minutes30,

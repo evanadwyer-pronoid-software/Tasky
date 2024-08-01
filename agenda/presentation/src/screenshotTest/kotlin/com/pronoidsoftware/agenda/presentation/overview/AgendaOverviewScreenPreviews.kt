@@ -8,8 +8,10 @@ import com.pronoidsoftware.agenda.presentation.overview.model.AgendaOverviewItem
 import com.pronoidsoftware.core.domain.util.today
 import com.pronoidsoftware.core.presentation.designsystem.LocalClock
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
+import com.pronoidsoftware.core.presentation.ui.formatOverview
 import com.pronoidsoftware.testutil.jvmtest.core.data.time.TestClock
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 
@@ -31,7 +33,9 @@ private fun AgendaOverviewScreenPreview_Figma() {
                                 id = "1",
                                 title = "Project X",
                                 description = "Just work",
-                                fromTime = "Mar 5, 10:00",
+                                startDateTime = LocalDateTime(2023, 3, 5, 10, 0)
+                                    .formatOverview()
+                                    .asString(),
                                 completed = true,
                             ),
                         ),
@@ -42,8 +46,12 @@ private fun AgendaOverviewScreenPreview_Figma() {
                                 id = "2",
                                 title = "Meeting",
                                 description = "Amet minim mollit non deserunt",
-                                fromTime = "Mar 5, 10:30",
-                                toTime = "Mar 5, 11:00",
+                                startDateTime = LocalDateTime(2023, 3, 5, 10, 30)
+                                    .formatOverview()
+                                    .asString(),
+                                endDateTime = LocalDateTime(2023, 3, 5, 11, 0)
+                                    .formatOverview()
+                                    .asString(),
                             ),
                         ),
                         AgendaOverviewItemUi.Item(
@@ -52,7 +60,9 @@ private fun AgendaOverviewScreenPreview_Figma() {
                                 id = "3",
                                 title = "Lunch break",
                                 description = "Just work",
-                                fromTime = "Mar 5, 14:00",
+                                startDateTime = LocalDateTime(2023, 3, 5, 14, 0)
+                                    .formatOverview()
+                                    .asString(),
                             ),
                         ),
                         AgendaOverviewItemUi.Item(
@@ -61,7 +71,9 @@ private fun AgendaOverviewScreenPreview_Figma() {
                                 id = "4",
                                 title = "Meeting",
                                 description = "Amet minim mollit non deserunt ullamco est",
-                                fromTime = "Mar 5, 15:00",
+                                startDateTime = LocalDateTime(2023, 3, 5, 15, 0)
+                                    .formatOverview()
+                                    .asString(),
                             ),
                         ),
                     ),
