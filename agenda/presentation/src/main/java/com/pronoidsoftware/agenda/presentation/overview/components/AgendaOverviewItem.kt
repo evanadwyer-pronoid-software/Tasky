@@ -182,9 +182,10 @@ fun AgendaOverviewItem(
                 text = if (
                     agendaOverviewItemContents is AgendaOverviewItemContents.EventOverviewUiContents
                 ) {
-                    "${agendaOverviewItemContents.fromTime} - ${agendaOverviewItemContents.toTime}"
+                    "${agendaOverviewItemContents.startDateTime} " +
+                        "- ${agendaOverviewItemContents.endDateTime}"
                 } else {
-                    agendaOverviewItemContents.fromTime
+                    agendaOverviewItemContents.startDateTime
                 },
                 color = contentColors.time,
                 style = MaterialTheme.typography.bodySmall,
@@ -269,8 +270,8 @@ private fun AgendaOverviewItemUiPreview(
                         title = type.name,
                         description = "Lorem ipsum dolor sit amet, consectetur adipi scing elit, " +
                             "sed do eiusmod tempor incididunt ut labore",
-                        fromTime = "Mar 5, 10:30",
-                        toTime = "Mar 5, 11:00",
+                        startDateTime = "Mar 5, 10:30",
+                        endDateTime = "Mar 5, 11:00",
                     ),
                     onTickClick = {
                         completed = !completed
@@ -297,7 +298,7 @@ private fun AgendaOverviewItemUiPreview(
                         title = type.name,
                         description = "Lorem ipsum dolor sit amet, consectetur adipi scing elit, " +
                             "sed do eiusmod tempor incididunt ut labore",
-                        fromTime = "Mar 5, 10:30",
+                        startDateTime = "Mar 5, 10:30",
                         completed = true,
                     ),
                     onTickClick = {
@@ -326,7 +327,7 @@ private fun AgendaOverviewItemUiPreview(
                         title = type.name,
                         description = "Lorem ipsum dolor sit amet, consectetur adipi scing elit, " +
                             "sed do eiusmod tempor incididunt ut labore",
-                        fromTime = "Mar 5, 10:30",
+                        startDateTime = "Mar 5, 10:30",
                     ),
                     onTickClick = {
                         completed = !completed

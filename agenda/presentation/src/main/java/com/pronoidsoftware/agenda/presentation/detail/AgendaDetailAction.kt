@@ -36,16 +36,16 @@ sealed interface AgendaDetailAction {
     data class OnDeletePhotoClick(val photo: PhotoId) : AgendaDetailAction
 
     // time picker actions
-    data object OnToggleFromTimePickerExpanded : AgendaDetailAction
-    data class OnSelectFromTime(val fromTime: LocalTime) : AgendaDetailAction
-    data object OnToggleToTimePickerExpanded : AgendaDetailAction
-    data class OnSelectToTime(val toTime: LocalTime) : AgendaDetailAction
+    data object OnToggleStartTimePickerExpanded : AgendaDetailAction
+    data class OnSelectStartTime(val startTime: LocalTime) : AgendaDetailAction
+    data object OnToggleEndTimePickerExpanded : AgendaDetailAction
+    data class OnSelectEndTime(val endTime: LocalTime) : AgendaDetailAction
 
     // date picker actions
-    data object OnToggleFromDatePickerExpanded : AgendaDetailAction
-    data class OnSelectFromDate(val fromDate: LocalDate) : AgendaDetailAction
-    data object OnToggleToDatePickerExpanded : AgendaDetailAction
-    data class OnSelectToDate(val toDate: LocalDate) : AgendaDetailAction
+    data object OnToggleStartDatePickerExpanded : AgendaDetailAction
+    data class OnSelectStartDate(val startDate: LocalDate) : AgendaDetailAction
+    data object OnToggleEndDatePickerExpanded : AgendaDetailAction
+    data class OnSelectEndDate(val endDate: LocalDate) : AgendaDetailAction
 
     // notification duration actions
     data object OnToggleNotificationDurationExpanded : AgendaDetailAction

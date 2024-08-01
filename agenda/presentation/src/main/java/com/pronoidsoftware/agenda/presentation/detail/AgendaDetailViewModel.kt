@@ -35,7 +35,7 @@ class AgendaDetailViewModel @Inject constructor(
     var state by mutableStateOf(
         AgendaDetailState(
             selectedDate = today(clock),
-            fromDateTime = now(clock)
+            startDateTime = now(clock)
                 .toInstant(TimeZone.currentSystemDefault())
                 .plus(60.minutes)
                 .toLocalDateTime(TimeZone.currentSystemDefault()),
@@ -168,119 +168,119 @@ class AgendaDetailViewModel @Inject constructor(
                 )
             }
 
-            is AgendaDetailAction.OnSelectFromDate -> {
-                val date = action.fromDate
-                val newFromTime = LocalDateTime(
+            is AgendaDetailAction.OnSelectStartDate -> {
+                val date = action.startDate
+                val newStartTime = LocalDateTime(
                     date.year,
                     date.month,
                     date.dayOfMonth,
-                    state.fromDateTime.hour,
-                    state.fromDateTime.minute,
+                    state.startDateTime.hour,
+                    state.startDateTime.minute,
                 )
-                val newToTime = if (newFromTime > state.toDateTime) {
-                    newFromTime
+                val newEndDateTime = if (newStartTime > state.endDateTime) {
+                    newStartTime
                         .toInstant(TimeZone.currentSystemDefault())
                         .plus(30.minutes)
                         .toLocalDateTime(TimeZone.currentSystemDefault())
                 } else {
-                    state.toDateTime
+                    state.endDateTime
                 }
                 state = state.copy(
-                    fromDateTime = newFromTime,
-                    toDateTime = newToTime,
+                    startDateTime = newStartTime,
+                    endDateTime = newEndDateTime,
                 )
             }
 
-            is AgendaDetailAction.OnSelectFromTime -> {
-                val time = action.fromTime
-                val newFromTime = LocalDateTime(
-                    state.fromDateTime.year,
-                    state.fromDateTime.month,
-                    state.fromDateTime.dayOfMonth,
+            is AgendaDetailAction.OnSelectStartTime -> {
+                val time = action.startTime
+                val newStartTime = LocalDateTime(
+                    state.startDateTime.year,
+                    state.startDateTime.month,
+                    state.startDateTime.dayOfMonth,
                     time.hour,
                     time.minute,
                 )
-                val newToTime = if (newFromTime > state.toDateTime) {
-                    newFromTime
+                val newEndDateTime = if (newStartTime > state.endDateTime) {
+                    newStartTime
                         .toInstant(TimeZone.currentSystemDefault())
                         .plus(30.minutes)
                         .toLocalDateTime(TimeZone.currentSystemDefault())
                 } else {
-                    state.toDateTime
+                    state.endDateTime
                 }
                 state = state.copy(
-                    fromDateTime = newFromTime,
-                    toDateTime = newToTime,
+                    startDateTime = newStartTime,
+                    endDateTime = newEndDateTime,
                 )
             }
 
-            is AgendaDetailAction.OnSelectToDate -> {
-                val date = action.toDate
-                val newToTime = LocalDateTime(
+            is AgendaDetailAction.OnSelectEndDate -> {
+                val date = action.endDate
+                val newEndDateTime = LocalDateTime(
                     date.year,
                     date.month,
                     date.dayOfMonth,
-                    state.fromDateTime.hour,
-                    state.fromDateTime.minute,
+                    state.startDateTime.hour,
+                    state.startDateTime.minute,
                 )
-                val newFromTime = if (newToTime < state.fromDateTime) {
-                    newToTime
+                val newStartDateTime = if (newEndDateTime < state.startDateTime) {
+                    newEndDateTime
                         .toInstant(TimeZone.currentSystemDefault())
                         .minus(30.minutes)
                         .toLocalDateTime(TimeZone.currentSystemDefault())
                 } else {
-                    state.fromDateTime
+                    state.startDateTime
                 }
                 state = state.copy(
-                    fromDateTime = newFromTime,
-                    toDateTime = newToTime,
+                    startDateTime = newStartDateTime,
+                    endDateTime = newEndDateTime,
                 )
             }
 
-            is AgendaDetailAction.OnSelectToTime -> {
-                val time = action.toTime
-                val newToTime = LocalDateTime(
-                    state.fromDateTime.year,
-                    state.fromDateTime.month,
-                    state.fromDateTime.dayOfMonth,
+            is AgendaDetailAction.OnSelectEndTime -> {
+                val time = action.endTime
+                val newEndDateTime = LocalDateTime(
+                    state.startDateTime.year,
+                    state.startDateTime.month,
+                    state.startDateTime.dayOfMonth,
                     time.hour,
                     time.minute,
                 )
-                val newFromTime = if (newToTime < state.fromDateTime) {
-                    newToTime
+                val newStartDateTime = if (newEndDateTime < state.startDateTime) {
+                    newEndDateTime
                         .toInstant(TimeZone.currentSystemDefault())
                         .minus(30.minutes)
                         .toLocalDateTime(TimeZone.currentSystemDefault())
                 } else {
-                    state.fromDateTime
+                    state.startDateTime
                 }
                 state = state.copy(
-                    fromDateTime = newFromTime,
-                    toDateTime = newToTime,
+                    startDateTime = newStartDateTime,
+                    endDateTime = newEndDateTime,
                 )
             }
 
-            AgendaDetailAction.OnToggleFromTimePickerExpanded -> {
+            AgendaDetailAction.OnToggleStartTimePickerExpanded -> {
                 state = state.copy(
-                    isEditingFromTime = !state.isEditingFromTime,
+                    isEditingStartTime = !state.isEditingStartTime,
                 )
             }
 
-            AgendaDetailAction.OnToggleFromDatePickerExpanded -> {
+            AgendaDetailAction.OnToggleStartDatePickerExpanded -> {
                 state = state.copy(
-                    isEditingFromDate = !state.isEditingFromDate,
+                    isEditingStartDate = !state.isEditingStartDate,
                 )
             }
 
-            AgendaDetailAction.OnToggleToTimePickerExpanded -> {
+            AgendaDetailAction.OnToggleEndTimePickerExpanded -> {
                 state = state.copy(
-                    isEditingToTime = !state.isEditingToTime,
+                    isEditingEndTime = !state.isEditingEndTime,
                 )
             }
 
-            AgendaDetailAction.OnToggleToDatePickerExpanded -> {
+            AgendaDetailAction.OnToggleEndDatePickerExpanded -> {
                 state = state.copy(
-                    isEditingToDate = !state.isEditingToDate,
+                    isEditingEndDate = !state.isEditingEndDate,
                 )
             }
 

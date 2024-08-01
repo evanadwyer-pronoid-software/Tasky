@@ -17,3 +17,15 @@ fun Modifier.crop(horizontal: Dp = 0.dp, vertical: Dp = 0.dp): Modifier =
             placeable.placeRelative(-horizontal.toPx().toInt(), -vertical.toPx().toInt())
         }
     }
+
+fun Modifier.ignoreColumnPadding(horizontal: Dp = 0.dp): Modifier =
+    this.layout { measurable, constraints ->
+        val placeable = measurable.measure(
+            constraints.copy(
+                maxWidth = constraints.maxWidth + (horizontal * 2).roundToPx(),
+            ),
+        )
+        layout(placeable.width, placeable.height) {
+            placeable.place(0, 0)
+        }
+    }
