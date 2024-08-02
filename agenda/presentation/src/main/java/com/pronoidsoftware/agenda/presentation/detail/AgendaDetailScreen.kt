@@ -21,7 +21,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
@@ -59,22 +58,9 @@ import kotlinx.datetime.LocalDateTime
 
 @Composable
 fun AgendaDetailScreenRoot(
-    type: AgendaItemType,
-    isEditing: Boolean,
     onCloseClick: () -> Unit,
     viewModel: AgendaDetailViewModel = hiltViewModel(),
 ) {
-    LaunchedEffect(isEditing) {
-        if (isEditing) {
-            viewModel.onAction(AgendaDetailAction.OnEnableEdit)
-        } else {
-            viewModel.onAction(AgendaDetailAction.OnDisableEdit)
-        }
-    }
-    LaunchedEffect(type) {
-        viewModel.onAction(AgendaDetailAction.OnSetAgendaItemType(type))
-    }
-
     val context = LocalContext.current
     ObserveAsEvents(flow = viewModel.events) { event ->
         when (event) {

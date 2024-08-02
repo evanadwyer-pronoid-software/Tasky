@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pronoidsoftware.agenda.domain.model.AgendaItemType
@@ -31,7 +32,17 @@ import timber.log.Timber
 class AgendaDetailViewModel @Inject constructor(
     clock: Clock,
     userDataValidator: UserDataValidator,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+
+    private fun SavedStateHandle.isEditing(): Boolean {
+        return get<Boolean>("isEditing") ?: false
+    }
+
+    private fun SavedStateHandle.getAgendaItemType(): AgendaItemType? {
+        return get<String>("type")
+            ?.let { AgendaItemType.valueOf(it) }
+    }
 
     var state by mutableStateOf(
         AgendaDetailState(
@@ -40,6 +51,14 @@ class AgendaDetailViewModel @Inject constructor(
                 .toInstant(TimeZone.currentSystemDefault())
                 .plus(60.minutes)
                 .toLocalDateTime(TimeZone.currentSystemDefault()),
+            isEditing = savedStateHandle.isEditing(),
+            agendaItemType = savedStateHandle.getAgendaItemType(),
+            typeSpecificDetails = when (savedStateHandle.getAgendaItemType()) {
+                AgendaItemType.EVENT -> AgendaItemDetails.Event()
+                AgendaItemType.TASK -> AgendaItemDetails.Task()
+                AgendaItemType.REMINDER -> AgendaItemDetails.Reminder
+                null -> null
+            },
         ),
     )
         private set
@@ -61,40 +80,23 @@ class AgendaDetailViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-    fun getDetailsAsEvent(): AgendaItemDetails.Event? {
+    private fun getDetailsAsEvent(): AgendaItemDetails.Event? {
         return (state.typeSpecificDetails as? AgendaItemDetails.Event)
     }
 
-    fun getDetailsAsTask(): AgendaItemDetails.Task? {
+    private fun getDetailsAsTask(): AgendaItemDetails.Task? {
         return (state.typeSpecificDetails as? AgendaItemDetails.Task)
     }
 
-    fun getDetailsAsReminder(): AgendaItemDetails.Reminder? {
+    private fun getDetailsAsReminder(): AgendaItemDetails.Reminder? {
         return (state.typeSpecificDetails as? AgendaItemDetails.Reminder)
     }
 
     fun onAction(action: AgendaDetailAction) {
         when (action) {
-            is AgendaDetailAction.OnSetAgendaItemType -> {
-                state = state.copy(
-                    agendaItemType = action.type,
-                    typeSpecificDetails = when (action.type) {
-                        AgendaItemType.EVENT -> AgendaItemDetails.Event()
-                        AgendaItemType.TASK -> AgendaItemDetails.Task()
-                        AgendaItemType.REMINDER -> AgendaItemDetails.Reminder
-                    },
-                )
-            }
-
             AgendaDetailAction.OnEnableEdit -> {
                 state = state.copy(
                     isEditing = true,
-                )
-            }
-
-            AgendaDetailAction.OnDisableEdit -> {
-                state = state.copy(
-                    isEditing = false,
                 )
             }
 
