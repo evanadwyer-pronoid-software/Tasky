@@ -7,12 +7,12 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 
 sealed interface AgendaDetailAction {
+
     // toolbar actions
     data object OnClose : AgendaDetailAction
     data object OnConfirmClose : AgendaDetailAction
     data object OnCancelClose : AgendaDetailAction
     data object OnEnableEdit : AgendaDetailAction
-    data object OnDisableEdit : AgendaDetailAction
     data object OnSave : AgendaDetailAction
 
     // title actions

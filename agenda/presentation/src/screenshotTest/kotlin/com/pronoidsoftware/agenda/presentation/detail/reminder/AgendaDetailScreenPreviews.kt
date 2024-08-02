@@ -7,6 +7,7 @@ import com.pronoidsoftware.agenda.domain.model.AgendaItemType
 import com.pronoidsoftware.agenda.presentation.R
 import com.pronoidsoftware.agenda.presentation.detail.AgendaDetailScreen
 import com.pronoidsoftware.agenda.presentation.detail.AgendaDetailState
+import com.pronoidsoftware.agenda.presentation.detail.AgendaItemDetails
 import com.pronoidsoftware.agenda.presentation.detail.components.event.photo.model.PhotoId
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.model.VisitorFilterType
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.model.VisitorUI
@@ -57,8 +58,8 @@ private fun ReminderDetailScreenPreview_Read() {
     TaskyTheme {
         CompositionLocalProvider(LocalClock provides fixedClock) {
             AgendaDetailScreen(
-                type = AgendaItemType.REMINDER,
                 state = AgendaDetailState(
+                    agendaItemType = AgendaItemType.REMINDER,
                     title = "Project X",
                     description = "Weekly plan\nRole distribution",
                     selectedDate = selectedDate,
@@ -77,8 +78,8 @@ private fun ReminderDetailScreenPreview_Read_EmptyDescription() {
     TaskyTheme {
         CompositionLocalProvider(LocalClock provides fixedClock) {
             AgendaDetailScreen(
-                type = AgendaItemType.REMINDER,
                 state = AgendaDetailState(
+                    agendaItemType = AgendaItemType.REMINDER,
                     title = "Project X",
                     selectedDate = selectedDate,
                     startDateTime = startDateTime,
@@ -96,8 +97,8 @@ private fun ReminderDetailScreenPreview_Edit() {
     TaskyTheme {
         CompositionLocalProvider(LocalClock provides fixedClock) {
             AgendaDetailScreen(
-                type = AgendaItemType.REMINDER,
                 state = AgendaDetailState(
+                    agendaItemType = AgendaItemType.REMINDER,
                     title = "Project X",
                     description = "Weekly plan\nRole distribution",
                     selectedDate = selectedDate,
@@ -116,8 +117,8 @@ private fun ReminderDetailScreenPreview_Edit_EmptyDescription() {
     TaskyTheme {
         CompositionLocalProvider(LocalClock provides fixedClock) {
             AgendaDetailScreen(
-                type = AgendaItemType.REMINDER,
                 state = AgendaDetailState(
+                    agendaItemType = AgendaItemType.REMINDER,
                     title = "Project X",
                     selectedDate = selectedDate,
                     startDateTime = startDateTime,
@@ -135,8 +136,8 @@ private fun TaskDetailScreenPreview_Read() {
     TaskyTheme {
         CompositionLocalProvider(LocalClock provides fixedClock) {
             AgendaDetailScreen(
-                type = AgendaItemType.TASK,
                 state = AgendaDetailState(
+                    agendaItemType = AgendaItemType.TASK,
                     title = "Project X",
                     description = "Weekly plan\nRole distribution",
                     selectedDate = selectedDate,
@@ -155,14 +156,16 @@ private fun TaskDetailScreenPreview_Read_Completed() {
     TaskyTheme {
         CompositionLocalProvider(LocalClock provides fixedClock) {
             AgendaDetailScreen(
-                type = AgendaItemType.TASK,
                 state = AgendaDetailState(
+                    agendaItemType = AgendaItemType.TASK,
                     title = "Project X",
                     description = "Weekly plan\nRole distribution",
                     selectedDate = selectedDate,
                     startDateTime = startDateTime,
                     isEditing = false,
-                    completed = true,
+                    typeSpecificDetails = AgendaItemDetails.Task(
+                        completed = true,
+                    ),
                 ),
                 onAction = {},
             )
@@ -176,8 +179,8 @@ private fun TaskDetailScreenPreview_Read_EmptyDescription() {
     TaskyTheme {
         CompositionLocalProvider(LocalClock provides fixedClock) {
             AgendaDetailScreen(
-                type = AgendaItemType.TASK,
                 state = AgendaDetailState(
+                    agendaItemType = AgendaItemType.TASK,
                     title = "Project X",
                     selectedDate = selectedDate,
                     startDateTime = startDateTime,
@@ -195,8 +198,8 @@ private fun TaskDetailScreenPreview_Edit() {
     TaskyTheme {
         CompositionLocalProvider(LocalClock provides fixedClock) {
             AgendaDetailScreen(
-                type = AgendaItemType.TASK,
                 state = AgendaDetailState(
+                    agendaItemType = AgendaItemType.TASK,
                     title = "Project X",
                     description = "Weekly plan\nRole distribution",
                     selectedDate = selectedDate,
@@ -215,8 +218,8 @@ private fun TaskDetailScreenPreview_Edit_EmptyDescription() {
     TaskyTheme {
         CompositionLocalProvider(LocalClock provides fixedClock) {
             AgendaDetailScreen(
-                type = AgendaItemType.TASK,
                 state = AgendaDetailState(
+                    agendaItemType = AgendaItemType.TASK,
                     title = "Project X",
                     selectedDate = selectedDate,
                     startDateTime = startDateTime,
@@ -234,10 +237,13 @@ private fun EventDetailScreenPreview_Read_Empty() {
     TaskyTheme {
         CompositionLocalProvider(LocalClock provides fixedClock) {
             AgendaDetailScreen(
-                type = AgendaItemType.EVENT,
                 state = AgendaDetailState(
+                    selectedDate = selectedDate,
+                    agendaItemType = AgendaItemType.EVENT,
                     startDateTime = startDateTime,
-                    endDateTime = endDateTime,
+                    typeSpecificDetails = AgendaItemDetails.Event(
+                        endDateTime = endDateTime,
+                    ),
                 ),
                 onAction = {},
             )
@@ -251,9 +257,11 @@ private fun EventDetailScreenPreview_Read_OpenPhoto() {
     TaskyTheme {
         CompositionLocalProvider(LocalClock provides fixedClock) {
             AgendaDetailScreen(
-                type = AgendaItemType.EVENT,
                 state = AgendaDetailState(
-                    selectedPhotoToView = PhotoId.PhotoResId(R.drawable.test_wedding),
+                    agendaItemType = AgendaItemType.EVENT,
+                    typeSpecificDetails = AgendaItemDetails.Event(
+                        selectedPhotoToView = PhotoId.PhotoResId(R.drawable.test_wedding),
+                    ),
                 ),
                 onAction = {},
             )
@@ -267,17 +275,19 @@ private fun EventDetailScreenPreview_Read() {
     TaskyTheme {
         CompositionLocalProvider(LocalClock provides fixedClock) {
             AgendaDetailScreen(
-                type = AgendaItemType.EVENT,
                 state = AgendaDetailState(
+                    agendaItemType = AgendaItemType.EVENT,
                     title = "Meeting",
                     description = "Amet minim mollit non deserunt ullamco " +
                         "est sit aliqua dolor do amet sint. ",
-                    photos = photos,
                     selectedDate = selectedDate,
                     startDateTime = startDateTime,
-                    endDateTime = endDateTime,
                     isEditing = false,
-                    visitors = visitors,
+                    typeSpecificDetails = AgendaItemDetails.Event(
+                        photos = photos,
+                        endDateTime = endDateTime,
+                        visitors = visitors,
+                    ),
                 ),
                 onAction = {},
             )
@@ -291,18 +301,20 @@ private fun EventDetailScreenPreview_Read_GoingVisitors() {
     TaskyTheme {
         CompositionLocalProvider(LocalClock provides fixedClock) {
             AgendaDetailScreen(
-                type = AgendaItemType.EVENT,
                 state = AgendaDetailState(
+                    agendaItemType = AgendaItemType.EVENT,
                     title = "Meeting",
                     description = "Amet minim mollit non deserunt ullamco " +
                         "est sit aliqua dolor do amet sint. ",
-                    photos = photos,
                     selectedDate = selectedDate,
                     startDateTime = startDateTime,
-                    endDateTime = endDateTime,
                     isEditing = false,
-                    visitors = visitors,
-                    selectedVisitorFilter = VisitorFilterType.GOING,
+                    typeSpecificDetails = AgendaItemDetails.Event(
+                        photos = photos,
+                        endDateTime = endDateTime,
+                        visitors = visitors,
+                        selectedVisitorFilter = VisitorFilterType.GOING,
+                    ),
                 ),
                 onAction = {},
             )
@@ -316,18 +328,20 @@ private fun EventDetailScreenPreview_Read_NotGoingVisitors() {
     TaskyTheme {
         CompositionLocalProvider(LocalClock provides fixedClock) {
             AgendaDetailScreen(
-                type = AgendaItemType.EVENT,
                 state = AgendaDetailState(
+                    agendaItemType = AgendaItemType.EVENT,
                     title = "Meeting",
                     description = "Amet minim mollit non deserunt ullamco " +
                         "est sit aliqua dolor do amet sint. ",
-                    photos = photos,
                     selectedDate = selectedDate,
                     startDateTime = startDateTime,
-                    endDateTime = endDateTime,
                     isEditing = false,
-                    visitors = visitors,
-                    selectedVisitorFilter = VisitorFilterType.NOT_GOING,
+                    typeSpecificDetails = AgendaItemDetails.Event(
+                        photos = photos,
+                        endDateTime = endDateTime,
+                        visitors = visitors,
+                        selectedVisitorFilter = VisitorFilterType.NOT_GOING,
+                    ),
                 ),
                 onAction = {},
             )
@@ -341,15 +355,17 @@ private fun EventDetailScreenPreview_Read_EmptyDescription() {
     TaskyTheme {
         CompositionLocalProvider(LocalClock provides fixedClock) {
             AgendaDetailScreen(
-                type = AgendaItemType.EVENT,
                 state = AgendaDetailState(
+                    agendaItemType = AgendaItemType.EVENT,
                     title = "Meeting",
-                    photos = photos,
                     selectedDate = selectedDate,
                     startDateTime = startDateTime,
-                    endDateTime = endDateTime,
                     isEditing = false,
-                    visitors = visitors,
+                    typeSpecificDetails = AgendaItemDetails.Event(
+                        photos = photos,
+                        endDateTime = endDateTime,
+                        visitors = visitors,
+                    ),
                 ),
                 onAction = {},
             )
@@ -363,17 +379,19 @@ private fun EventDetailScreenPreview_Edit() {
     TaskyTheme {
         CompositionLocalProvider(LocalClock provides fixedClock) {
             AgendaDetailScreen(
-                type = AgendaItemType.EVENT,
                 state = AgendaDetailState(
+                    agendaItemType = AgendaItemType.EVENT,
                     title = "Meeting",
                     description = "Amet minim mollit non deserunt ullamco " +
                         "est sit aliqua dolor do amet sint. ",
-                    photos = photos,
                     selectedDate = selectedDate,
                     startDateTime = startDateTime,
-                    endDateTime = endDateTime,
                     isEditing = true,
-                    visitors = visitors,
+                    typeSpecificDetails = AgendaItemDetails.Event(
+                        photos = photos,
+                        endDateTime = endDateTime,
+                        visitors = visitors,
+                    ),
                 ),
                 onAction = {},
             )
@@ -387,18 +405,20 @@ private fun EventDetailScreenPreview_Edit_AddVisitor() {
     TaskyTheme {
         CompositionLocalProvider(LocalClock provides fixedClock) {
             AgendaDetailScreen(
-                type = AgendaItemType.EVENT,
                 state = AgendaDetailState(
+                    agendaItemType = AgendaItemType.EVENT,
                     title = "Meeting",
                     description = "Amet minim mollit non deserunt ullamco " +
                         "est sit aliqua dolor do amet sint. ",
-                    photos = photos,
                     selectedDate = selectedDate,
                     startDateTime = startDateTime,
-                    endDateTime = endDateTime,
                     isEditing = true,
-                    visitors = visitors,
-                    isShowingAddVisitorDialog = true,
+                    typeSpecificDetails = AgendaItemDetails.Event(
+                        photos = photos,
+                        endDateTime = endDateTime,
+                        visitors = visitors,
+                        isShowingAddVisitorDialog = true,
+                    ),
                 ),
                 onAction = {},
             )
@@ -412,15 +432,17 @@ private fun EventDetailScreenPreview_Edit_EmptyDescription() {
     TaskyTheme {
         CompositionLocalProvider(LocalClock provides fixedClock) {
             AgendaDetailScreen(
-                type = AgendaItemType.EVENT,
                 state = AgendaDetailState(
+                    agendaItemType = AgendaItemType.EVENT,
                     title = "Meeting",
-                    photos = photos,
                     selectedDate = selectedDate,
                     startDateTime = startDateTime,
-                    endDateTime = endDateTime,
                     isEditing = true,
-                    visitors = visitors,
+                    typeSpecificDetails = AgendaItemDetails.Event(
+                        photos = photos,
+                        endDateTime = endDateTime,
+                        visitors = visitors,
+                    ),
                 ),
                 onAction = {},
             )

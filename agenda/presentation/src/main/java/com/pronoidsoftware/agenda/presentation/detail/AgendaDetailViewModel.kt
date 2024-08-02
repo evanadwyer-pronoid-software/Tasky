@@ -5,8 +5,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.pronoidsoftware.agenda.domain.model.AgendaItemType
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.model.VisitorFilterType
 import com.pronoidsoftware.core.domain.util.now
 import com.pronoidsoftware.core.domain.util.today
@@ -30,7 +32,17 @@ import timber.log.Timber
 class AgendaDetailViewModel @Inject constructor(
     clock: Clock,
     userDataValidator: UserDataValidator,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+
+    private fun SavedStateHandle.isEditing(): Boolean {
+        return get<Boolean>("isEditing") ?: false
+    }
+
+    private fun SavedStateHandle.getAgendaItemType(): AgendaItemType? {
+        return get<String>("type")
+            ?.let { AgendaItemType.valueOf(it) }
+    }
 
     var state by mutableStateOf(
         AgendaDetailState(
@@ -39,6 +51,14 @@ class AgendaDetailViewModel @Inject constructor(
                 .toInstant(TimeZone.currentSystemDefault())
                 .plus(60.minutes)
                 .toLocalDateTime(TimeZone.currentSystemDefault()),
+            isEditing = savedStateHandle.isEditing(),
+            agendaItemType = savedStateHandle.getAgendaItemType(),
+            typeSpecificDetails = when (savedStateHandle.getAgendaItemType()) {
+                AgendaItemType.EVENT -> AgendaItemDetails.Event()
+                AgendaItemType.TASK -> AgendaItemDetails.Task()
+                AgendaItemType.REMINDER -> AgendaItemDetails.Reminder
+                null -> null
+            },
         ),
     )
         private set
@@ -47,13 +67,29 @@ class AgendaDetailViewModel @Inject constructor(
     val events = eventChannel.receiveAsFlow()
 
     init {
-        snapshotFlow { state.visitorToAddEmail.text }
+        snapshotFlow { getDetailsAsEvent()?.visitorToAddEmail?.text }
             .onEach { email ->
                 state = state.copy(
-                    isVisitorToAddEmailValid = userDataValidator.validateEmail(email.toString()),
+                    typeSpecificDetails = getDetailsAsEvent()?.copy(
+                        isVisitorToAddEmailValid = userDataValidator.validateEmail(
+                            email.toString(),
+                        ),
+                    ),
                 )
             }
             .launchIn(viewModelScope)
+    }
+
+    private fun getDetailsAsEvent(): AgendaItemDetails.Event? {
+        return (state.typeSpecificDetails as? AgendaItemDetails.Event)
+    }
+
+    private fun getDetailsAsTask(): AgendaItemDetails.Task? {
+        return (state.typeSpecificDetails as? AgendaItemDetails.Task)
+    }
+
+    private fun getDetailsAsReminder(): AgendaItemDetails.Reminder? {
+        return (state.typeSpecificDetails as? AgendaItemDetails.Reminder)
     }
 
     fun onAction(action: AgendaDetailAction) {
@@ -61,12 +97,6 @@ class AgendaDetailViewModel @Inject constructor(
             AgendaDetailAction.OnEnableEdit -> {
                 state = state.copy(
                     isEditing = true,
-                )
-            }
-
-            AgendaDetailAction.OnDisableEdit -> {
-                state = state.copy(
-                    isEditing = false,
                 )
             }
 
@@ -144,120 +174,156 @@ class AgendaDetailViewModel @Inject constructor(
             }
 
             is AgendaDetailAction.OnAddPhotoClick -> {
-                state = state.copy(
-                    photos = state.photos + action.photo,
-                )
+                getDetailsAsEvent()?.let { eventDetails ->
+                    state = state.copy(
+                        typeSpecificDetails = eventDetails.copy(
+                            photos = eventDetails.photos + action.photo,
+                        ),
+                    )
+                }
             }
 
             is AgendaDetailAction.OnOpenPhotoClick -> {
-                state = state.copy(
-                    selectedPhotoToView = action.photo,
-                )
+                getDetailsAsEvent()?.let { eventDetails ->
+                    state = state.copy(
+                        typeSpecificDetails = eventDetails.copy(
+                            selectedPhotoToView = action.photo,
+                        ),
+                    )
+                }
             }
 
             AgendaDetailAction.OnClosePhotoClick -> {
-                state = state.copy(
-                    selectedPhotoToView = null,
-                )
+                getDetailsAsEvent()?.let { eventDetails ->
+                    state = state.copy(
+                        typeSpecificDetails = eventDetails.copy(
+                            selectedPhotoToView = null,
+                        ),
+                    )
+                }
             }
 
             is AgendaDetailAction.OnDeletePhotoClick -> {
-                state = state.copy(
-                    photos = state.photos.filterNot { it == action.photo },
-                    selectedPhotoToView = null,
-                )
+                getDetailsAsEvent()?.let { eventDetails ->
+                    state = state.copy(
+                        typeSpecificDetails = eventDetails.copy(
+                            photos = eventDetails.photos.filterNot { it == action.photo },
+                            selectedPhotoToView = null,
+                        ),
+                    )
+                }
             }
 
             is AgendaDetailAction.OnSelectStartDate -> {
                 val date = action.startDate
-                val newStartTime = LocalDateTime(
+                val newStartDateTime = LocalDateTime(
                     date.year,
                     date.month,
                     date.dayOfMonth,
                     state.startDateTime.hour,
                     state.startDateTime.minute,
                 )
-                val newEndDateTime = if (newStartTime > state.endDateTime) {
-                    newStartTime
-                        .toInstant(TimeZone.currentSystemDefault())
-                        .plus(30.minutes)
-                        .toLocalDateTime(TimeZone.currentSystemDefault())
-                } else {
-                    state.endDateTime
-                }
                 state = state.copy(
-                    startDateTime = newStartTime,
-                    endDateTime = newEndDateTime,
+                    startDateTime = newStartDateTime,
                 )
+                getDetailsAsEvent()?.let { eventDetails ->
+                    val newEndDateTime = if (newStartDateTime > eventDetails.endDateTime) {
+                        newStartDateTime
+                            .toInstant(TimeZone.currentSystemDefault())
+                            .plus(30.minutes)
+                            .toLocalDateTime(TimeZone.currentSystemDefault())
+                    } else {
+                        eventDetails.endDateTime
+                    }
+                    state = state.copy(
+                        typeSpecificDetails = eventDetails.copy(
+                            endDateTime = newEndDateTime,
+                        ),
+                    )
+                }
             }
 
             is AgendaDetailAction.OnSelectStartTime -> {
                 val time = action.startTime
-                val newStartTime = LocalDateTime(
+                val newStartDateTime = LocalDateTime(
                     state.startDateTime.year,
                     state.startDateTime.month,
                     state.startDateTime.dayOfMonth,
                     time.hour,
                     time.minute,
                 )
-                val newEndDateTime = if (newStartTime > state.endDateTime) {
-                    newStartTime
-                        .toInstant(TimeZone.currentSystemDefault())
-                        .plus(30.minutes)
-                        .toLocalDateTime(TimeZone.currentSystemDefault())
-                } else {
-                    state.endDateTime
-                }
                 state = state.copy(
-                    startDateTime = newStartTime,
-                    endDateTime = newEndDateTime,
+                    startDateTime = newStartDateTime,
                 )
+                getDetailsAsEvent()?.let { eventDetails ->
+                    val newEndDateTime = if (newStartDateTime > eventDetails.endDateTime) {
+                        newStartDateTime
+                            .toInstant(TimeZone.currentSystemDefault())
+                            .plus(30.minutes)
+                            .toLocalDateTime(TimeZone.currentSystemDefault())
+                    } else {
+                        eventDetails.endDateTime
+                    }
+                    state = state.copy(
+                        typeSpecificDetails = eventDetails.copy(
+                            endDateTime = newEndDateTime,
+                        ),
+                    )
+                }
             }
 
             is AgendaDetailAction.OnSelectEndDate -> {
-                val date = action.endDate
-                val newEndDateTime = LocalDateTime(
-                    date.year,
-                    date.month,
-                    date.dayOfMonth,
-                    state.startDateTime.hour,
-                    state.startDateTime.minute,
-                )
-                val newStartDateTime = if (newEndDateTime < state.startDateTime) {
-                    newEndDateTime
-                        .toInstant(TimeZone.currentSystemDefault())
-                        .minus(30.minutes)
-                        .toLocalDateTime(TimeZone.currentSystemDefault())
-                } else {
-                    state.startDateTime
+                getDetailsAsEvent()?.let { eventDetails ->
+                    val date = action.endDate
+                    val newEndDateTime = LocalDateTime(
+                        date.year,
+                        date.month,
+                        date.dayOfMonth,
+                        eventDetails.endDateTime.hour,
+                        eventDetails.endDateTime.minute,
+                    )
+                    val newStartDateTime = if (newEndDateTime < state.startDateTime) {
+                        newEndDateTime
+                            .toInstant(TimeZone.currentSystemDefault())
+                            .minus(30.minutes)
+                            .toLocalDateTime(TimeZone.currentSystemDefault())
+                    } else {
+                        state.startDateTime
+                    }
+                    state = state.copy(
+                        startDateTime = newStartDateTime,
+                        typeSpecificDetails = eventDetails.copy(
+                            endDateTime = newEndDateTime,
+                        ),
+                    )
                 }
-                state = state.copy(
-                    startDateTime = newStartDateTime,
-                    endDateTime = newEndDateTime,
-                )
             }
 
             is AgendaDetailAction.OnSelectEndTime -> {
-                val time = action.endTime
-                val newEndDateTime = LocalDateTime(
-                    state.startDateTime.year,
-                    state.startDateTime.month,
-                    state.startDateTime.dayOfMonth,
-                    time.hour,
-                    time.minute,
-                )
-                val newStartDateTime = if (newEndDateTime < state.startDateTime) {
-                    newEndDateTime
-                        .toInstant(TimeZone.currentSystemDefault())
-                        .minus(30.minutes)
-                        .toLocalDateTime(TimeZone.currentSystemDefault())
-                } else {
-                    state.startDateTime
+                getDetailsAsEvent()?.let { eventDetails ->
+                    val time = action.endTime
+                    val newEndDateTime = LocalDateTime(
+                        eventDetails.endDateTime.year,
+                        eventDetails.endDateTime.month,
+                        eventDetails.endDateTime.dayOfMonth,
+                        time.hour,
+                        time.minute,
+                    )
+                    val newStartDateTime = if (newEndDateTime < state.startDateTime) {
+                        newEndDateTime
+                            .toInstant(TimeZone.currentSystemDefault())
+                            .minus(30.minutes)
+                            .toLocalDateTime(TimeZone.currentSystemDefault())
+                    } else {
+                        state.startDateTime
+                    }
+                    state = state.copy(
+                        startDateTime = newStartDateTime,
+                        typeSpecificDetails = eventDetails.copy(
+                            endDateTime = newEndDateTime,
+                        ),
+                    )
                 }
-                state = state.copy(
-                    startDateTime = newStartDateTime,
-                    endDateTime = newEndDateTime,
-                )
             }
 
             AgendaDetailAction.OnToggleStartTimePickerExpanded -> {
@@ -273,15 +339,23 @@ class AgendaDetailViewModel @Inject constructor(
             }
 
             AgendaDetailAction.OnToggleEndTimePickerExpanded -> {
-                state = state.copy(
-                    isEditingEndTime = !state.isEditingEndTime,
-                )
+                getDetailsAsEvent()?.let { eventDetails ->
+                    state = state.copy(
+                        typeSpecificDetails = eventDetails.copy(
+                            isEditingEndTime = !eventDetails.isEditingEndTime,
+                        ),
+                    )
+                }
             }
 
             AgendaDetailAction.OnToggleEndDatePickerExpanded -> {
-                state = state.copy(
-                    isEditingEndDate = !state.isEditingEndDate,
-                )
+                getDetailsAsEvent()?.let { eventDetails ->
+                    state = state.copy(
+                        typeSpecificDetails = eventDetails.copy(
+                            isEditingEndDate = !eventDetails.isEditingEndDate,
+                        ),
+                    )
+                }
             }
 
             AgendaDetailAction.OnToggleNotificationDurationExpanded -> {
@@ -297,47 +371,74 @@ class AgendaDetailViewModel @Inject constructor(
             }
 
             AgendaDetailAction.OnAllVisitorsClick -> {
-                state = state.copy(
-                    selectedVisitorFilter = VisitorFilterType.ALL,
-                )
-            }
-
-            AgendaDetailAction.OnGoingVisitorsClick -> {
-                state = state.copy(
-                    selectedVisitorFilter = VisitorFilterType.GOING,
-                )
-            }
-
-            AgendaDetailAction.OnNotGoingVisitorsClick -> {
-                state = state.copy(
-                    selectedVisitorFilter = VisitorFilterType.NOT_GOING,
-                )
-            }
-
-            AgendaDetailAction.OnToggleAddVisitorDialog -> {
-                state = state.copy(
-                    visitorToAddEmail = TextFieldState(),
-                    isShowingAddVisitorDialog = !state.isShowingAddVisitorDialog,
-                )
-            }
-
-            is AgendaDetailAction.OnAddVisitorClick -> {
-                viewModelScope.launch {
+                getDetailsAsEvent()?.let { eventDetails ->
                     state = state.copy(
-                        isAddingVisitor = true,
-                    )
-                    state = state.copy(
-                        visitorToAddEmail = TextFieldState(),
-                        isAddingVisitor = false,
-                        isShowingAddVisitorDialog = false,
+                        typeSpecificDetails = eventDetails.copy(
+                            selectedVisitorFilter = VisitorFilterType.ALL,
+                        ),
                     )
                 }
             }
 
+            AgendaDetailAction.OnGoingVisitorsClick -> {
+                getDetailsAsEvent()?.let { eventDetails ->
+                    state = state.copy(
+                        typeSpecificDetails = eventDetails.copy(
+                            selectedVisitorFilter = VisitorFilterType.GOING,
+                        ),
+                    )
+                }
+            }
+
+            AgendaDetailAction.OnNotGoingVisitorsClick -> {
+                getDetailsAsEvent()?.let { eventDetails ->
+                    state = state.copy(
+                        typeSpecificDetails = eventDetails.copy(
+                            selectedVisitorFilter = VisitorFilterType.NOT_GOING,
+                        ),
+                    )
+                }
+            }
+
+            AgendaDetailAction.OnToggleAddVisitorDialog -> {
+                getDetailsAsEvent()?.let { eventDetails ->
+                    state = state.copy(
+                        typeSpecificDetails = eventDetails.copy(
+                            visitorToAddEmail = TextFieldState(),
+                            isShowingAddVisitorDialog = !eventDetails.isShowingAddVisitorDialog,
+                        ),
+                    )
+                }
+            }
+
+            is AgendaDetailAction.OnAddVisitorClick -> {
+                getDetailsAsEvent()?.let { eventDetails ->
+                    viewModelScope.launch {
+                        state = state.copy(
+                            typeSpecificDetails = eventDetails.copy(
+                                isAddingVisitor = true,
+                            ),
+                        )
+                        // TODO: add visitor, update if error
+                        state = state.copy(
+                            typeSpecificDetails = eventDetails.copy(
+                                visitorToAddEmail = TextFieldState(),
+                                isAddingVisitor = false,
+                                isShowingAddVisitorDialog = false,
+                            ),
+                        )
+                    }
+                }
+            }
+
             is AgendaDetailAction.OnDeleteVisitorClick -> {
-                state = state.copy(
-                    visitors = state.visitors.filterNot { it == action.visitor },
-                )
+                getDetailsAsEvent()?.let { eventDetails ->
+                    state = state.copy(
+                        typeSpecificDetails = eventDetails.copy(
+                            visitors = eventDetails.visitors.filterNot { it == action.visitor },
+                        ),
+                    )
+                }
             }
 
             AgendaDetailAction.OnDelete -> {

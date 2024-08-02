@@ -28,7 +28,6 @@ private fun AgendaOverviewScreenPreview_Figma() {
                     selectedDate = today(fixedClock),
                     items = listOf(
                         AgendaOverviewItemUi.Item(
-                            id = "1",
                             item = AgendaOverviewItemContents.TaskOverviewUiContents(
                                 id = "1",
                                 title = "Project X",
@@ -39,9 +38,8 @@ private fun AgendaOverviewScreenPreview_Figma() {
                                 completed = true,
                             ),
                         ),
-                        AgendaOverviewItemUi.TimeMarker(),
+                        AgendaOverviewItemUi.TimeMarker,
                         AgendaOverviewItemUi.Item(
-                            id = "2",
                             item = AgendaOverviewItemContents.EventOverviewUiContents(
                                 id = "2",
                                 title = "Meeting",
@@ -55,7 +53,6 @@ private fun AgendaOverviewScreenPreview_Figma() {
                             ),
                         ),
                         AgendaOverviewItemUi.Item(
-                            id = "3",
                             item = AgendaOverviewItemContents.ReminderOverviewUiContents(
                                 id = "3",
                                 title = "Lunch break",
@@ -66,7 +63,6 @@ private fun AgendaOverviewScreenPreview_Figma() {
                             ),
                         ),
                         AgendaOverviewItemUi.Item(
-                            id = "4",
                             item = AgendaOverviewItemContents.ReminderOverviewUiContents(
                                 id = "4",
                                 title = "Meeting",
