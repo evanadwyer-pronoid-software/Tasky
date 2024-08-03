@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import com.pronoidsoftware.agenda.presentation.detail.AgendaDetailScreenRoot
 import com.pronoidsoftware.agenda.presentation.overview.AgendaOverviewScreenRoot
 import com.pronoidsoftware.auth.presentation.login.LoginScreenRoot
 import com.pronoidsoftware.auth.presentation.register.RegisterScreenRoot
@@ -72,23 +73,22 @@ private fun NavGraphBuilder.agendaGraph(navController: NavHostController) {
         composable<AgendaScreen> {
             AgendaOverviewScreenRoot(
                 onCreateAgendaItem = { type, isEditing ->
+                    navController.navigate(
+                        DetailScreen(
+                            type = type.name,
+                            isEditing = isEditing,
+                        ),
+                    )
                 },
-//                    navController.navigate(
-//                        DetailScreen(
-//                            type = type.name,
-//                            isEditing = isEditing,
-//                        ),
-//                    )
-//                },
             )
         }
-//        composable<DetailScreen> {
-//            AgendaDetailScreenRoot(
-//                onCloseClick = {
-//                    navController.navigateUp()
-//                },
-//            )
-//        }
+        composable<DetailScreen> {
+            AgendaDetailScreenRoot(
+                onCloseClick = {
+                    navController.navigateUp()
+                },
+            )
+        }
     }
 }
 
