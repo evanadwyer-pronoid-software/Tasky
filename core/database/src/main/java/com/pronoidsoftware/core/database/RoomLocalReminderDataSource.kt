@@ -9,10 +9,11 @@ import com.pronoidsoftware.core.domain.agendaitem.Reminder
 import com.pronoidsoftware.core.domain.agendaitem.ReminderId
 import com.pronoidsoftware.core.domain.util.DataError
 import com.pronoidsoftware.core.domain.util.Result
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class RoomLocalReminderDataSource(
+class RoomLocalReminderDataSource @Inject constructor(
     private val reminderDao: ReminderDao,
 ) : LocalReminderDataSource {
     override fun getAllReminders(): Flow<List<Reminder>> {
