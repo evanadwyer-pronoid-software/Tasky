@@ -19,3 +19,27 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-dontwarn com.pronoidsoftware.agenda.presentation.detail.AgendaDetailScreenKt
+-dontwarn com.pronoidsoftware.agenda.presentation.detail.AgendaDetailViewModel
+-dontwarn com.pronoidsoftware.agenda.presentation.detail.AgendaDetailViewModel_HiltModules$KeyModule
+-dontwarn com.pronoidsoftware.agenda.presentation.di.ClockModule_ProvideClockFactory
+-dontwarn com.pronoidsoftware.agenda.presentation.overview.AgendaOverviewScreenKt
+-dontwarn com.pronoidsoftware.agenda.presentation.overview.AgendaOverviewViewModel
+-dontwarn com.pronoidsoftware.agenda.presentation.overview.AgendaOverviewViewModel_HiltModules$KeyModule
+-dontwarn com.pronoidsoftware.auth.data.AuthRepositoryImplementation
+-dontwarn com.pronoidsoftware.auth.presentation.login.LoginScreenKt
+-dontwarn com.pronoidsoftware.auth.presentation.login.LoginViewModel
+-dontwarn com.pronoidsoftware.auth.presentation.login.LoginViewModel_HiltModules$KeyModule
+-dontwarn com.pronoidsoftware.auth.presentation.register.RegisterScreenKt
+-dontwarn com.pronoidsoftware.auth.presentation.register.RegisterViewModel
+-dontwarn com.pronoidsoftware.auth.presentation.register.RegisterViewModel_HiltModules$KeyModule
+-dontwarn com.pronoidsoftware.core.data.auth.EncryptedSessionStorage
+-dontwarn com.pronoidsoftware.core.data.di.CoreDataModule_ProvideCIOEngineFactory
+-dontwarn com.pronoidsoftware.core.data.di.CoreDataModule_ProvideHttpClientFactory
+-dontwarn com.pronoidsoftware.core.data.di.CoreDataModule_ProvideSharedPreferencesFactory
+-dontwarn com.pronoidsoftware.core.data.di.DispatchersModule_BindDispatcherProviderFactory
+-dontwarn com.pronoidsoftware.core.data.validation.EmailPatternValidator
+-dontwarn com.pronoidsoftware.core.presentation.designsystem.LocalClockKt
+-dontwarn com.pronoidsoftware.core.presentation.designsystem.ThemeKt
+-dontwarn com.pronoidsoftware.core.presentation.ui.di.UserDataValidatorModule_ProvideUserDataValidatorFactory
