@@ -13,7 +13,7 @@ room = "2.6.1"
 ktor = "2.3.12"
 ktorClientLogging = "2.3.8"
 desugar_jdk_libs = "2.0.4"
-kotlinx-serialization = "1.6.3"
+kotlinx-serialization = "1.7.1"
 kotlinx-datetime = "0.6.0"
 securityCryptoKtx = "1.1.0-alpha06"
 coreSplashscreen = "1.0.1"
@@ -32,17 +32,17 @@ espressoCore = "3.6.1"
 testRunner = "1.6.1"
 assertk = "0.28.1"
 androidJunit5 = "1.10.0.0"
-screenshot = "0.0.1-alpha02"
+screenshot = "0.0.1-alpha03"
 coroutinesTest = "1.8.1"
 
 # Compose versions
-activityCompose = "1.9.0"
+activityCompose = "1.9.1"
 composeBom = "2024.06.00"
 chrisBanesComposeBom = "2024.05.00-alpha03"
-composeNavigation = "2.8.0-beta05"
+composeNavigation = "2.8.0-beta06"
 
 # Lifecycle versions
-lifecycleRuntimeKtx = "2.8.3"
+lifecycleRuntimeKtx = "2.8.4"
 
 # Ktlint version
 ktlint = "12.1.1"
