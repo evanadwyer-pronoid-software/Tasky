@@ -6,4 +6,6 @@ object AuthRoutes {
     const val ACCESS_TOKEN = "/accessToken"
 }
 
-object AgendaRoutes
+object AgendaRoutes {
+    const val REMINDER = "/reminder"
+}
