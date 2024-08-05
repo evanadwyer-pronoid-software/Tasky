@@ -8,6 +8,7 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.plus
+import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
 import kotlinx.datetime.until
@@ -61,11 +62,21 @@ fun LocalDate.toMillis(): Long {
     return this.atStartOfDayIn(TimeZone.currentSystemDefault()).toEpochMilliseconds()
 }
 
+fun LocalDateTime.toMillis(): Long {
+    return this.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
+}
+
 fun Long.toLocalDate(): LocalDate {
     return Instant
         .fromEpochMilliseconds(this)
         .toLocalDateTime(TimeZone.currentSystemDefault())
         .date
+}
+
+fun Long.toLocalDateTime(): LocalDateTime {
+    return Instant
+        .fromEpochMilliseconds(this)
+        .toLocalDateTime(TimeZone.currentSystemDefault())
 }
 
 fun Long.toLocalDateFromUTC(): LocalDate {
