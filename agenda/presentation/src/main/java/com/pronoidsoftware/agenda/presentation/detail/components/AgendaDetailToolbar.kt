@@ -95,7 +95,7 @@ fun AgendaDetailToolbar(
 private fun AgendaDetailToolbarPreview_Read() {
     TaskyTheme {
         AgendaDetailToolbar(
-            title = LocalDate(2022, 3, 5).formatFullDate().asString(),
+            title = LocalDate(2022, 3, 5).formatFullDate(),
             onCloseClick = { },
             isEditing = false,
             onEditClick = { },

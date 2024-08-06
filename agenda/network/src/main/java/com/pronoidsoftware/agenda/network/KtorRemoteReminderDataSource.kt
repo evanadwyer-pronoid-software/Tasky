@@ -1,5 +1,7 @@
 package com.pronoidsoftware.agenda.network
 
+import com.pronoidsoftware.agenda.network.dto.AgendaDto
+import com.pronoidsoftware.agenda.network.dto.ReminderDto
 import com.pronoidsoftware.agenda.network.mappers.toPostReminderRequest
 import com.pronoidsoftware.agenda.network.mappers.toReminder
 import com.pronoidsoftware.core.data.networking.AgendaRoutes
@@ -25,6 +27,15 @@ class KtorRemoteReminderDataSource @Inject constructor(
                 REMINDER_ID_QUERY_PARAM to id,
             ),
         ).map { it.toReminder() }
+    }
+
+    override suspend fun getAllReminders(): Result<List<Reminder>, DataError.Network> {
+        return httpClient.get<AgendaDto>(
+            route = AgendaRoutes.FULL_AGENDA,
+        )
+            .map { agendaDto ->
+                agendaDto.reminders.map { it.toReminder() }
+            }
     }
 
     override suspend fun postReminder(reminder: Reminder): EmptyResult<DataError.Network> {

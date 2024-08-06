@@ -64,6 +64,14 @@ fun AgendaDetailScreenRoot(
     val context = LocalContext.current
     ObserveAsEvents(flow = viewModel.events) { event ->
         when (event) {
+            is AgendaDetailEvent.OnError -> {
+                Toast.makeText(
+                    context,
+                    event.error.asString(context),
+                    Toast.LENGTH_LONG,
+                ).show()
+            }
+
             AgendaDetailEvent.OnDeleted -> {
                 Toast.makeText(
                     context,
@@ -201,7 +209,7 @@ internal fun AgendaDetailScreen(state: AgendaDetailState, onAction: (AgendaDetai
                             getTypeString(type = state.agendaItemType, isUppercase = true),
                         )
                     } else {
-                        state.selectedDate.formatFullDate(clock).asString()
+                        state.selectedDate.formatFullDate(clock)
                     },
                     onCloseClick = {
                         if (state.isEditing) {

@@ -107,7 +107,7 @@ class DateTimePresentationUtilTest {
     fun todayFormattedFull() {
         val today = LocalDate(2024, 3, 5)
         val expectedFormat = "05 MARCH"
-        val actualFormat = today.formatFullDate(clockNow).asString(context)
+        val actualFormat = today.formatFullDate(clockNow)
         assertThat(actualFormat).isEqualTo(expectedFormat)
     }
 
@@ -115,7 +115,7 @@ class DateTimePresentationUtilTest {
     fun pastInYearFormattedFull() {
         val today = LocalDate(2024, 2, 19)
         val expectedFormat = "19 FEBRUARY"
-        val actualFormat = today.formatFullDate(clockNow).asString(context)
+        val actualFormat = today.formatFullDate(clockNow)
         assertThat(actualFormat).isEqualTo(expectedFormat)
     }
 
@@ -123,7 +123,7 @@ class DateTimePresentationUtilTest {
     fun futureInYearFormattedFull() {
         val today = LocalDate(2024, 5, 31)
         val expectedFormat = "31 MAY"
-        val actualFormat = today.formatFullDate(clockNow).asString(context)
+        val actualFormat = today.formatFullDate(clockNow)
         assertThat(actualFormat).isEqualTo(expectedFormat)
     }
 
@@ -131,7 +131,7 @@ class DateTimePresentationUtilTest {
     fun pastOutOfYearFormattedFull() {
         val today = LocalDate(2023, 3, 5)
         val expectedFormat = "05 MARCH 2023"
-        val actualFormat = today.formatFullDate(clockNow).asString(context)
+        val actualFormat = today.formatFullDate(clockNow)
         assertThat(actualFormat).isEqualTo(expectedFormat)
     }
 
@@ -139,7 +139,7 @@ class DateTimePresentationUtilTest {
     fun futureOutOfYearFormattedFull() {
         val today = LocalDate(2025, 3, 5)
         val expectedFormat = "05 MARCH 2025"
-        val actualFormat = today.formatFullDate(clockNow).asString(context)
+        val actualFormat = today.formatFullDate(clockNow)
         assertThat(actualFormat).isEqualTo(expectedFormat)
     }
 
@@ -147,7 +147,7 @@ class DateTimePresentationUtilTest {
     fun morningHourFormatted() {
         val now = LocalDateTime(2023, 3, 5, 8, 0)
         val expectedFormat = "08:00"
-        val actualFormat = now.time.formatHours().asString(context)
+        val actualFormat = now.time.formatHours()
         assertThat(actualFormat).isEqualTo(expectedFormat)
     }
 
@@ -157,7 +157,7 @@ class DateTimePresentationUtilTest {
             .atStartOfDayIn(timeZone)
             .toLocalDateTime(timeZone)
         val expectedFormat = "00:00"
-        val actualFormat = now.time.formatHours().asString(context)
+        val actualFormat = now.time.formatHours()
         assertThat(actualFormat).isEqualTo(expectedFormat)
     }
 
@@ -165,7 +165,7 @@ class DateTimePresentationUtilTest {
     fun noonHourFormatted() {
         val now = LocalDateTime(2023, 3, 5, 12, 0)
         val expectedFormat = "12:00"
-        val actualFormat = now.time.formatHours().asString(context)
+        val actualFormat = now.time.formatHours()
         assertThat(actualFormat).isEqualTo(expectedFormat)
     }
 
@@ -173,7 +173,7 @@ class DateTimePresentationUtilTest {
     fun afternoonHourFormatted() {
         val now = LocalDateTime(2023, 3, 5, 17, 30)
         val expectedFormat = "17:30"
-        val actualFormat = now.time.formatHours().asString(context)
+        val actualFormat = now.time.formatHours()
         assertThat(actualFormat).isEqualTo(expectedFormat)
     }
 
@@ -184,7 +184,7 @@ class DateTimePresentationUtilTest {
             .plus(1.minutes)
             .toLocalDateTime(timeZone)
         val expectedFormat = "00:00"
-        val actualFormat = now.time.formatHours().asString(context)
+        val actualFormat = now.time.formatHours()
         assertThat(actualFormat).isEqualTo(expectedFormat)
     }
 }

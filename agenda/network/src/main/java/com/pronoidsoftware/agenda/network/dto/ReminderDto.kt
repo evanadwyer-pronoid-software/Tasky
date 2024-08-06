@@ -1,4 +1,4 @@
-package com.pronoidsoftware.agenda.network
+package com.pronoidsoftware.agenda.network.dto
 
 import kotlinx.serialization.Serializable
 

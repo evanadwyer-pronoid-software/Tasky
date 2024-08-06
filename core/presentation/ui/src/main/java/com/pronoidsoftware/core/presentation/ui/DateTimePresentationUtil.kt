@@ -37,47 +37,41 @@ fun LocalDate.formatRelativeDate(clock: Clock = Clock.System): UiText {
     }
 }
 
-fun LocalDate.formatFullDate(clock: Clock = Clock.System): UiText {
+fun LocalDate.formatFullDate(clock: Clock = Clock.System): String {
     val thisYear = this.year
-    return UiText.DynamicString(
-        this.format(
-            LocalDate.Format {
-                dayOfMonth()
+    return this.format(
+        LocalDate.Format {
+            dayOfMonth()
+            char(' ')
+            monthName(MonthNames.ENGLISH_FULL)
+            if (thisYear != today(clock).year) {
                 char(' ')
-                monthName(MonthNames.ENGLISH_FULL)
-                if (thisYear != today(clock).year) {
-                    char(' ')
-                    year()
-                }
-            },
-        ).uppercase(),
+                year()
+            }
+        },
+    ).uppercase()
+}
+
+fun LocalTime.formatHours(): String {
+    return this.format(
+        LocalTime.Format {
+            hour()
+            char(':')
+            minute()
+        },
     )
 }
 
-fun LocalTime.formatHours(): UiText {
-    return UiText.DynamicString(
-        this.format(
-            LocalTime.Format {
-                hour()
-                char(':')
-                minute()
-            },
-        ),
-    )
-}
-
-fun LocalDateTime.formatOverview(): UiText {
-    return UiText.DynamicString(
-        this.format(
-            LocalDateTime.Format {
-                monthName(MonthNames.ENGLISH_ABBREVIATED)
-                char(' ')
-                dayOfMonth(padding = Padding.NONE)
-                chars(", ")
-                hour(padding = Padding.NONE)
-                char(':')
-                minute()
-            },
-        ),
+fun LocalDateTime.formatOverview(): String {
+    return this.format(
+        LocalDateTime.Format {
+            monthName(MonthNames.ENGLISH_ABBREVIATED)
+            char(' ')
+            dayOfMonth(padding = Padding.NONE)
+            chars(", ")
+            hour(padding = Padding.NONE)
+            char(':')
+            minute()
+        },
     )
 }

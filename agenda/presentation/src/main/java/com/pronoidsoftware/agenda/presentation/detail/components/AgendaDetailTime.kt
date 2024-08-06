@@ -62,7 +62,7 @@ fun AgendaDetailTime(
             modifier = Modifier.widthIn(min = 40.dp),
         )
         Text(
-            text = localDateTime.time.formatHours().asString(),
+            text = localDateTime.time.formatHours(),
             style = textStyle,
             color = contentColor,
         )

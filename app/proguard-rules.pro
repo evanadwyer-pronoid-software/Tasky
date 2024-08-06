@@ -43,3 +43,9 @@
 -dontwarn com.pronoidsoftware.core.presentation.designsystem.LocalClockKt
 -dontwarn com.pronoidsoftware.core.presentation.designsystem.ThemeKt
 -dontwarn com.pronoidsoftware.core.presentation.ui.di.UserDataValidatorModule_ProvideUserDataValidatorFactory
+-dontwarn com.pronoidsoftware.agenda.network.KtorRemoteReminderDataSource
+-dontwarn com.pronoidsoftware.core.data.agenda.OfflineFirstReminderRepository
+-dontwarn com.pronoidsoftware.core.database.RoomLocalReminderDataSource
+-dontwarn com.pronoidsoftware.core.database.dao.ReminderDao
+-dontwarn com.pronoidsoftware.core.database.di.DatabaseModule_ProvideReminderDaoFactory
+-dontwarn com.pronoidsoftware.core.database.di.DatabaseModule_ProvideReminderDatabaseFactory
