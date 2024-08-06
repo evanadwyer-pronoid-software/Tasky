@@ -33,8 +33,7 @@ private fun AgendaOverviewScreenPreview_Figma() {
                                 title = "Project X",
                                 description = "Just work",
                                 startDateTime = LocalDateTime(2023, 3, 5, 10, 0)
-                                    .formatOverview()
-                                    .asString(),
+                                    .formatOverview(),
                                 completed = true,
                             ),
                         ),
@@ -45,11 +44,9 @@ private fun AgendaOverviewScreenPreview_Figma() {
                                 title = "Meeting",
                                 description = "Amet minim mollit non deserunt",
                                 startDateTime = LocalDateTime(2023, 3, 5, 10, 30)
-                                    .formatOverview()
-                                    .asString(),
+                                    .formatOverview(),
                                 endDateTime = LocalDateTime(2023, 3, 5, 11, 0)
-                                    .formatOverview()
-                                    .asString(),
+                                    .formatOverview(),
                             ),
                         ),
                         AgendaOverviewItemUi.Item(
@@ -58,8 +55,7 @@ private fun AgendaOverviewScreenPreview_Figma() {
                                 title = "Lunch break",
                                 description = "Just work",
                                 startDateTime = LocalDateTime(2023, 3, 5, 14, 0)
-                                    .formatOverview()
-                                    .asString(),
+                                    .formatOverview(),
                             ),
                         ),
                         AgendaOverviewItemUi.Item(
@@ -68,8 +64,7 @@ private fun AgendaOverviewScreenPreview_Figma() {
                                 title = "Meeting",
                                 description = "Amet minim mollit non deserunt ullamco est",
                                 startDateTime = LocalDateTime(2023, 3, 5, 15, 0)
-                                    .formatOverview()
-                                    .asString(),
+                                    .formatOverview(),
                             ),
                         ),
                     ),

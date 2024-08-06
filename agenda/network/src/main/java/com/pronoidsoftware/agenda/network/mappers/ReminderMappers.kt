@@ -1,7 +1,7 @@
 package com.pronoidsoftware.agenda.network.mappers
 
 import com.pronoidsoftware.agenda.network.PostReminderRequest
-import com.pronoidsoftware.agenda.network.ReminderDto
+import com.pronoidsoftware.agenda.network.dto.ReminderDto
 import com.pronoidsoftware.core.domain.agendaitem.Reminder
 import com.pronoidsoftware.core.domain.util.toLocalDateTime
 import com.pronoidsoftware.core.domain.util.toMillis
