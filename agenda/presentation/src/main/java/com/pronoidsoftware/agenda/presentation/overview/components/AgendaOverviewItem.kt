@@ -49,7 +49,6 @@ import com.pronoidsoftware.core.presentation.designsystem.TaskyLightGreen
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
 import com.pronoidsoftware.core.presentation.designsystem.TaskyWhite
 import com.pronoidsoftware.core.presentation.designsystem.components.TaskyDropdownMenu
-import com.pronoidsoftware.core.presentation.ui.UiText
 import timber.log.Timber
 
 @Composable
@@ -183,10 +182,10 @@ fun AgendaOverviewItem(
                 text = if (
                     agendaOverviewItemContents is AgendaOverviewItemContents.EventOverviewUiContents
                 ) {
-                    "${agendaOverviewItemContents.startDateTime.asString()} " +
-                        "- ${agendaOverviewItemContents.endDateTime.asString()}"
+                    "${agendaOverviewItemContents.startDateTime} " +
+                        "- ${agendaOverviewItemContents.endDateTime}"
                 } else {
-                    agendaOverviewItemContents.startDateTime.asString()
+                    agendaOverviewItemContents.startDateTime
                 },
                 color = contentColors.time,
                 style = MaterialTheme.typography.bodySmall,
@@ -271,8 +270,8 @@ private fun AgendaOverviewItemUiPreview(
                         title = type.name,
                         description = "Lorem ipsum dolor sit amet, consectetur adipi scing elit, " +
                             "sed do eiusmod tempor incididunt ut labore",
-                        startDateTime = UiText.DynamicString("Mar 5, 10:30"),
-                        endDateTime = UiText.DynamicString("Mar 5, 11:00"),
+                        startDateTime = "Mar 5, 10:30",
+                        endDateTime = "Mar 5, 11:00",
                     ),
                     onTickClick = {
                         completed = !completed
@@ -299,7 +298,7 @@ private fun AgendaOverviewItemUiPreview(
                         title = type.name,
                         description = "Lorem ipsum dolor sit amet, consectetur adipi scing elit, " +
                             "sed do eiusmod tempor incididunt ut labore",
-                        startDateTime = UiText.DynamicString("Mar 5, 10:30"),
+                        startDateTime = "Mar 5, 10:30",
                         completed = true,
                     ),
                     onTickClick = {
@@ -328,7 +327,7 @@ private fun AgendaOverviewItemUiPreview(
                         title = type.name,
                         description = "Lorem ipsum dolor sit amet, consectetur adipi scing elit, " +
                             "sed do eiusmod tempor incididunt ut labore",
-                        startDateTime = UiText.DynamicString("Mar 5, 10:30"),
+                        startDateTime = "Mar 5, 10:30",
                     ),
                     onTickClick = {
                         completed = !completed

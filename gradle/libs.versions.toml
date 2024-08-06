@@ -32,7 +32,7 @@ espressoCore = "3.6.1"
 testRunner = "1.6.1"
 assertk = "0.28.1"
 androidJunit5 = "1.10.0.0"
-screenshot = "0.0.1-alpha03"
+screenshot = "0.0.1-alpha02"
 coroutinesTest = "1.8.1"
 
 # Compose versions

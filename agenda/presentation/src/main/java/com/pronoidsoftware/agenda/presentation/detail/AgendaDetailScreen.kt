@@ -209,7 +209,7 @@ internal fun AgendaDetailScreen(state: AgendaDetailState, onAction: (AgendaDetai
                             getTypeString(type = state.agendaItemType, isUppercase = true),
                         )
                     } else {
-                        state.selectedDate.formatFullDate(clock).asString()
+                        state.selectedDate.formatFullDate(clock)
                     },
                     onCloseClick = {
                         if (state.isEditing) {

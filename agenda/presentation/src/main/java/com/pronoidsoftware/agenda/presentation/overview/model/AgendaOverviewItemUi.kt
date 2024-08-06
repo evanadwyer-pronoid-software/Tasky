@@ -1,7 +1,5 @@
 package com.pronoidsoftware.agenda.presentation.overview.model
 
-import com.pronoidsoftware.core.presentation.ui.UiText
-
 sealed class AgendaOverviewItemUi(
     val id: String,
 ) {
@@ -16,13 +14,13 @@ sealed class AgendaOverviewItemContents(
     open val id: String,
     open val title: String,
     open val description: String,
-    open val startDateTime: UiText,
+    open val startDateTime: String,
 ) {
     data class ReminderOverviewUiContents(
         override val id: String,
         override val title: String,
         override val description: String,
-        override val startDateTime: UiText,
+        override val startDateTime: String,
     ) : AgendaOverviewItemContents(
         id = id,
         title = title,
@@ -34,7 +32,7 @@ sealed class AgendaOverviewItemContents(
         override val id: String,
         override val title: String,
         override val description: String,
-        override val startDateTime: UiText,
+        override val startDateTime: String,
         val completed: Boolean,
     ) : AgendaOverviewItemContents(
         id = id,
@@ -47,8 +45,8 @@ sealed class AgendaOverviewItemContents(
         override val id: String,
         override val title: String,
         override val description: String,
-        override val startDateTime: UiText,
-        val endDateTime: UiText,
+        override val startDateTime: String,
+        val endDateTime: String,
     ) : AgendaOverviewItemContents(
         id = id,
         title = title,
