@@ -12,6 +12,9 @@ data class EventEntity(
     val startDateTime: Long,
     val endDateTime: Long,
     val notificationDateTime: Long,
+    val isLocalUserGoing: Boolean,
+    val host: String,
+    val isUserEventCreator: Boolean,
 )
 
 @Entity(primaryKeys = ["userId", "eventId"])

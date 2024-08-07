@@ -45,8 +45,12 @@ sealed class AgendaItem(
         override val startDateTime: LocalDateTime,
         override val notificationDateTime: LocalDateTime,
         val endDateTime: LocalDateTime,
+        val host: String,
+        val isUserEventCreator: Boolean,
         val attendees: List<Attendee>,
         val photos: List<Photo>,
+        val deletedPhotos: List<Photo>,
+        val isLocalUserGoing: Boolean,
     ) : AgendaItem(
         id = id,
         title = title,

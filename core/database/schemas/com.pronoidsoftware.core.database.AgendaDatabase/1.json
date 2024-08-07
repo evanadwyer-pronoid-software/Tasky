@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "d6af3567dace13b9c5d1c2edc3fcf29a",
+    "identityHash": "b95fc548c7ed7bf25b73a0561775ba49",
     "entities": [
       {
         "tableName": "ReminderEntity",
@@ -100,7 +100,7 @@
       },
       {
         "tableName": "EventEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `title` TEXT NOT NULL, `description` TEXT, `startDateTime` INTEGER NOT NULL, `endDateTime` INTEGER NOT NULL, `notificationDateTime` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `title` TEXT NOT NULL, `description` TEXT, `startDateTime` INTEGER NOT NULL, `endDateTime` INTEGER NOT NULL, `notificationDateTime` INTEGER NOT NULL, `isLocalUserGoing` INTEGER NOT NULL, `host` TEXT NOT NULL, `isUserEventCreator` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -135,6 +135,24 @@
           {
             "fieldPath": "notificationDateTime",
             "columnName": "notificationDateTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isLocalUserGoing",
+            "columnName": "isLocalUserGoing",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "host",
+            "columnName": "host",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isUserEventCreator",
+            "columnName": "isUserEventCreator",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -235,7 +253,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd6af3567dace13b9c5d1c2edc3fcf29a')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b95fc548c7ed7bf25b73a0561775ba49')"
     ]
   }
 }
