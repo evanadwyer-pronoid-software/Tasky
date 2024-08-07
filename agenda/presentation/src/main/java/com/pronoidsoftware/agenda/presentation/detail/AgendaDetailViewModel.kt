@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pronoidsoftware.agenda.domain.model.AgendaItemType
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.model.VisitorFilterType
-import com.pronoidsoftware.core.domain.agendaitem.Reminder
+import com.pronoidsoftware.core.domain.agendaitem.AgendaItem
 import com.pronoidsoftware.core.domain.agendaitem.ReminderRepository
 import com.pronoidsoftware.core.domain.util.Result
 import com.pronoidsoftware.core.domain.util.now
@@ -119,7 +119,7 @@ class AgendaDetailViewModel @Inject constructor(
                         }
 
                         AgendaItemType.REMINDER -> {
-                            val reminder = Reminder(
+                            val reminder = AgendaItem.Reminder(
                                 id = null,
                                 title = state.title,
                                 description = state.description,

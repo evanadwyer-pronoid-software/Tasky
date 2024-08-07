@@ -2,12 +2,12 @@ package com.pronoidsoftware.agenda.network.mappers
 
 import com.pronoidsoftware.agenda.network.PostReminderRequest
 import com.pronoidsoftware.agenda.network.dto.ReminderDto
-import com.pronoidsoftware.core.domain.agendaitem.Reminder
+import com.pronoidsoftware.core.domain.agendaitem.AgendaItem
 import com.pronoidsoftware.core.domain.util.toLocalDateTime
 import com.pronoidsoftware.core.domain.util.toMillis
 
-fun ReminderDto.toReminder(): Reminder {
-    return Reminder(
+fun ReminderDto.toReminder(): AgendaItem.Reminder {
+    return AgendaItem.Reminder(
         id = id,
         title = title,
         description = description,
@@ -16,7 +16,7 @@ fun ReminderDto.toReminder(): Reminder {
     )
 }
 
-fun Reminder.toPostReminderRequest(): PostReminderRequest {
+fun AgendaItem.Reminder.toPostReminderRequest(): PostReminderRequest {
     return PostReminderRequest(
         id = id!!,
         title = title,
