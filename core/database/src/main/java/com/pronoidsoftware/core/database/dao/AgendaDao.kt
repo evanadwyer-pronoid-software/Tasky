@@ -2,7 +2,12 @@ package com.pronoidsoftware.core.database.dao
 
 import androidx.room.Dao
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Upsert
+import com.pronoidsoftware.core.database.entity.AttendeeEntity
+import com.pronoidsoftware.core.database.entity.EventEntity
+import com.pronoidsoftware.core.database.entity.EventWithAttendeesAndPhotos
+import com.pronoidsoftware.core.database.entity.PhotoEntity
 import com.pronoidsoftware.core.database.entity.ReminderEntity
 import com.pronoidsoftware.core.database.entity.TaskEntity
 import kotlinx.coroutines.flow.Flow
@@ -55,4 +60,59 @@ interface AgendaDao {
 
     @Query("DELETE FROM taskentity")
     suspend fun deleteAllTasks()
+
+    // Events
+    @Upsert
+    suspend fun upsertEvent(event: EventEntity)
+
+    @Upsert
+    suspend fun upsertEvents(events: List<EventEntity>)
+
+    @Upsert
+    suspend fun upsertAttendee(attendee: AttendeeEntity)
+
+    @Upsert
+    suspend fun upsertAttendees(attendees: List<AttendeeEntity>)
+
+    @Upsert
+    suspend fun upsertPhoto(photo: PhotoEntity)
+
+    @Upsert
+    suspend fun upsertPhotos(photos: List<PhotoEntity>)
+
+    @Transaction
+    @Query("SELECT * FROM evententity ORDER BY startDateTime")
+    fun getAllEvents(): Flow<List<EventWithAttendeesAndPhotos>>
+
+    @Transaction
+    @Query(
+        "SELECT * FROM evententity " +
+            "WHERE strftime('%m-%d-%Y', startDateTime/1000, 'unixepoch') = :targetDate " +
+            "ORDER BY startDateTime",
+    )
+    fun getEventsForDate(targetDate: String): Flow<List<EventWithAttendeesAndPhotos>>
+
+    @Query("DELETE FROM evententity WHERE id=:id")
+    suspend fun deleteEvent(id: String)
+
+    @Query("DELETE FROM evententity")
+    suspend fun deleteAllEvents()
+
+    @Query("DELETE FROM attendeeentity WHERE userId=:id")
+    suspend fun deleteAttendee(id: String)
+
+    @Query("DELETE FROM attendeeentity WHERE eventId=:id")
+    suspend fun deleteAttendeesFromEvent(id: String)
+
+    @Query("DELETE FROM attendeeentity")
+    suspend fun deleteAllAttendees()
+
+    @Query("DELETE FROM photoentity WHERE `key`=:id")
+    suspend fun deletePhoto(id: String)
+
+    @Query("DELETE FROM photoentity WHERE eventId=:id")
+    suspend fun deletePhotosFromEvent(id: String)
+
+    @Query("DELETE FROM photoentity")
+    suspend fun deleteAllPhotos()
 }

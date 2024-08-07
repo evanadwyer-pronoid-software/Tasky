@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 typealias ReminderId = String
 typealias TaskId = String
+typealias EventId = String
 
 interface LocalAgendaDataSource {
     // Reminders
@@ -27,6 +28,15 @@ interface LocalAgendaDataSource {
 
     suspend fun deleteTask(id: String)
     suspend fun deleteAllTasks()
+
+    // Events
+    fun getAllEvents(): Flow<List<AgendaItem.Event>>
+    fun getEventsForDate(targetDate: String): Flow<List<AgendaItem.Event>>
+    suspend fun upsertEvent(event: AgendaItem.Event): Result<EventId, DataError.Local>
+    suspend fun upsertEvents(events: List<AgendaItem.Event>): Result<List<EventId>, DataError.Local>
+
+    suspend fun deleteEvent(id: String)
+    suspend fun deleteAllEvents()
 
     // All
     fun getAllAgendaItems(): Flow<List<AgendaItem>>

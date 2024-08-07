@@ -2,16 +2,22 @@ package com.pronoidsoftware.core.database
 
 import android.database.sqlite.SQLiteFullException
 import com.pronoidsoftware.core.database.dao.AgendaDao
+import com.pronoidsoftware.core.database.mappers.toAttendeeEntity
+import com.pronoidsoftware.core.database.mappers.toEvent
+import com.pronoidsoftware.core.database.mappers.toEventEntity
+import com.pronoidsoftware.core.database.mappers.toPhotoEntity
 import com.pronoidsoftware.core.database.mappers.toReminder
 import com.pronoidsoftware.core.database.mappers.toReminderEntity
 import com.pronoidsoftware.core.database.mappers.toTask
 import com.pronoidsoftware.core.database.mappers.toTaskEntity
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItem
+import com.pronoidsoftware.core.domain.agendaitem.EventId
 import com.pronoidsoftware.core.domain.agendaitem.LocalAgendaDataSource
 import com.pronoidsoftware.core.domain.agendaitem.ReminderId
 import com.pronoidsoftware.core.domain.agendaitem.TaskId
 import com.pronoidsoftware.core.domain.util.DataError
 import com.pronoidsoftware.core.domain.util.Result
+import java.util.UUID
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -113,11 +119,97 @@ class RoomLocalAgendaDataSource @Inject constructor(
         agendaDao.deleteAllTasks()
     }
 
+    // Events
+    override fun getAllEvents(): Flow<List<AgendaItem.Event>> {
+        return agendaDao.getAllEvents()
+            .map { eventEntities ->
+                eventEntities.map { it.toEvent() }
+            }
+    }
+
+    override fun getEventsForDate(targetDate: String): Flow<List<AgendaItem.Event>> {
+        return agendaDao.getEventsForDate(targetDate)
+            .map { eventEntities ->
+                eventEntities.map { it.toEvent() }
+            }
+    }
+
+    override suspend fun upsertEvent(event: AgendaItem.Event): Result<EventId, DataError.Local> {
+        return try {
+            val entity = event.toEventEntity()
+            agendaDao.upsertEvent(entity)
+            agendaDao.upsertAttendees(
+                event.attendees
+                    .map {
+                        it.toAttendeeEntity(
+                            eventId = event.id ?: UUID.randomUUID().toString(),
+                        )
+                    },
+            )
+            agendaDao.upsertPhotos(
+                event.photos
+                    .map {
+                        it.toPhotoEntity(
+                            eventId = event.id ?: UUID.randomUUID().toString(),
+                        )
+                    },
+            )
+            Result.Success(entity.id)
+        } catch (e: SQLiteFullException) {
+            Result.Error(DataError.Local.DISK_FULL)
+        }
+    }
+
+    override suspend fun upsertEvents(
+        events: List<AgendaItem.Event>,
+    ): Result<List<EventId>, DataError.Local> {
+        return try {
+            val entities = events.map { it.toEventEntity() }
+            agendaDao.upsertEvents(entities)
+            events.forEach { event ->
+                agendaDao.upsertAttendees(
+                    event.attendees
+                        .map {
+                            it.toAttendeeEntity(
+                                eventId = event.id ?: UUID.randomUUID().toString(),
+                            )
+                        },
+                )
+                agendaDao.upsertPhotos(
+                    event.photos
+                        .map {
+                            it.toPhotoEntity(
+                                eventId = event.id ?: UUID.randomUUID().toString(),
+                            )
+                        },
+                )
+            }
+            Result.Success(entities.map { it.id })
+        } catch (e: SQLiteFullException) {
+            Result.Error(DataError.Local.DISK_FULL)
+        }
+    }
+
+    override suspend fun deleteEvent(id: String) {
+        agendaDao.deleteEvent(id)
+        agendaDao.deleteAttendeesFromEvent(id)
+        agendaDao.deletePhotosFromEvent(id)
+    }
+
+    override suspend fun deleteAllEvents() {
+        agendaDao.deleteAllEvents()
+        agendaDao.deleteAllAttendees()
+        agendaDao.deleteAllPhotos()
+    }
+
     // All
     override fun getAllAgendaItems(): Flow<List<AgendaItem>> {
         return getAllReminders()
             .combine(getAllTasks()) { reminders, tasks ->
-                (reminders + tasks).sortedBy { it.startDateTime }
+                (reminders + tasks)
+            }
+            .combine(getAllEvents()) { items, events ->
+                (items + events).sortedBy { it.startDateTime }
             }
     }
 
@@ -126,10 +218,16 @@ class RoomLocalAgendaDataSource @Inject constructor(
             .combine(getTasksForDate(targetDate)) { reminders, tasks ->
                 (reminders + tasks).sortedBy { it.startDateTime }
             }
+            .combine(getEventsForDate(targetDate)) { items, events ->
+                (items + events).sortedBy { it.startDateTime }
+            }
     }
 
     override suspend fun deleteAllAgendaItems() {
         agendaDao.deleteAllReminders()
         agendaDao.deleteAllTasks()
+        agendaDao.deleteAllEvents()
+        agendaDao.deleteAllAttendees()
+        agendaDao.deleteAllPhotos()
     }
 }
