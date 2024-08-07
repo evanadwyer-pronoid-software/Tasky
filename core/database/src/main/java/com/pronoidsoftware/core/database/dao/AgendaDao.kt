@@ -120,8 +120,8 @@ interface AgendaDao {
     @Query("DELETE FROM evententity")
     suspend fun deleteAllEvents()
 
-    @Query("DELETE FROM attendeeentity WHERE userId=:id")
-    suspend fun deleteAttendee(id: String)
+    @Query("DELETE FROM attendeeentity WHERE userId=:userId AND eventId=:eventId")
+    suspend fun deleteAttendeeFromEvent(userId: String, eventId: String)
 
     @Query("DELETE FROM attendeeentity WHERE eventId=:id")
     suspend fun deleteAttendeesFromEvent(id: String)

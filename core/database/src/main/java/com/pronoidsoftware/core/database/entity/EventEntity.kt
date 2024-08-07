@@ -14,15 +14,14 @@ data class EventEntity(
     val notificationDateTime: Long,
 )
 
-@Entity
+@Entity(primaryKeys = ["userId", "eventId"])
 data class AttendeeEntity(
-    @PrimaryKey(autoGenerate = false)
     val userId: String,
+    val eventId: String,
     val email: String,
     val fullName: String,
     val isGoing: Boolean,
     val remindAt: Long,
-    val eventId: String,
 )
 
 @Entity
