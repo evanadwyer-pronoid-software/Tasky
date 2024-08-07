@@ -64,6 +64,10 @@ fun EventWithAttendeesAndPhotos.toEvent(): AgendaItem.Event {
         notificationDateTime = event.notificationDateTime.toLocalDateTime(),
         attendees = attendees.map { it.toAttendee() },
         photos = photos.map { it.toPhoto() },
+        isLocalUserGoing = event.isLocalUserGoing,
+        host = event.host,
+        deletedPhotos = emptyList(),
+        isUserEventCreator = event.isUserEventCreator,
     )
 }
 
@@ -92,6 +96,9 @@ fun AgendaItem.Event.toEventEntity(): EventEntity {
         startDateTime = startDateTime.toMillis(),
         endDateTime = endDateTime.toMillis(),
         notificationDateTime = notificationDateTime.toMillis(),
+        isLocalUserGoing = isLocalUserGoing,
+        host = host,
+        isUserEventCreator = isUserEventCreator,
     )
 }
 

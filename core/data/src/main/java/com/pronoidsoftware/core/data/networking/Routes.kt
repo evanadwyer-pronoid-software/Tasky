@@ -9,5 +9,6 @@ object AuthRoutes {
 object AgendaRoutes {
     const val REMINDER = "/reminder"
     const val TASK = "/task"
+    const val EVENT = "/event"
     const val FULL_AGENDA = "/fullAgenda" // for syncing
 }
