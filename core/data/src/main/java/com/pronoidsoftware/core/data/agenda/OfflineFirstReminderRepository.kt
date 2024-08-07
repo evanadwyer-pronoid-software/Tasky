@@ -4,7 +4,7 @@ import com.pronoidsoftware.core.domain.agendaitem.AgendaItem
 import com.pronoidsoftware.core.domain.agendaitem.LocalAgendaDataSource
 import com.pronoidsoftware.core.domain.agendaitem.ReminderId
 import com.pronoidsoftware.core.domain.agendaitem.ReminderRepository
-import com.pronoidsoftware.core.domain.agendaitem.RemoteReminderDataSource
+import com.pronoidsoftware.core.domain.agendaitem.RemoteAgendaDataSource
 import com.pronoidsoftware.core.domain.util.DataError
 import com.pronoidsoftware.core.domain.util.EmptyResult
 import com.pronoidsoftware.core.domain.util.Result
@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.Flow
 
 class OfflineFirstReminderRepository @Inject constructor(
     private val localAgendaDataSource: LocalAgendaDataSource,
-    private val remoteReminderDataSource: RemoteReminderDataSource,
+    private val remoteAgendaDataSource: RemoteAgendaDataSource,
     private val applicationScope: CoroutineScope,
 ) : ReminderRepository {
     override suspend fun createReminder(reminder: AgendaItem.Reminder): EmptyResult<DataError> {
@@ -26,7 +26,7 @@ class OfflineFirstReminderRepository @Inject constructor(
         }
 
         val reminderWithId = reminder.copy(id = localResult.data)
-        return remoteReminderDataSource.createReminder(
+        return remoteAgendaDataSource.createReminder(
             reminder = reminderWithId,
         )
     }
@@ -36,7 +36,7 @@ class OfflineFirstReminderRepository @Inject constructor(
     }
 
     override suspend fun fetchAllReminders(): EmptyResult<DataError> {
-        return when (val result = remoteReminderDataSource.getAllReminders()) {
+        return when (val result = remoteAgendaDataSource.getAllReminders()) {
             is Result.Error -> result.asEmptyResult()
             is Result.Success -> {
                 applicationScope.async {
@@ -53,7 +53,7 @@ class OfflineFirstReminderRepository @Inject constructor(
         }
 
         val reminderWithId = reminder.copy(id = localResult.data)
-        return remoteReminderDataSource.updateReminder(
+        return remoteAgendaDataSource.updateReminder(
             reminder = reminderWithId,
         )
     }
@@ -61,7 +61,7 @@ class OfflineFirstReminderRepository @Inject constructor(
     override suspend fun deleteReminder(id: ReminderId) {
         localAgendaDataSource.deleteReminder(id)
         val remoteResult = applicationScope.async {
-            remoteReminderDataSource.deleteReminder(id)
+            remoteAgendaDataSource.deleteReminder(id)
         }.await()
     }
 }
