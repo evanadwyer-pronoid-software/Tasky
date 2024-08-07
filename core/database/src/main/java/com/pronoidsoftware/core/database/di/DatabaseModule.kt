@@ -2,8 +2,8 @@ package com.pronoidsoftware.core.database.di
 
 import android.app.Application
 import androidx.room.Room
-import com.pronoidsoftware.core.database.ReminderDatabase
-import com.pronoidsoftware.core.database.dao.ReminderDao
+import com.pronoidsoftware.core.database.AgendaDatabase
+import com.pronoidsoftware.core.database.dao.AgendaDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,17 +16,17 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideReminderDatabase(app: Application): ReminderDatabase {
+    fun provideAgendaDatabase(app: Application): AgendaDatabase {
         return Room.databaseBuilder(
             app,
-            ReminderDatabase::class.java,
-            ReminderDatabase.REMINDER_DATABASE_NAME,
+            AgendaDatabase::class.java,
+            AgendaDatabase.AGENDA_DATABASE_NAME,
         ).build()
     }
 
     @Provides
     @Singleton
-    fun provideReminderDao(reminderDatabase: ReminderDatabase): ReminderDao {
-        return reminderDatabase.reminderDao
+    fun provideAgendaDao(agendaDatabase: AgendaDatabase): AgendaDao {
+        return agendaDatabase.agendaDao
     }
 }

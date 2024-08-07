@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 typealias ReminderId = String
 
-interface LocalReminderDataSource {
+interface LocalAgendaDataSource {
     fun getAllReminders(): Flow<List<Reminder>>
     fun getRemindersForDate(targetDate: String): Flow<List<Reminder>>
     suspend fun upsertReminder(reminder: Reminder): Result<ReminderId, DataError.Local>

@@ -1,10 +1,10 @@
 package com.pronoidsoftware.core.database
 
 import android.database.sqlite.SQLiteFullException
-import com.pronoidsoftware.core.database.dao.ReminderDao
+import com.pronoidsoftware.core.database.dao.AgendaDao
 import com.pronoidsoftware.core.database.mappers.toReminder
 import com.pronoidsoftware.core.database.mappers.toReminderEntity
-import com.pronoidsoftware.core.domain.agendaitem.LocalReminderDataSource
+import com.pronoidsoftware.core.domain.agendaitem.LocalAgendaDataSource
 import com.pronoidsoftware.core.domain.agendaitem.Reminder
 import com.pronoidsoftware.core.domain.agendaitem.ReminderId
 import com.pronoidsoftware.core.domain.util.DataError
@@ -13,18 +13,18 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class RoomLocalReminderDataSource @Inject constructor(
-    private val reminderDao: ReminderDao,
-) : LocalReminderDataSource {
+class RoomLocalAgendaDataSource @Inject constructor(
+    private val agendaDao: AgendaDao,
+) : LocalAgendaDataSource {
     override fun getAllReminders(): Flow<List<Reminder>> {
-        return reminderDao.getAllReminders()
+        return agendaDao.getAllReminders()
             .map { reminderEntities ->
                 reminderEntities.map { it.toReminder() }
             }
     }
 
     override fun getRemindersForDate(targetDate: String): Flow<List<Reminder>> {
-        return reminderDao.getRemindersForDate(targetDate)
+        return agendaDao.getRemindersForDate(targetDate)
             .map { reminderEntities ->
                 reminderEntities.map { it.toReminder() }
             }
@@ -33,7 +33,7 @@ class RoomLocalReminderDataSource @Inject constructor(
     override suspend fun upsertReminder(reminder: Reminder): Result<ReminderId, DataError.Local> {
         return try {
             val entity = reminder.toReminderEntity()
-            reminderDao.upsertReminder(entity)
+            agendaDao.upsertReminder(entity)
             Result.Success(entity.id)
         } catch (e: SQLiteFullException) {
             Result.Error(DataError.Local.DISK_FULL)
@@ -45,7 +45,7 @@ class RoomLocalReminderDataSource @Inject constructor(
     ): Result<List<ReminderId>, DataError.Local> {
         return try {
             val entities = reminders.map { it.toReminderEntity() }
-            reminderDao.upsertReminders(entities)
+            agendaDao.upsertReminders(entities)
             Result.Success(entities.map { it.id })
         } catch (e: SQLiteFullException) {
             Result.Error(DataError.Local.DISK_FULL)
@@ -53,10 +53,10 @@ class RoomLocalReminderDataSource @Inject constructor(
     }
 
     override suspend fun deleteReminder(id: String) {
-        reminderDao.deleteReminder(id)
+        agendaDao.deleteReminder(id)
     }
 
     override suspend fun deleteAllReminders() {
-        reminderDao.deleteAllReminders()
+        agendaDao.deleteAllReminders()
     }
 }

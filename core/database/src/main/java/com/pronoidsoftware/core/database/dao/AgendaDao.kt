@@ -7,7 +7,7 @@ import com.pronoidsoftware.core.database.entity.ReminderEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface ReminderDao {
+interface AgendaDao {
 
     @Upsert
     suspend fun upsertReminder(reminder: ReminderEntity)
