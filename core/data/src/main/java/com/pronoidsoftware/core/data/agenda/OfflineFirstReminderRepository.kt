@@ -1,7 +1,7 @@
 package com.pronoidsoftware.core.data.agenda
 
+import com.pronoidsoftware.core.domain.agendaitem.AgendaItem
 import com.pronoidsoftware.core.domain.agendaitem.LocalAgendaDataSource
-import com.pronoidsoftware.core.domain.agendaitem.Reminder
 import com.pronoidsoftware.core.domain.agendaitem.ReminderId
 import com.pronoidsoftware.core.domain.agendaitem.ReminderRepository
 import com.pronoidsoftware.core.domain.agendaitem.RemoteReminderDataSource
@@ -19,7 +19,7 @@ class OfflineFirstReminderRepository @Inject constructor(
     private val remoteReminderDataSource: RemoteReminderDataSource,
     private val applicationScope: CoroutineScope,
 ) : ReminderRepository {
-    override fun getReminders(): Flow<List<Reminder>> {
+    override fun getReminders(): Flow<List<AgendaItem.Reminder>> {
         return localAgendaDataSource.getAllReminders()
     }
 
@@ -34,7 +34,7 @@ class OfflineFirstReminderRepository @Inject constructor(
         }
     }
 
-    override suspend fun upsertReminder(reminder: Reminder): EmptyResult<DataError> {
+    override suspend fun upsertReminder(reminder: AgendaItem.Reminder): EmptyResult<DataError> {
         val localResult = localAgendaDataSource.upsertReminder(reminder)
         if (localResult !is Result.Success) {
             return localResult.asEmptyResult()

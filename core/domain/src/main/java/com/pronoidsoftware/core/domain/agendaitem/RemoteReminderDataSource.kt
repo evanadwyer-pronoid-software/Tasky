@@ -5,8 +5,8 @@ import com.pronoidsoftware.core.domain.util.EmptyResult
 import com.pronoidsoftware.core.domain.util.Result
 
 interface RemoteReminderDataSource {
-    suspend fun getReminder(id: String): Result<Reminder, DataError.Network>
-    suspend fun getAllReminders(): Result<List<Reminder>, DataError.Network>
-    suspend fun postReminder(reminder: Reminder): EmptyResult<DataError.Network>
+    suspend fun getReminder(id: String): Result<AgendaItem.Reminder, DataError.Network>
+    suspend fun getAllReminders(): Result<List<AgendaItem.Reminder>, DataError.Network>
+    suspend fun postReminder(reminder: AgendaItem.Reminder): EmptyResult<DataError.Network>
     suspend fun deleteReminder(id: String): EmptyResult<DataError.Network>
 }

@@ -5,15 +5,31 @@ import com.pronoidsoftware.core.domain.util.Result
 import kotlinx.coroutines.flow.Flow
 
 typealias ReminderId = String
+typealias TaskId = String
 
 interface LocalAgendaDataSource {
-    fun getAllReminders(): Flow<List<Reminder>>
-    fun getRemindersForDate(targetDate: String): Flow<List<Reminder>>
-    suspend fun upsertReminder(reminder: Reminder): Result<ReminderId, DataError.Local>
+    // Reminders
+    fun getAllReminders(): Flow<List<AgendaItem.Reminder>>
+    fun getRemindersForDate(targetDate: String): Flow<List<AgendaItem.Reminder>>
+    suspend fun upsertReminder(reminder: AgendaItem.Reminder): Result<ReminderId, DataError.Local>
     suspend fun upsertReminders(
-        reminders: List<Reminder>,
+        reminders: List<AgendaItem.Reminder>,
     ): Result<List<ReminderId>, DataError.Local>
 
     suspend fun deleteReminder(id: String)
     suspend fun deleteAllReminders()
+
+    // Tasks
+    fun getAllTasks(): Flow<List<AgendaItem.Task>>
+    fun getTasksForDate(targetDate: String): Flow<List<AgendaItem.Task>>
+    suspend fun upsertTask(task: AgendaItem.Task): Result<TaskId, DataError.Local>
+    suspend fun upsertTasks(tasks: List<AgendaItem.Task>): Result<List<TaskId>, DataError.Local>
+
+    suspend fun deleteTask(id: String)
+    suspend fun deleteAllTasks()
+
+    // All
+    fun getAllAgendaItems(): Flow<List<AgendaItem>>
+    fun getAgendaItemsForDate(targetDate: String): Flow<List<AgendaItem>>
+    suspend fun deleteAllAgendaItems()
 }

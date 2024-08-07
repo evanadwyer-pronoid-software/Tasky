@@ -4,10 +4,12 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.pronoidsoftware.core.database.dao.AgendaDao
 import com.pronoidsoftware.core.database.entity.ReminderEntity
+import com.pronoidsoftware.core.database.entity.TaskEntity
 
 @Database(
     entities = [
         ReminderEntity::class,
+        TaskEntity::class,
     ],
     version = 1,
 )
