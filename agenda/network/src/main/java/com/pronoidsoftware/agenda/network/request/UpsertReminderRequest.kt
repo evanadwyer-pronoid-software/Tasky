@@ -1,9 +1,9 @@
-package com.pronoidsoftware.agenda.network
+package com.pronoidsoftware.agenda.network.request
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class PostReminderRequest(
+data class UpsertReminderRequest(
     val id: String,
     val title: String,
     val description: String?,
