@@ -81,6 +81,28 @@ interface AgendaDao {
     suspend fun upsertPhotos(photos: List<PhotoEntity>)
 
     @Transaction
+    suspend fun upsertEventWithPhotosAndAttendees(
+        event: EventEntity,
+        photos: List<PhotoEntity>,
+        attendees: List<AttendeeEntity>,
+    ) {
+        upsertEvent(event)
+        upsertPhotos(photos)
+        upsertAttendees(attendees)
+    }
+
+    @Transaction
+    suspend fun upsertEventsWithPhotosAndAttendees(
+        events: List<EventEntity>,
+        photos: List<PhotoEntity>,
+        attendees: List<AttendeeEntity>,
+    ) {
+        upsertEvents(events)
+        upsertPhotos(photos)
+        upsertAttendees(attendees)
+    }
+
+    @Transaction
     @Query("SELECT * FROM evententity ORDER BY startDateTime")
     fun getAllEvents(): Flow<List<EventWithAttendeesAndPhotos>>
 
@@ -115,4 +137,26 @@ interface AgendaDao {
 
     @Query("DELETE FROM photoentity")
     suspend fun deleteAllPhotos()
+
+    @Transaction
+    suspend fun deleteEventWithPhotosAndAttendees(id: String) {
+        deleteEvent(id)
+        deletePhotosFromEvent(id)
+        deleteAttendeesFromEvent(id)
+    }
+
+    @Transaction
+    suspend fun deleteAllEventsAndPhotosAndAttendees() {
+        deleteAllEvents()
+        deleteAllPhotos()
+        deleteAllAttendees()
+    }
+
+    // All
+    @Transaction
+    suspend fun deleteAllAgendaItems() {
+        deleteAllReminders()
+        deleteAllTasks()
+        deleteAllEventsAndPhotosAndAttendees()
+    }
 }

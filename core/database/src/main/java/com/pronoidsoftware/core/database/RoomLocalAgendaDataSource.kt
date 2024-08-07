@@ -2,6 +2,8 @@ package com.pronoidsoftware.core.database
 
 import android.database.sqlite.SQLiteFullException
 import com.pronoidsoftware.core.database.dao.AgendaDao
+import com.pronoidsoftware.core.database.entity.AttendeeEntity
+import com.pronoidsoftware.core.database.entity.PhotoEntity
 import com.pronoidsoftware.core.database.mappers.toAttendeeEntity
 import com.pronoidsoftware.core.database.mappers.toEvent
 import com.pronoidsoftware.core.database.mappers.toEventEntity
@@ -136,25 +138,19 @@ class RoomLocalAgendaDataSource @Inject constructor(
 
     override suspend fun upsertEvent(event: AgendaItem.Event): Result<EventId, DataError.Local> {
         return try {
-            val entity = event.toEventEntity()
-            agendaDao.upsertEvent(entity)
-            agendaDao.upsertAttendees(
-                event.attendees
-                    .map {
-                        it.toAttendeeEntity(
-                            eventId = event.id ?: UUID.randomUUID().toString(),
-                        )
-                    },
+            val eventEntity = event.toEventEntity()
+            val photoEntities = event.photos.map {
+                it.toPhotoEntity(event.id ?: UUID.randomUUID().toString())
+            }
+            val attendeeEntities = event.attendees.map {
+                it.toAttendeeEntity(event.id ?: UUID.randomUUID().toString())
+            }
+            agendaDao.upsertEventWithPhotosAndAttendees(
+                event = eventEntity,
+                photos = photoEntities,
+                attendees = attendeeEntities,
             )
-            agendaDao.upsertPhotos(
-                event.photos
-                    .map {
-                        it.toPhotoEntity(
-                            eventId = event.id ?: UUID.randomUUID().toString(),
-                        )
-                    },
-            )
-            Result.Success(entity.id)
+            Result.Success(eventEntity.id)
         } catch (e: SQLiteFullException) {
             Result.Error(DataError.Local.DISK_FULL)
         }
@@ -164,70 +160,64 @@ class RoomLocalAgendaDataSource @Inject constructor(
         events: List<AgendaItem.Event>,
     ): Result<List<EventId>, DataError.Local> {
         return try {
-            val entities = events.map { it.toEventEntity() }
-            agendaDao.upsertEvents(entities)
+            val eventEntities = events.map { it.toEventEntity() }
+            val photoEntities = mutableListOf<PhotoEntity>()
             events.forEach { event ->
-                agendaDao.upsertAttendees(
-                    event.attendees
-                        .map {
-                            it.toAttendeeEntity(
-                                eventId = event.id ?: UUID.randomUUID().toString(),
-                            )
-                        },
-                )
-                agendaDao.upsertPhotos(
-                    event.photos
-                        .map {
-                            it.toPhotoEntity(
-                                eventId = event.id ?: UUID.randomUUID().toString(),
-                            )
-                        },
+                photoEntities.addAll(
+                    event.photos.map {
+                        it.toPhotoEntity(event.id ?: UUID.randomUUID().toString())
+                    },
                 )
             }
-            Result.Success(entities.map { it.id })
+            val attendeeEntities = mutableListOf<AttendeeEntity>()
+            events.forEach { event ->
+                attendeeEntities.addAll(
+                    event.attendees.map {
+                        it.toAttendeeEntity(event.id ?: UUID.randomUUID().toString())
+                    },
+                )
+            }
+            agendaDao.upsertEventsWithPhotosAndAttendees(
+                events = eventEntities,
+                photos = photoEntities,
+                attendees = attendeeEntities,
+            )
+            Result.Success(eventEntities.map { it.id })
         } catch (e: SQLiteFullException) {
             Result.Error(DataError.Local.DISK_FULL)
         }
     }
 
     override suspend fun deleteEvent(id: String) {
-        agendaDao.deleteEvent(id)
-        agendaDao.deleteAttendeesFromEvent(id)
-        agendaDao.deletePhotosFromEvent(id)
+        agendaDao.deleteEventWithPhotosAndAttendees(id)
     }
 
     override suspend fun deleteAllEvents() {
-        agendaDao.deleteAllEvents()
-        agendaDao.deleteAllAttendees()
-        agendaDao.deleteAllPhotos()
+        agendaDao.deleteAllEventsAndPhotosAndAttendees()
     }
 
     // All
     override fun getAllAgendaItems(): Flow<List<AgendaItem>> {
-        return getAllReminders()
-            .combine(getAllTasks()) { reminders, tasks ->
-                (reminders + tasks)
-            }
-            .combine(getAllEvents()) { items, events ->
-                (items + events).sortedBy { it.startDateTime }
-            }
+        return combine(
+            getAllReminders(),
+            getAllTasks(),
+            getAllEvents(),
+        ) { reminders, tasks, events ->
+            (reminders + tasks + events).sortedBy { it.startDateTime }
+        }
     }
 
     override fun getAgendaItemsForDate(targetDate: String): Flow<List<AgendaItem>> {
-        return getRemindersForDate(targetDate)
-            .combine(getTasksForDate(targetDate)) { reminders, tasks ->
-                (reminders + tasks).sortedBy { it.startDateTime }
-            }
-            .combine(getEventsForDate(targetDate)) { items, events ->
-                (items + events).sortedBy { it.startDateTime }
-            }
+        return combine(
+            getRemindersForDate(targetDate),
+            getTasksForDate(targetDate),
+            getEventsForDate(targetDate),
+        ) { reminders, tasks, events ->
+            (reminders + tasks + events).sortedBy { it.startDateTime }
+        }
     }
 
     override suspend fun deleteAllAgendaItems() {
-        agendaDao.deleteAllReminders()
-        agendaDao.deleteAllTasks()
-        agendaDao.deleteAllEvents()
-        agendaDao.deleteAllAttendees()
-        agendaDao.deleteAllPhotos()
+        agendaDao.deleteAllAgendaItems()
     }
 }
