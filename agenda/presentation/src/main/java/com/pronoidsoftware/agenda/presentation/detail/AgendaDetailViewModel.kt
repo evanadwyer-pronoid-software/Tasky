@@ -18,6 +18,7 @@ import com.pronoidsoftware.core.domain.util.today
 import com.pronoidsoftware.core.domain.validation.UserDataValidator
 import com.pronoidsoftware.core.presentation.ui.asUiText
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.UUID
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.channels.Channel
@@ -36,7 +37,7 @@ import timber.log.Timber
 class AgendaDetailViewModel @Inject constructor(
     clock: Clock,
     userDataValidator: UserDataValidator,
-    savedStateHandle: SavedStateHandle,
+    private val savedStateHandle: SavedStateHandle,
     private val reminderRepository: ReminderRepository,
 ) : ViewModel() {
 
@@ -47,6 +48,10 @@ class AgendaDetailViewModel @Inject constructor(
     private fun SavedStateHandle.getAgendaItemType(): AgendaItemType? {
         return get<String>("type")
             ?.let { AgendaItemType.valueOf(it) }
+    }
+
+    private fun SavedStateHandle.getId(): String? {
+        return get<String>("id")
     }
 
     var state by mutableStateOf(
@@ -111,6 +116,7 @@ class AgendaDetailViewModel @Inject constructor(
                         isEditing = false,
                         isSaving = true,
                     )
+                    val id = savedStateHandle.getId()
                     when (state.agendaItemType) {
                         AgendaItemType.EVENT -> {
                         }
@@ -120,7 +126,7 @@ class AgendaDetailViewModel @Inject constructor(
 
                         AgendaItemType.REMINDER -> {
                             val reminder = AgendaItem.Reminder(
-                                id = null,
+                                id = id ?: UUID.randomUUID().toString(),
                                 title = state.title,
                                 description = state.description,
                                 startDateTime = state.startDateTime,
@@ -129,7 +135,12 @@ class AgendaDetailViewModel @Inject constructor(
                                     .minus(state.notificationDuration.duration)
                                     .toLocalDateTime(TimeZone.currentSystemDefault()),
                             )
-                            when (val result = reminderRepository.upsertReminder(reminder)) {
+                            val result = if (id == null) {
+                                reminderRepository.createReminder(reminder)
+                            } else {
+                                reminderRepository.updateReminder(reminder)
+                            }
+                            when (result) {
                                 is Result.Error -> {
                                     eventChannel.send(
                                         AgendaDetailEvent.OnError(result.error.asUiText()),

@@ -19,6 +19,18 @@ class OfflineFirstReminderRepository @Inject constructor(
     private val remoteReminderDataSource: RemoteReminderDataSource,
     private val applicationScope: CoroutineScope,
 ) : ReminderRepository {
+    override suspend fun createReminder(reminder: AgendaItem.Reminder): EmptyResult<DataError> {
+        val localResult = localAgendaDataSource.upsertReminder(reminder)
+        if (localResult !is Result.Success) {
+            return localResult.asEmptyResult()
+        }
+
+        val reminderWithId = reminder.copy(id = localResult.data)
+        return remoteReminderDataSource.createReminder(
+            reminder = reminderWithId,
+        )
+    }
+
     override fun getReminders(): Flow<List<AgendaItem.Reminder>> {
         return localAgendaDataSource.getAllReminders()
     }
@@ -34,14 +46,14 @@ class OfflineFirstReminderRepository @Inject constructor(
         }
     }
 
-    override suspend fun upsertReminder(reminder: AgendaItem.Reminder): EmptyResult<DataError> {
+    override suspend fun updateReminder(reminder: AgendaItem.Reminder): EmptyResult<DataError> {
         val localResult = localAgendaDataSource.upsertReminder(reminder)
         if (localResult !is Result.Success) {
             return localResult.asEmptyResult()
         }
 
         val reminderWithId = reminder.copy(id = localResult.data)
-        return remoteReminderDataSource.postReminder(
+        return remoteReminderDataSource.updateReminder(
             reminder = reminderWithId,
         )
     }

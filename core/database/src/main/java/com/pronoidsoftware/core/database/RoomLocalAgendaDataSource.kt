@@ -19,7 +19,6 @@ import com.pronoidsoftware.core.domain.agendaitem.ReminderId
 import com.pronoidsoftware.core.domain.agendaitem.TaskId
 import com.pronoidsoftware.core.domain.util.DataError
 import com.pronoidsoftware.core.domain.util.Result
-import java.util.UUID
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -140,10 +139,10 @@ class RoomLocalAgendaDataSource @Inject constructor(
         return try {
             val eventEntity = event.toEventEntity()
             val photoEntities = event.photos.map {
-                it.toPhotoEntity(event.id ?: UUID.randomUUID().toString())
+                it.toPhotoEntity(event.id)
             }
             val attendeeEntities = event.attendees.map {
-                it.toAttendeeEntity(event.id ?: UUID.randomUUID().toString())
+                it.toAttendeeEntity(event.id)
             }
             agendaDao.upsertEventWithPhotosAndAttendees(
                 event = eventEntity,
@@ -165,7 +164,7 @@ class RoomLocalAgendaDataSource @Inject constructor(
             events.forEach { event ->
                 photoEntities.addAll(
                     event.photos.map {
-                        it.toPhotoEntity(event.id ?: UUID.randomUUID().toString())
+                        it.toPhotoEntity(event.id)
                     },
                 )
             }
@@ -173,7 +172,7 @@ class RoomLocalAgendaDataSource @Inject constructor(
             events.forEach { event ->
                 attendeeEntities.addAll(
                     event.attendees.map {
-                        it.toAttendeeEntity(event.id ?: UUID.randomUUID().toString())
+                        it.toAttendeeEntity(event.id)
                     },
                 )
             }

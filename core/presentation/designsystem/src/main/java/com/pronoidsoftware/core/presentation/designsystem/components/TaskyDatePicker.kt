@@ -60,7 +60,8 @@ fun TaskyDatePicker(
                         onClick = {
                             toggleExpanded()
                             onSelectDate(
-                                datePickerState.selectedDateMillis!!.toLocalDateFromUTC(),
+                                datePickerState.selectedDateMillis?.toLocalDateFromUTC()
+                                    ?: selectedDate,
                             )
                         },
                     ) {

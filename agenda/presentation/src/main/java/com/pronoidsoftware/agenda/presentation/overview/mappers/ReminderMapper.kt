@@ -8,7 +8,7 @@ import com.pronoidsoftware.core.presentation.ui.formatOverview
 fun AgendaItem.Reminder.toReminderUi(): AgendaOverviewItemUi {
     return AgendaOverviewItemUi.Item(
         item = AgendaOverviewItemContents.ReminderOverviewUiContents(
-            id = id!!,
+            id = id,
             title = title,
             description = description ?: "",
             startDateTime = startDateTime.formatOverview(),

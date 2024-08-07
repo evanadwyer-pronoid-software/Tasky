@@ -11,7 +11,6 @@ import com.pronoidsoftware.core.domain.agendaitem.Attendee
 import com.pronoidsoftware.core.domain.agendaitem.Photo
 import com.pronoidsoftware.core.domain.util.toLocalDateTime
 import com.pronoidsoftware.core.domain.util.toMillis
-import java.util.UUID
 
 fun ReminderEntity.toReminder(): AgendaItem.Reminder {
     return AgendaItem.Reminder(
@@ -25,7 +24,7 @@ fun ReminderEntity.toReminder(): AgendaItem.Reminder {
 
 fun AgendaItem.Reminder.toReminderEntity(): ReminderEntity {
     return ReminderEntity(
-        id = id ?: UUID.randomUUID().toString(),
+        id = id,
         title = title,
         description = description,
         startDateTime = startDateTime.toMillis(),
@@ -46,7 +45,7 @@ fun TaskEntity.toTask(): AgendaItem.Task {
 
 fun AgendaItem.Task.toTaskEntity(): TaskEntity {
     return TaskEntity(
-        id = id ?: UUID.randomUUID().toString(),
+        id = id,
         title = title,
         description = description,
         startDateTime = startDateTime.toMillis(),
@@ -87,7 +86,7 @@ fun PhotoEntity.toPhoto(): Photo {
 
 fun AgendaItem.Event.toEventEntity(): EventEntity {
     return EventEntity(
-        id = id ?: UUID.randomUUID().toString(),
+        id = id,
         title = title,
         description = description,
         startDateTime = startDateTime.toMillis(),
