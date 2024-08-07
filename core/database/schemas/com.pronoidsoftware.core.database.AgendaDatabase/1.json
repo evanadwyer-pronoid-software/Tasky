@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "994a4a45c3b928be8657c1dcf0591208",
+    "identityHash": "d6af3567dace13b9c5d1c2edc3fcf29a",
     "entities": [
       {
         "tableName": "ReminderEntity",
@@ -150,11 +150,17 @@
       },
       {
         "tableName": "AttendeeEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` TEXT NOT NULL, `email` TEXT NOT NULL, `fullName` TEXT NOT NULL, `isGoing` INTEGER NOT NULL, `remindAt` INTEGER NOT NULL, `eventId` TEXT NOT NULL, PRIMARY KEY(`userId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` TEXT NOT NULL, `eventId` TEXT NOT NULL, `email` TEXT NOT NULL, `fullName` TEXT NOT NULL, `isGoing` INTEGER NOT NULL, `remindAt` INTEGER NOT NULL, PRIMARY KEY(`userId`, `eventId`))",
         "fields": [
           {
             "fieldPath": "userId",
             "columnName": "userId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "eventId",
+            "columnName": "eventId",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -181,18 +187,13 @@
             "columnName": "remindAt",
             "affinity": "INTEGER",
             "notNull": true
-          },
-          {
-            "fieldPath": "eventId",
-            "columnName": "eventId",
-            "affinity": "TEXT",
-            "notNull": true
           }
         ],
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "userId"
+            "userId",
+            "eventId"
           ]
         },
         "indices": [],
@@ -234,7 +235,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '994a4a45c3b928be8657c1dcf0591208')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd6af3567dace13b9c5d1c2edc3fcf29a')"
     ]
   }
 }
