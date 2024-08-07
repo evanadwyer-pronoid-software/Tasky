@@ -43,7 +43,7 @@ import timber.log.Timber
 
 @Composable
 fun AgendaOverviewScreenRoot(
-    onCreateAgendaItem: (AgendaItemType, Boolean) -> Unit,
+    onCreateAgendaItem: (AgendaItemType, Boolean, String?) -> Unit,
     viewModel: AgendaOverviewViewModel = hiltViewModel(),
 ) {
     ObserveAsEvents(flow = viewModel.events) { event ->
@@ -62,6 +62,7 @@ fun AgendaOverviewScreenRoot(
                     onCreateAgendaItem(
                         action.type,
                         true,
+                        null,
                     )
                 }
 

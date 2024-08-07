@@ -72,11 +72,12 @@ private fun NavGraphBuilder.agendaGraph(navController: NavHostController) {
     ) {
         composable<AgendaScreen> {
             AgendaOverviewScreenRoot(
-                onCreateAgendaItem = { type, isEditing ->
+                onCreateAgendaItem = { type, isEditing, id ->
                     navController.navigate(
                         DetailScreen(
                             type = type.name,
                             isEditing = isEditing,
+                            id = id,
                         ),
                     )
                 },
@@ -113,4 +114,5 @@ object AgendaScreen
 data class DetailScreen(
     val type: String,
     val isEditing: Boolean,
+    val id: String?,
 )

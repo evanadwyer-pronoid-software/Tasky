@@ -8,6 +8,7 @@ import com.pronoidsoftware.core.data.networking.AgendaRoutes
 import com.pronoidsoftware.core.data.networking.delete
 import com.pronoidsoftware.core.data.networking.get
 import com.pronoidsoftware.core.data.networking.post
+import com.pronoidsoftware.core.data.networking.put
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItem
 import com.pronoidsoftware.core.domain.agendaitem.RemoteReminderDataSource
 import com.pronoidsoftware.core.domain.util.DataError
@@ -20,6 +21,15 @@ import javax.inject.Inject
 class KtorRemoteReminderDataSource @Inject constructor(
     private val httpClient: HttpClient,
 ) : RemoteReminderDataSource {
+    override suspend fun createReminder(
+        reminder: AgendaItem.Reminder,
+    ): EmptyResult<DataError.Network> {
+        return httpClient.post(
+            route = AgendaRoutes.REMINDER,
+            body = reminder.toPostReminderRequest(),
+        )
+    }
+
     override suspend fun getReminder(id: String): Result<AgendaItem.Reminder, DataError.Network> {
         return httpClient.get<ReminderDto>(
             route = AgendaRoutes.REMINDER,
@@ -38,10 +48,10 @@ class KtorRemoteReminderDataSource @Inject constructor(
             }
     }
 
-    override suspend fun postReminder(
+    override suspend fun updateReminder(
         reminder: AgendaItem.Reminder,
     ): EmptyResult<DataError.Network> {
-        return httpClient.post(
+        return httpClient.put(
             route = AgendaRoutes.REMINDER,
             body = reminder.toPostReminderRequest(),
         )

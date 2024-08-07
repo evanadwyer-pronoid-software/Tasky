@@ -18,7 +18,7 @@ fun ReminderDto.toReminder(): AgendaItem.Reminder {
 
 fun AgendaItem.Reminder.toPostReminderRequest(): PostReminderRequest {
     return PostReminderRequest(
-        id = id!!,
+        id = id,
         title = title,
         description = description,
         time = startDateTime.toMillis(),
