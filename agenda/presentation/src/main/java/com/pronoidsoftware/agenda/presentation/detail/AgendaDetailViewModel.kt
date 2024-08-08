@@ -8,10 +8,10 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.pronoidsoftware.agenda.domain.model.AgendaItemType
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.model.VisitorFilterType
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItem
-import com.pronoidsoftware.core.domain.agendaitem.ReminderRepository
+import com.pronoidsoftware.core.domain.agendaitem.AgendaItemType
+import com.pronoidsoftware.core.domain.agendaitem.AgendaRepository
 import com.pronoidsoftware.core.domain.util.Result
 import com.pronoidsoftware.core.domain.util.now
 import com.pronoidsoftware.core.domain.util.today
@@ -38,7 +38,7 @@ class AgendaDetailViewModel @Inject constructor(
     clock: Clock,
     userDataValidator: UserDataValidator,
     private val savedStateHandle: SavedStateHandle,
-    private val reminderRepository: ReminderRepository,
+    private val agendaRepository: AgendaRepository,
 ) : ViewModel() {
 
     private fun SavedStateHandle.isEditing(): Boolean {
@@ -122,6 +122,33 @@ class AgendaDetailViewModel @Inject constructor(
                         }
 
                         AgendaItemType.TASK -> {
+                            val task = AgendaItem.Task(
+                                id = id ?: UUID.randomUUID().toString(),
+                                title = state.title,
+                                description = state.description,
+                                startDateTime = state.startDateTime,
+                                notificationDateTime = state.startDateTime
+                                    .toInstant(TimeZone.currentSystemDefault())
+                                    .minus(state.notificationDuration.duration)
+                                    .toLocalDateTime(TimeZone.currentSystemDefault()),
+                                isCompleted = false,
+                            )
+                            val result = if (id == null) {
+                                agendaRepository.createTask(task)
+                            } else {
+                                agendaRepository.updateTask(task)
+                            }
+                            when (result) {
+                                is Result.Error -> {
+                                    eventChannel.send(
+                                        AgendaDetailEvent.OnError(result.error.asUiText()),
+                                    )
+                                }
+
+                                is Result.Success -> {
+                                    eventChannel.send(AgendaDetailEvent.OnSaved)
+                                }
+                            }
                         }
 
                         AgendaItemType.REMINDER -> {
@@ -136,9 +163,9 @@ class AgendaDetailViewModel @Inject constructor(
                                     .toLocalDateTime(TimeZone.currentSystemDefault()),
                             )
                             val result = if (id == null) {
-                                reminderRepository.createReminder(reminder)
+                                agendaRepository.createReminder(reminder)
                             } else {
-                                reminderRepository.updateReminder(reminder)
+                                agendaRepository.updateReminder(reminder)
                             }
                             when (result) {
                                 is Result.Error -> {

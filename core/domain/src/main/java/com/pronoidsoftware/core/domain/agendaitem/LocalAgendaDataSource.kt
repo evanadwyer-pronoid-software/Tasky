@@ -39,6 +39,12 @@ interface LocalAgendaDataSource {
     suspend fun deleteAllEvents()
 
     // All
+    suspend fun upsertAgendaItems(
+        reminders: List<AgendaItem.Reminder>,
+        tasks: List<AgendaItem.Task>,
+        events: List<AgendaItem.Event>,
+    ): Result<Map<AgendaItemType, List<String>>, DataError.Local>
+
     fun getAllAgendaItems(): Flow<List<AgendaItem>>
     fun getAgendaItemsForDate(targetDate: String): Flow<List<AgendaItem>>
     suspend fun deleteAllAgendaItems()

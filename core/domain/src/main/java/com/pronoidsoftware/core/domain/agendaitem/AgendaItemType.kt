@@ -1,4 +1,4 @@
-package com.pronoidsoftware.agenda.domain.model
+package com.pronoidsoftware.core.domain.agendaitem
 
 enum class AgendaItemType {
     EVENT,

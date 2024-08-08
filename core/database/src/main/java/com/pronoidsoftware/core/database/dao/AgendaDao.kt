@@ -154,6 +154,17 @@ interface AgendaDao {
 
     // All
     @Transaction
+    suspend fun upsertAllAgendaItems(
+        reminders: List<ReminderEntity>,
+        tasks: List<TaskEntity>,
+        events: List<EventEntity>,
+    ) {
+        upsertReminders(reminders)
+        upsertTasks(tasks)
+        upsertEvents(events)
+    }
+
+    @Transaction
     suspend fun deleteAllAgendaItems() {
         deleteAllReminders()
         deleteAllTasks()

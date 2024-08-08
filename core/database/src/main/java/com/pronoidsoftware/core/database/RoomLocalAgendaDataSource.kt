@@ -13,6 +13,7 @@ import com.pronoidsoftware.core.database.mappers.toReminderEntity
 import com.pronoidsoftware.core.database.mappers.toTask
 import com.pronoidsoftware.core.database.mappers.toTaskEntity
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItem
+import com.pronoidsoftware.core.domain.agendaitem.AgendaItemType
 import com.pronoidsoftware.core.domain.agendaitem.EventId
 import com.pronoidsoftware.core.domain.agendaitem.LocalAgendaDataSource
 import com.pronoidsoftware.core.domain.agendaitem.ReminderId
@@ -196,6 +197,32 @@ class RoomLocalAgendaDataSource @Inject constructor(
     }
 
     // All
+    override suspend fun upsertAgendaItems(
+        reminders: List<AgendaItem.Reminder>,
+        tasks: List<AgendaItem.Task>,
+        events: List<AgendaItem.Event>,
+    ): Result<Map<AgendaItemType, List<String>>, DataError.Local> {
+        return try {
+            val reminderEntities = reminders.map { it.toReminderEntity() }
+            val taskEntities = tasks.map { it.toTaskEntity() }
+            val eventEntities = events.map { it.toEventEntity() }
+            agendaDao.upsertAllAgendaItems(
+                reminders = reminderEntities,
+                tasks = taskEntities,
+                events = eventEntities,
+            )
+            Result.Success(
+                mapOf(
+                    AgendaItemType.REMINDER to reminders.map { it.id },
+                    AgendaItemType.TASK to tasks.map { it.id },
+                    AgendaItemType.EVENT to events.map { it.id },
+                ),
+            )
+        } catch (e: SQLiteFullException) {
+            Result.Error(DataError.Local.DISK_FULL)
+        }
+    }
+
     override fun getAllAgendaItems(): Flow<List<AgendaItem>> {
         return combine(
             getAllReminders(),

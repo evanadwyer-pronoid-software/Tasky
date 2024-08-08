@@ -15,3 +15,15 @@ fun AgendaItem.Reminder.toReminderUi(): AgendaOverviewItemUi {
         ),
     )
 }
+
+fun AgendaItem.Task.toTaskUi(): AgendaOverviewItemUi {
+    return AgendaOverviewItemUi.Item(
+        item = AgendaOverviewItemContents.TaskOverviewUiContents(
+            id = id,
+            title = title,
+            description = description ?: "",
+            startDateTime = startDateTime.formatOverview(),
+            completed = isCompleted,
+        ),
+    )
+}

@@ -1,11 +1,11 @@
 package com.pronoidsoftware.agenda.presentation.detail
 
 import androidx.compose.foundation.text.input.TextFieldState
-import com.pronoidsoftware.agenda.domain.model.AgendaItemType
 import com.pronoidsoftware.agenda.presentation.detail.components.event.photo.model.PhotoId
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.model.VisitorFilterType
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.model.VisitorUI
 import com.pronoidsoftware.agenda.presentation.detail.model.NotificationDuration
+import com.pronoidsoftware.core.domain.agendaitem.AgendaItemType
 import com.pronoidsoftware.core.domain.util.now
 import com.pronoidsoftware.core.domain.util.today
 import kotlin.time.Duration.Companion.minutes

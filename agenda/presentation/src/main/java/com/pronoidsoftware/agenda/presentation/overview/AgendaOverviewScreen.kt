@@ -22,13 +22,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.pronoidsoftware.agenda.domain.model.AgendaItemType
 import com.pronoidsoftware.agenda.presentation.R
 import com.pronoidsoftware.agenda.presentation.overview.components.AgendaOverviewDateWidget
 import com.pronoidsoftware.agenda.presentation.overview.components.AgendaOverviewItem
 import com.pronoidsoftware.agenda.presentation.overview.components.AgendaOverviewToolbar
 import com.pronoidsoftware.agenda.presentation.overview.components.TimeMarker
+import com.pronoidsoftware.agenda.presentation.overview.model.AgendaOverviewItemContents
 import com.pronoidsoftware.agenda.presentation.overview.model.AgendaOverviewItemUi
+import com.pronoidsoftware.core.domain.agendaitem.AgendaItemType
 import com.pronoidsoftware.core.domain.util.today
 import com.pronoidsoftware.core.presentation.designsystem.LocalClock
 import com.pronoidsoftware.core.presentation.designsystem.LocalSpacing
@@ -193,7 +194,12 @@ internal fun AgendaOverviewScreen(
                                     onAction(AgendaOverviewAction.OnEditClick(id))
                                 },
                                 onDeleteClick = { id ->
-                                    onAction(AgendaOverviewAction.OnDeleteClick(id))
+                                    onAction(
+                                        AgendaOverviewAction.OnDeleteClick(
+                                            type = getAgendaItemType(agendaOverviewItem),
+                                            id = id,
+                                        ),
+                                    )
                                 },
                                 modifier = Modifier.padding(
                                     vertical = 7.5.dp,
@@ -210,6 +216,13 @@ internal fun AgendaOverviewScreen(
         }
     }
 }
+
+private fun getAgendaItemType(agendaOverviewItem: AgendaOverviewItemUi.Item) =
+    when (agendaOverviewItem.item) {
+        is AgendaOverviewItemContents.EventOverviewUiContents -> AgendaItemType.EVENT
+        is AgendaOverviewItemContents.ReminderOverviewUiContents -> AgendaItemType.REMINDER
+        is AgendaOverviewItemContents.TaskOverviewUiContents -> AgendaItemType.TASK
+    }
 
 @Preview
 @Composable
