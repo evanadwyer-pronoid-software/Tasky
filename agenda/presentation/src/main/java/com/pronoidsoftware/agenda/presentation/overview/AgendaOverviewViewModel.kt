@@ -6,8 +6,11 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pronoidsoftware.agenda.presentation.overview.mappers.toReminderUi
+import com.pronoidsoftware.agenda.presentation.overview.mappers.toTaskUi
 import com.pronoidsoftware.core.domain.SessionStorage
-import com.pronoidsoftware.core.domain.agendaitem.ReminderRepository
+import com.pronoidsoftware.core.domain.agendaitem.AgendaItem
+import com.pronoidsoftware.core.domain.agendaitem.AgendaItemType
+import com.pronoidsoftware.core.domain.agendaitem.AgendaRepository
 import com.pronoidsoftware.core.domain.util.initializeAndCapitalize
 import com.pronoidsoftware.core.domain.util.today
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,7 +27,7 @@ import timber.log.Timber
 class AgendaOverviewViewModel @Inject constructor(
     sessionStorage: SessionStorage,
     clock: Clock,
-    private val reminderRepository: ReminderRepository,
+    private val agendaRepository: AgendaRepository,
 ) : ViewModel() {
 
     var state by mutableStateOf(AgendaOverviewState(selectedDate = today(clock)))
@@ -34,9 +37,15 @@ class AgendaOverviewViewModel @Inject constructor(
     val events = eventChannel.receiveAsFlow()
 
     init {
-        reminderRepository.getReminders().onEach { reminders ->
-            val remindersUi = reminders.map { it.toReminderUi() }
-            state = state.copy(items = remindersUi)
+        agendaRepository.getAllAgendaItems().onEach { agendaItems ->
+            val items = agendaItems.map { agendaItem ->
+                when (agendaItem) {
+                    is AgendaItem.Event -> TODO()
+                    is AgendaItem.Reminder -> agendaItem.toReminderUi()
+                    is AgendaItem.Task -> agendaItem.toTaskUi()
+                }
+            }
+            state = state.copy(items = items)
         }.launchIn(viewModelScope)
 
         viewModelScope.launch {
@@ -44,7 +53,7 @@ class AgendaOverviewViewModel @Inject constructor(
                 userInitials = sessionStorage.get()?.fullName?.initializeAndCapitalize()
                     ?: error("User initials not available. Has the user logged out?"),
             )
-            reminderRepository.fetchAllReminders()
+            agendaRepository.fetchAllAgendaItems()
         }
     }
 
@@ -76,7 +85,11 @@ class AgendaOverviewViewModel @Inject constructor(
 
             is AgendaOverviewAction.OnDeleteClick -> {
                 viewModelScope.launch {
-                    reminderRepository.deleteReminder(action.id)
+                    when (action.type) {
+                        AgendaItemType.EVENT -> TODO()
+                        AgendaItemType.TASK -> agendaRepository.deleteTask(action.id)
+                        AgendaItemType.REMINDER -> agendaRepository.deleteReminder(action.id)
+                    }
                 }
             }
 
