@@ -9,9 +9,11 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.model.VisitorFilterType
+import com.pronoidsoftware.core.domain.SessionStorage
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItem
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItemType
 import com.pronoidsoftware.core.domain.agendaitem.AgendaRepository
+import com.pronoidsoftware.core.domain.agendaitem.Photo
 import com.pronoidsoftware.core.domain.util.Result
 import com.pronoidsoftware.core.domain.util.now
 import com.pronoidsoftware.core.domain.util.today
@@ -37,8 +39,10 @@ import timber.log.Timber
 class AgendaDetailViewModel @Inject constructor(
     clock: Clock,
     userDataValidator: UserDataValidator,
+    private val sessionsStorage: SessionStorage,
     private val savedStateHandle: SavedStateHandle,
     private val agendaRepository: AgendaRepository,
+//    private val photoCompressor: PhotoCompressor,
 ) : ViewModel() {
 
     private fun SavedStateHandle.isEditing(): Boolean {
@@ -88,6 +92,8 @@ class AgendaDetailViewModel @Inject constructor(
                 )
             }
             .launchIn(viewModelScope)
+
+        // TODO initialize based on type and id, update state type specific details
     }
 
     private fun getDetailsAsEvent(): AgendaItemDetails.Event? {
@@ -119,6 +125,47 @@ class AgendaDetailViewModel @Inject constructor(
                     val id = savedStateHandle.getId()
                     when (state.agendaItemType) {
                         AgendaItemType.EVENT -> {
+                            val eventDetails = state.typeSpecificDetails as AgendaItemDetails.Event
+//                            eventDetails.photos
+//                                .filterIsInstance<Photo.Local>()
+//                                .mapNotNull { it.id.stringId }
+//                                .forEach { localPhotoUri ->
+//                                    val compressedPhotoWorkerId = photoCompressor.compressPhoto(localPhotoUri)
+//                                    workM
+//                                }
+                            val event = AgendaItem.Event(
+                                id = id ?: UUID.randomUUID().toString(),
+                                title = state.title,
+                                description = state.description,
+                                startDateTime = state.startDateTime,
+                                endDateTime = eventDetails.endDateTime,
+                                notificationDateTime = state.startDateTime
+                                    .toInstant(TimeZone.currentSystemDefault())
+                                    .minus(state.notificationDuration.duration)
+                                    .toLocalDateTime(TimeZone.currentSystemDefault()),
+                                host = eventDetails.host,
+                                isUserEventCreator = eventDetails.isUserEventCreator,
+                                isLocalUserGoing = eventDetails.isLocalUserGoing,
+                                attendees = eventDetails.attendees,
+                                photos = eventDetails.photos,
+                                deletedPhotos = emptyList(),
+                            )
+                            val result = if (id == null) {
+                                agendaRepository.createEvent(event)
+                            } else {
+                                agendaRepository.updateEvent(event)
+                            }
+                            when (result) {
+                                is Result.Error -> {
+                                    eventChannel.send(
+                                        AgendaDetailEvent.OnError(result.error.asUiText()),
+                                    )
+                                }
+
+                                is Result.Success -> {
+                                    eventChannel.send(AgendaDetailEvent.OnSaved)
+                                }
+                            }
                         }
 
                         AgendaItemType.TASK -> {
@@ -256,10 +303,14 @@ class AgendaDetailViewModel @Inject constructor(
                 getDetailsAsEvent()?.let { eventDetails ->
                     state = state.copy(
                         typeSpecificDetails = eventDetails.copy(
-                            photos = eventDetails.photos + action.photo,
+                            photos = eventDetails.photos + Photo.Local(action.photo),
                         ),
                     )
                 }
+            }
+
+            is AgendaDetailAction.OnSaveLocalPhoto -> {
+                viewModelScope
             }
 
             is AgendaDetailAction.OnOpenPhotoClick -> {
@@ -287,6 +338,7 @@ class AgendaDetailViewModel @Inject constructor(
                     state = state.copy(
                         typeSpecificDetails = eventDetails.copy(
                             photos = eventDetails.photos.filterNot { it == action.photo },
+                            deletedPhotos = eventDetails.deletedPhotos + action.photo,
                             selectedPhotoToView = null,
                         ),
                     )
@@ -514,7 +566,9 @@ class AgendaDetailViewModel @Inject constructor(
                 getDetailsAsEvent()?.let { eventDetails ->
                     state = state.copy(
                         typeSpecificDetails = eventDetails.copy(
-                            visitors = eventDetails.visitors.filterNot { it == action.visitor },
+                            attendees = eventDetails.attendees.filterNot {
+                                it.userId == action.visitor.id
+                            },
                         ),
                     )
                 }

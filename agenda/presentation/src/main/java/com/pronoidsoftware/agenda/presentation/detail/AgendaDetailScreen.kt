@@ -39,10 +39,12 @@ import com.pronoidsoftware.agenda.presentation.detail.components.edittext.Agenda
 import com.pronoidsoftware.agenda.presentation.detail.components.edittext.EditTextType
 import com.pronoidsoftware.agenda.presentation.detail.components.event.photo.components.EventDetailPhotoDetail
 import com.pronoidsoftware.agenda.presentation.detail.components.event.photo.components.EventDetailPhotos
-import com.pronoidsoftware.agenda.presentation.detail.components.event.photo.model.PhotoId
+import com.pronoidsoftware.agenda.presentation.detail.components.event.photo.model.LocalPhotoId
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.components.AddVisitorDialog
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.components.EventDetailVisitorList
+import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.model.toVisitorUi
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItemType
+import com.pronoidsoftware.core.domain.agendaitem.Photo
 import com.pronoidsoftware.core.presentation.designsystem.LocalClock
 import com.pronoidsoftware.core.presentation.designsystem.LocalSpacing
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
@@ -110,7 +112,7 @@ internal fun AgendaDetailScreen(state: AgendaDetailState, onAction: (AgendaDetai
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri ->
             uri?.let {
-                onAction(AgendaDetailAction.OnAddPhotoClick(PhotoId.PhotoUri(uri)))
+                onAction(AgendaDetailAction.OnAddPhotoClick(LocalPhotoId.LocalPhotoUri(uri)))
             }
         },
     )
@@ -220,7 +222,17 @@ internal fun AgendaDetailScreen(state: AgendaDetailState, onAction: (AgendaDetai
                     },
                     isEditing = state.isEditing,
                     onEditClick = { onAction(AgendaDetailAction.OnEnableEdit) },
-                    onSaveClick = { onAction(AgendaDetailAction.OnSave) },
+                    onSaveClick = {
+                        val localCompressedPhotos = getDetailAsEvent(state)?.let { eventDetails ->
+                            eventDetails.photos
+                                .filterIsInstance<Photo.Local>()
+                                .mapNotNull { it.id.stringId }
+                                .forEach { localPhotoUri ->
+//                                    val localCompressedPhotoWorkerId = onAction(AgendaDetailAction.)
+                                }
+                        }
+                        onAction(AgendaDetailAction.OnSave)
+                    },
                 )
             },
         ) { innerPadding ->
@@ -382,8 +394,12 @@ internal fun AgendaDetailScreen(state: AgendaDetailState, onAction: (AgendaDetai
                             onAction(AgendaDetailAction.OnDeleteVisitorClick(visitor))
                         },
                         selectedFilterType = eventDetails.selectedVisitorFilter,
-                        goingVisitors = eventDetails.visitors.filter { it.isGoing },
-                        notGoingVisitors = eventDetails.visitors.filterNot { it.isGoing },
+                        goingVisitors = eventDetails.attendees
+                            .filter { it.isGoing }
+                            .map { it.toVisitorUi(eventDetails.isUserEventCreator) },
+                        notGoingVisitors = eventDetails.attendees
+                            .filterNot { it.isGoing }
+                            .map { it.toVisitorUi(eventDetails.isUserEventCreator) },
                         editEnabled = state.isEditing,
                     )
                 }

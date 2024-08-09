@@ -5,8 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.pronoidsoftware.agenda.presentation.overview.mappers.toReminderUi
-import com.pronoidsoftware.agenda.presentation.overview.mappers.toTaskUi
+import com.pronoidsoftware.agenda.presentation.overview.mappers.toEventOverviewUi
+import com.pronoidsoftware.agenda.presentation.overview.mappers.toReminderOverviewUi
+import com.pronoidsoftware.agenda.presentation.overview.mappers.toTaskOverviewUi
 import com.pronoidsoftware.core.domain.SessionStorage
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItem
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItemType
@@ -40,9 +41,9 @@ class AgendaOverviewViewModel @Inject constructor(
         agendaRepository.getAllAgendaItems().onEach { agendaItems ->
             val items = agendaItems.map { agendaItem ->
                 when (agendaItem) {
-                    is AgendaItem.Event -> TODO()
-                    is AgendaItem.Reminder -> agendaItem.toReminderUi()
-                    is AgendaItem.Task -> agendaItem.toTaskUi()
+                    is AgendaItem.Event -> agendaItem.toEventOverviewUi()
+                    is AgendaItem.Reminder -> agendaItem.toReminderOverviewUi()
+                    is AgendaItem.Task -> agendaItem.toTaskOverviewUi()
                 }
             }
             state = state.copy(items = items)
@@ -86,7 +87,7 @@ class AgendaOverviewViewModel @Inject constructor(
             is AgendaOverviewAction.OnDeleteClick -> {
                 viewModelScope.launch {
                     when (action.type) {
-                        AgendaItemType.EVENT -> TODO()
+                        AgendaItemType.EVENT -> agendaRepository.deleteEvent(action.id)
                         AgendaItemType.TASK -> agendaRepository.deleteTask(action.id)
                         AgendaItemType.REMINDER -> agendaRepository.deleteReminder(action.id)
                     }

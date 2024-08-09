@@ -47,10 +47,10 @@ sealed class AgendaItem(
         val endDateTime: LocalDateTime,
         val host: String,
         val isUserEventCreator: Boolean,
+        val isLocalUserGoing: Boolean,
         val attendees: List<Attendee>,
         val photos: List<Photo>,
         val deletedPhotos: List<Photo>,
-        val isLocalUserGoing: Boolean,
     ) : AgendaItem(
         id = id,
         title = title,
@@ -68,7 +68,18 @@ data class Attendee(
     val remindAt: LocalDateTime,
 )
 
-data class Photo(
-    val key: String,
-    val url: String,
-)
+sealed interface Photo {
+    data class Remote(
+        val key: String,
+        val url: String,
+    ) : Photo
+
+    data class Local(
+        val id: PhotoId,
+    ) : Photo
+}
+
+interface PhotoId {
+    val stringId: String?
+    val intId: Int? // For supporting resIds for previews
+}

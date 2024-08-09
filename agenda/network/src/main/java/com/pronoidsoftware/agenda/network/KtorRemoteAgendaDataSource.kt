@@ -1,5 +1,7 @@
 package com.pronoidsoftware.agenda.network
 
+import android.content.Context
+import androidx.work.WorkManager
 import com.pronoidsoftware.agenda.network.dto.AgendaDto
 import com.pronoidsoftware.agenda.network.dto.EventDto
 import com.pronoidsoftware.agenda.network.dto.ReminderDto
@@ -20,11 +22,14 @@ import com.pronoidsoftware.core.data.networking.put
 import com.pronoidsoftware.core.data.networking.putMultipart
 import com.pronoidsoftware.core.domain.SessionStorage
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItem
+import com.pronoidsoftware.core.domain.agendaitem.Photo
+import com.pronoidsoftware.core.domain.agendaitem.PhotoCompressor
 import com.pronoidsoftware.core.domain.agendaitem.RemoteAgendaDataSource
 import com.pronoidsoftware.core.domain.util.DataError
 import com.pronoidsoftware.core.domain.util.EmptyResult
 import com.pronoidsoftware.core.domain.util.Result
 import com.pronoidsoftware.core.domain.util.map
+import dagger.hilt.android.qualifiers.ApplicationContext
 import io.ktor.client.HttpClient
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
@@ -36,9 +41,13 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 class KtorRemoteAgendaDataSource @Inject constructor(
+    @ApplicationContext context: Context,
     private val httpClient: HttpClient,
     private val sessionStorage: SessionStorage,
+    private val photoCompressor: PhotoCompressor,
 ) : RemoteAgendaDataSource {
+
+    private val workManager = WorkManager.getInstance(context)
 
     // Reminders
     override suspend fun createReminder(
@@ -135,17 +144,26 @@ class KtorRemoteAgendaDataSource @Inject constructor(
             body = MultiPartFormDataContent(
                 formData {
                     append(EVENT_CREATE_REQUEST, Json.encodeToString(event.toCreateEventRequest()))
-                    event.photos.forEachIndexed { index, photo ->
-                        val photoName = "photo$index"
-                        append(
-                            photoName,
-                            URL(photo.url).readBytes(),
-                            Headers.build {
-                                append(HttpHeaders.ContentType, "image/png")
-                                append(HttpHeaders.ContentDisposition, "filename=$photoName.png")
-                            },
-                        )
-                    }
+                    var photoIndex = 0
+                    event.photos
+                        .filterIsInstance<Photo.Local>()
+                        .mapNotNull { it.id.stringId }
+                        .forEach { localPhotoUri ->
+                            val photoCompressionId = photoCompressor.compressPhoto(localPhotoUri)
+//                            workManager.getWorkInfoByIdLiveData(photoCompressionId).asFlow()
+                            val photoName = "photo$photoIndex"
+                            append(
+                                photoName,
+                                URL(localPhotoUri).readBytes(),
+                                Headers.build {
+                                    append(HttpHeaders.ContentType, "image/png")
+                                    append(
+                                        HttpHeaders.ContentDisposition,
+                                        "filename=$photoName.png",
+                                    )
+                                },
+                            )
+                        }
                 },
             ),
         )
@@ -179,7 +197,7 @@ class KtorRemoteAgendaDataSource @Inject constructor(
                         val photoName = "photo$index"
                         append(
                             photoName,
-                            URL(photo.url).readBytes(),
+                            URL((photo as? Photo.Remote)?.url).readBytes(),
                             Headers.build {
                                 append(HttpHeaders.ContentType, "image/png")
                                 append(HttpHeaders.ContentDisposition, "filename=$photoName.png")

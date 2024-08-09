@@ -16,6 +16,7 @@ import com.pronoidsoftware.core.domain.agendaitem.AgendaItem
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItemType
 import com.pronoidsoftware.core.domain.agendaitem.EventId
 import com.pronoidsoftware.core.domain.agendaitem.LocalAgendaDataSource
+import com.pronoidsoftware.core.domain.agendaitem.Photo
 import com.pronoidsoftware.core.domain.agendaitem.ReminderId
 import com.pronoidsoftware.core.domain.agendaitem.TaskId
 import com.pronoidsoftware.core.domain.util.DataError
@@ -139,9 +140,9 @@ class RoomLocalAgendaDataSource @Inject constructor(
     override suspend fun upsertEvent(event: AgendaItem.Event): Result<EventId, DataError.Local> {
         return try {
             val eventEntity = event.toEventEntity()
-            val photoEntities = event.photos.map {
-                it.toPhotoEntity(event.id)
-            }
+            val photoEntities = event.photos
+                .filterIsInstance<Photo.Remote>()
+                .map { it.toPhotoEntity(event.id) }
             val attendeeEntities = event.attendees.map {
                 it.toAttendeeEntity(event.id)
             }
@@ -164,9 +165,9 @@ class RoomLocalAgendaDataSource @Inject constructor(
             val photoEntities = mutableListOf<PhotoEntity>()
             events.forEach { event ->
                 photoEntities.addAll(
-                    event.photos.map {
-                        it.toPhotoEntity(event.id)
-                    },
+                    event.photos
+                        .filterIsInstance<Photo.Remote>()
+                        .map { it.toPhotoEntity(event.id) },
                 )
             }
             val attendeeEntities = mutableListOf<AttendeeEntity>()

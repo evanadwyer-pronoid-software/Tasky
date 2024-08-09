@@ -13,4 +13,5 @@ dependencies {
     implementation(projects.core.data)
 
     implementation(libs.kotlinx.datetime)
+    implementation(libs.androidx.work)
 }

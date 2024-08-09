@@ -20,6 +20,13 @@ interface AgendaRepository {
     suspend fun updateTask(task: AgendaItem.Task): EmptyResult<DataError>
     suspend fun deleteTask(id: TaskId)
 
+    // Events
+    suspend fun createEvent(event: AgendaItem.Event): EmptyResult<DataError>
+    fun getEvents(): Flow<List<AgendaItem.Event>>
+    suspend fun fetchAllEvents(): EmptyResult<DataError>
+    suspend fun updateEvent(event: AgendaItem.Event): EmptyResult<DataError>
+    suspend fun deleteEvent(id: EventId)
+
     // All
     fun getAllAgendaItems(): Flow<List<AgendaItem>>
     suspend fun fetchAllAgendaItems(): EmptyResult<DataError>
