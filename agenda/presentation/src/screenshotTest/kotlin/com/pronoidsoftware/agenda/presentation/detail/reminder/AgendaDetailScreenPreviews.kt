@@ -3,14 +3,13 @@ package com.pronoidsoftware.agenda.presentation.detail.reminder
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.tooling.preview.Preview
-import com.pronoidsoftware.agenda.presentation.R
 import com.pronoidsoftware.agenda.presentation.detail.AgendaDetailScreen
 import com.pronoidsoftware.agenda.presentation.detail.AgendaDetailState
 import com.pronoidsoftware.agenda.presentation.detail.AgendaItemDetails
-import com.pronoidsoftware.agenda.presentation.detail.components.event.photo.model.PhotoId
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.model.VisitorFilterType
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.model.VisitorUI
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItemType
+import com.pronoidsoftware.core.domain.agendaitem.Photo
 import com.pronoidsoftware.core.presentation.designsystem.LocalClock
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
 import com.pronoidsoftware.testutil.jvmtest.core.data.time.TestClock
@@ -25,10 +24,7 @@ private val endDateTime = LocalDateTime(2022, 7, 21, 8, 30)
 private val today = LocalDate(2024, 7, 19)
 private val fixedClock = TestClock(today.atStartOfDayIn(TimeZone.currentSystemDefault()))
 
-private val photos = listOf(
-    PhotoId.PhotoResId(R.drawable.test_wedding),
-    PhotoId.PhotoResId(R.drawable.solid_orange),
-)
+private val photos = emptyList<Photo>()
 
 private val visitors = listOf(
     VisitorUI(
@@ -243,24 +239,6 @@ private fun EventDetailScreenPreview_Read_Empty() {
                     startDateTime = startDateTime,
                     typeSpecificDetails = AgendaItemDetails.Event(
                         endDateTime = endDateTime,
-                    ),
-                ),
-                onAction = {},
-            )
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun EventDetailScreenPreview_Read_OpenPhoto() {
-    TaskyTheme {
-        CompositionLocalProvider(LocalClock provides fixedClock) {
-            AgendaDetailScreen(
-                state = AgendaDetailState(
-                    agendaItemType = AgendaItemType.EVENT,
-                    typeSpecificDetails = AgendaItemDetails.Event(
-                        selectedPhotoToView = PhotoId.PhotoResId(R.drawable.test_wedding),
                     ),
                 ),
                 onAction = {},

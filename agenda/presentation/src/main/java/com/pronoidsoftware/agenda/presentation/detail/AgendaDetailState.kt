@@ -1,11 +1,11 @@
 package com.pronoidsoftware.agenda.presentation.detail
 
 import androidx.compose.foundation.text.input.TextFieldState
-import com.pronoidsoftware.agenda.presentation.detail.components.event.photo.model.PhotoId
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.model.VisitorFilterType
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.model.VisitorUI
 import com.pronoidsoftware.agenda.presentation.detail.model.NotificationDuration
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItemType
+import com.pronoidsoftware.core.domain.agendaitem.Photo
 import com.pronoidsoftware.core.domain.util.now
 import com.pronoidsoftware.core.domain.util.today
 import kotlin.time.Duration.Companion.minutes
@@ -51,8 +51,9 @@ data class AgendaDetailState(
 sealed interface AgendaItemDetails {
     data class Event(
         // photos
-        val photos: List<PhotoId> = emptyList(),
-        val selectedPhotoToView: PhotoId? = null,
+        val photos: List<Photo> = emptyList(),
+        val selectedPhotoToView: Photo? = null,
+        val deletedPhotos: List<Photo.Remote> = emptyList(),
 
         // date time
         val endDateTime: LocalDateTime = now()

@@ -39,10 +39,10 @@ import com.pronoidsoftware.agenda.presentation.detail.components.edittext.Agenda
 import com.pronoidsoftware.agenda.presentation.detail.components.edittext.EditTextType
 import com.pronoidsoftware.agenda.presentation.detail.components.event.photo.components.EventDetailPhotoDetail
 import com.pronoidsoftware.agenda.presentation.detail.components.event.photo.components.EventDetailPhotos
-import com.pronoidsoftware.agenda.presentation.detail.components.event.photo.model.PhotoId
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.components.AddVisitorDialog
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.components.EventDetailVisitorList
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItemType
+import com.pronoidsoftware.core.domain.agendaitem.Photo
 import com.pronoidsoftware.core.presentation.designsystem.LocalClock
 import com.pronoidsoftware.core.presentation.designsystem.LocalSpacing
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
@@ -110,7 +110,8 @@ internal fun AgendaDetailScreen(state: AgendaDetailState, onAction: (AgendaDetai
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri ->
             uri?.let {
-                onAction(AgendaDetailAction.OnAddPhotoClick(PhotoId.PhotoUri(uri)))
+                // TODO: compress photo here and save uri to compressed file
+                onAction(AgendaDetailAction.OnAddPhotoClick(Photo.Local(uri.toString())))
             }
         },
     )

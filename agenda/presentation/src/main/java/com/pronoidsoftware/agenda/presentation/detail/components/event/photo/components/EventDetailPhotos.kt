@@ -22,25 +22,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pronoidsoftware.agenda.presentation.R
-import com.pronoidsoftware.agenda.presentation.detail.components.event.photo.model.PhotoId
+import com.pronoidsoftware.core.domain.agendaitem.Photo
 import com.pronoidsoftware.core.presentation.designsystem.Inter
 import com.pronoidsoftware.core.presentation.designsystem.LocalSpacing
 import com.pronoidsoftware.core.presentation.designsystem.PlusIcon
 import com.pronoidsoftware.core.presentation.designsystem.TaskyBlack
 import com.pronoidsoftware.core.presentation.designsystem.TaskyGray
-import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
 
 @Composable
 fun EventDetailPhotos(
-    photos: List<PhotoId>,
+    photos: List<Photo>,
     arePhotosFull: Boolean,
     editEnabled: Boolean,
     onAddClick: () -> Unit,
-    onOpenClick: (PhotoId) -> Unit,
+    onOpenClick: (Photo) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (photos.isEmpty()) {
@@ -114,11 +112,11 @@ private fun NoPhotosCarousel(
 
 @Composable
 private fun PhotoCarousel(
-    photos: List<PhotoId>,
+    photos: List<Photo>,
     arePhotosFull: Boolean,
     editEnabled: Boolean,
     onAddClick: () -> Unit,
-    onOpenClick: (PhotoId) -> Unit,
+    onOpenClick: (Photo) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val spacing = LocalSpacing.current
@@ -158,7 +156,7 @@ private fun PhotoCarousel(
                     items = photos,
                 ) { index, photo ->
                     PhotoThumbnail(
-                        photoId = photo,
+                        photo = photo,
                         onClick = {
                             onOpenClick(photo)
                         },
@@ -185,118 +183,5 @@ private fun PhotoCarousel(
                 }
             }
         }
-    }
-}
-
-@Preview
-@Composable
-private fun EventDetailPhotosPreview_Empty_NotEditable() {
-    TaskyTheme {
-        EventDetailPhotos(
-            photos = emptyList(),
-            arePhotosFull = false,
-            editEnabled = false,
-            onAddClick = { },
-            onOpenClick = { },
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun EventDetailPhotosPreview_Empty_Editable() {
-    TaskyTheme {
-        EventDetailPhotos(
-            photos = emptyList(),
-            arePhotosFull = false,
-            editEnabled = true,
-            onAddClick = { },
-            onOpenClick = { },
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun EventDetailPhotosPreview_NotEmpty_NotEditable() {
-    TaskyTheme {
-        val weddingPhoto = PhotoId.PhotoResId(R.drawable.test_wedding)
-        val orangePhoto = PhotoId.PhotoResId(R.drawable.solid_orange)
-        EventDetailPhotos(
-            photos = listOf(weddingPhoto, orangePhoto),
-            arePhotosFull = false,
-            editEnabled = false,
-            onAddClick = { },
-            onOpenClick = { },
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun EventDetailPhotosPreview_NotEmpty_Editable() {
-    TaskyTheme {
-        val weddingPhoto = PhotoId.PhotoResId(R.drawable.test_wedding)
-        val orangePhoto = PhotoId.PhotoResId(R.drawable.solid_orange)
-        EventDetailPhotos(
-            photos = listOf(weddingPhoto, orangePhoto),
-            arePhotosFull = false,
-            editEnabled = true,
-            onAddClick = { },
-            onOpenClick = { },
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun EventDetailPhotosPreview_NotEmpty_Editable_NearFull() {
-    TaskyTheme {
-        val weddingPhoto = PhotoId.PhotoResId(R.drawable.test_wedding)
-        val orangePhoto = PhotoId.PhotoResId(R.drawable.solid_orange)
-        EventDetailPhotos(
-            photos = listOf(
-                weddingPhoto,
-                orangePhoto,
-                weddingPhoto,
-                orangePhoto,
-                weddingPhoto,
-                orangePhoto,
-                weddingPhoto,
-                orangePhoto,
-                weddingPhoto,
-                orangePhoto,
-            ),
-            arePhotosFull = false,
-            editEnabled = true,
-            onAddClick = { },
-            onOpenClick = { },
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun EventDetailPhotosPreview_NotEmpty_Editable_Full() {
-    TaskyTheme {
-        val weddingPhoto = PhotoId.PhotoResId(R.drawable.test_wedding)
-        val orangePhoto = PhotoId.PhotoResId(R.drawable.solid_orange)
-        EventDetailPhotos(
-            photos = listOf(
-                weddingPhoto,
-                orangePhoto,
-                weddingPhoto,
-                orangePhoto,
-                weddingPhoto,
-                orangePhoto,
-                weddingPhoto,
-                orangePhoto,
-                weddingPhoto,
-            ),
-            arePhotosFull = true,
-            editEnabled = true,
-            onAddClick = { },
-            onOpenClick = { },
-        )
     }
 }
