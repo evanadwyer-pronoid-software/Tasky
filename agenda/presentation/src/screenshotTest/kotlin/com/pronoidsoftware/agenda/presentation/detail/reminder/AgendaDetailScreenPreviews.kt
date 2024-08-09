@@ -7,7 +7,7 @@ import com.pronoidsoftware.agenda.presentation.R
 import com.pronoidsoftware.agenda.presentation.detail.AgendaDetailScreen
 import com.pronoidsoftware.agenda.presentation.detail.AgendaDetailState
 import com.pronoidsoftware.agenda.presentation.detail.AgendaItemDetails
-import com.pronoidsoftware.agenda.presentation.detail.components.event.photo.model.PhotoId
+import com.pronoidsoftware.agenda.presentation.detail.components.event.photo.model.LocalPhotoId
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.model.VisitorFilterType
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.model.VisitorUI
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItemType
@@ -26,8 +26,8 @@ private val today = LocalDate(2024, 7, 19)
 private val fixedClock = TestClock(today.atStartOfDayIn(TimeZone.currentSystemDefault()))
 
 private val photos = listOf(
-    PhotoId.PhotoResId(R.drawable.test_wedding),
-    PhotoId.PhotoResId(R.drawable.solid_orange),
+    LocalPhotoId.LocalPhotoResId(R.drawable.test_wedding),
+    LocalPhotoId.LocalPhotoResId(R.drawable.solid_orange),
 )
 
 private val visitors = listOf(
@@ -260,7 +260,7 @@ private fun EventDetailScreenPreview_Read_OpenPhoto() {
                 state = AgendaDetailState(
                     agendaItemType = AgendaItemType.EVENT,
                     typeSpecificDetails = AgendaItemDetails.Event(
-                        selectedPhotoToView = PhotoId.PhotoResId(R.drawable.test_wedding),
+                        selectedPhotoToView = LocalPhotoId.LocalPhotoResId(R.drawable.test_wedding),
                     ),
                 ),
                 onAction = {},
@@ -286,7 +286,7 @@ private fun EventDetailScreenPreview_Read() {
                     typeSpecificDetails = AgendaItemDetails.Event(
                         photos = photos,
                         endDateTime = endDateTime,
-                        visitors = visitors,
+                        attendees = visitors,
                     ),
                 ),
                 onAction = {},
@@ -312,7 +312,7 @@ private fun EventDetailScreenPreview_Read_GoingVisitors() {
                     typeSpecificDetails = AgendaItemDetails.Event(
                         photos = photos,
                         endDateTime = endDateTime,
-                        visitors = visitors,
+                        attendees = visitors,
                         selectedVisitorFilter = VisitorFilterType.GOING,
                     ),
                 ),
@@ -339,7 +339,7 @@ private fun EventDetailScreenPreview_Read_NotGoingVisitors() {
                     typeSpecificDetails = AgendaItemDetails.Event(
                         photos = photos,
                         endDateTime = endDateTime,
-                        visitors = visitors,
+                        attendees = visitors,
                         selectedVisitorFilter = VisitorFilterType.NOT_GOING,
                     ),
                 ),
@@ -364,7 +364,7 @@ private fun EventDetailScreenPreview_Read_EmptyDescription() {
                     typeSpecificDetails = AgendaItemDetails.Event(
                         photos = photos,
                         endDateTime = endDateTime,
-                        visitors = visitors,
+                        attendees = visitors,
                     ),
                 ),
                 onAction = {},
@@ -390,7 +390,7 @@ private fun EventDetailScreenPreview_Edit() {
                     typeSpecificDetails = AgendaItemDetails.Event(
                         photos = photos,
                         endDateTime = endDateTime,
-                        visitors = visitors,
+                        attendees = visitors,
                     ),
                 ),
                 onAction = {},
@@ -416,7 +416,7 @@ private fun EventDetailScreenPreview_Edit_AddVisitor() {
                     typeSpecificDetails = AgendaItemDetails.Event(
                         photos = photos,
                         endDateTime = endDateTime,
-                        visitors = visitors,
+                        attendees = visitors,
                         isShowingAddVisitorDialog = true,
                     ),
                 ),
@@ -441,7 +441,7 @@ private fun EventDetailScreenPreview_Edit_EmptyDescription() {
                     typeSpecificDetails = AgendaItemDetails.Event(
                         photos = photos,
                         endDateTime = endDateTime,
-                        visitors = visitors,
+                        attendees = visitors,
                     ),
                 ),
                 onAction = {},

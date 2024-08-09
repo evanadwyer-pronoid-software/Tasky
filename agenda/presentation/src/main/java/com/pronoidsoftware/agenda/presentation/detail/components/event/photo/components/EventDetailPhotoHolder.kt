@@ -22,7 +22,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.pronoidsoftware.agenda.presentation.R
-import com.pronoidsoftware.agenda.presentation.detail.components.event.photo.model.PhotoId
+import com.pronoidsoftware.agenda.presentation.detail.components.event.photo.model.LocalPhotoId
+import com.pronoidsoftware.core.domain.agendaitem.Photo
 import com.pronoidsoftware.core.presentation.designsystem.PlusIcon
 import com.pronoidsoftware.core.presentation.designsystem.TaskyLightBlue2
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
@@ -75,15 +76,15 @@ fun AddPhotoButton(
 }
 
 @Composable
-fun PhotoThumbnail(photoId: PhotoId, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun PhotoThumbnail(photo: Photo, onClick: () -> Unit, modifier: Modifier = Modifier) {
     PhotoBorder(
         modifier = modifier,
         onClick = onClick,
     ) {
-        when (photoId) {
-            is PhotoId.PhotoUri -> {
+        when (photo) {
+            is Photo.Remote -> {
                 AsyncImage(
-                    model = photoId.uri,
+                    model = photo.url,
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxSize(),
@@ -91,14 +92,28 @@ fun PhotoThumbnail(photoId: PhotoId, onClick: () -> Unit, modifier: Modifier = M
                 )
             }
 
-            is PhotoId.PhotoResId -> {
-                Image(
-                    painter = painterResource(id = photoId.resId),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentScale = ContentScale.Crop,
-                )
+            is Photo.Local -> when (photo.id) {
+                is LocalPhotoId.LocalPhotoUri -> {
+                    AsyncImage(
+                        model = (photo.id as LocalPhotoId.LocalPhotoUri).uri,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        contentScale = ContentScale.Crop,
+                    )
+                }
+
+                is LocalPhotoId.LocalPhotoResId -> {
+                    Image(
+                        painter = painterResource(
+                            id = (photo.id as LocalPhotoId.LocalPhotoResId).resId,
+                        ),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        contentScale = ContentScale.Crop,
+                    )
+                }
             }
         }
     }
@@ -119,7 +134,7 @@ private fun AddPhotoButtonPreview() {
 private fun PhotoThumbnailPreview() {
     TaskyTheme {
         PhotoThumbnail(
-            photoId = PhotoId.PhotoResId(R.drawable.test_wedding),
+            photo = Photo.Local(LocalPhotoId.LocalPhotoResId(R.drawable.test_wedding)),
             onClick = { },
         )
     }

@@ -82,7 +82,7 @@ fun AttendeeEntity.toAttendee(): Attendee {
 }
 
 fun PhotoEntity.toPhoto(): Photo {
-    return Photo(
+    return Photo.Remote(
         key = key,
         url = url,
     )
@@ -113,7 +113,7 @@ fun Attendee.toAttendeeEntity(eventId: String): AttendeeEntity {
     )
 }
 
-fun Photo.toPhotoEntity(eventId: String): PhotoEntity {
+fun Photo.Remote.toPhotoEntity(eventId: String): PhotoEntity {
     return PhotoEntity(
         key = key,
         url = url,

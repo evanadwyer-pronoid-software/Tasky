@@ -32,7 +32,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.pronoidsoftware.agenda.presentation.R
-import com.pronoidsoftware.agenda.presentation.detail.components.event.photo.model.PhotoId
+import com.pronoidsoftware.agenda.presentation.detail.components.event.photo.model.LocalPhotoId
+import com.pronoidsoftware.core.domain.agendaitem.Photo
 import com.pronoidsoftware.core.presentation.designsystem.CloseIcon
 import com.pronoidsoftware.core.presentation.designsystem.DeleteIcon
 import com.pronoidsoftware.core.presentation.designsystem.Inter
@@ -41,7 +42,7 @@ import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
 
 @Composable
 fun EventDetailPhotoDetail(
-    photo: PhotoId,
+    photo: Photo,
     editEnabled: Boolean,
     onCloseClick: () -> Unit,
     onDeleteClick: () -> Unit,
@@ -111,9 +112,9 @@ fun EventDetailPhotoDetail(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             when (photo) {
-                is PhotoId.PhotoResId -> {
-                    Image(
-                        painter = painterResource(id = photo.resId),
+                is Photo.Remote -> {
+                    AsyncImage(
+                        model = photo.url,
                         contentDescription = null,
                         modifier = Modifier
                             .fillMaxSize()
@@ -122,15 +123,30 @@ fun EventDetailPhotoDetail(
                     )
                 }
 
-                is PhotoId.PhotoUri -> {
-                    AsyncImage(
-                        model = photo.uri,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(RoundedCornerShape(spacing.photoDetailCornerRadius)),
-                        contentScale = ContentScale.Crop,
-                    )
+                is Photo.Local -> when (photo.id) {
+                    is LocalPhotoId.LocalPhotoResId -> {
+                        Image(
+                            painter = painterResource(
+                                id = (photo.id as LocalPhotoId.LocalPhotoResId).resId,
+                            ),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(RoundedCornerShape(spacing.photoDetailCornerRadius)),
+                            contentScale = ContentScale.Crop,
+                        )
+                    }
+
+                    is LocalPhotoId.LocalPhotoUri -> {
+                        AsyncImage(
+                            model = (photo.id as LocalPhotoId.LocalPhotoUri).uri,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(RoundedCornerShape(spacing.photoDetailCornerRadius)),
+                            contentScale = ContentScale.Crop,
+                        )
+                    }
                 }
             }
         }
@@ -142,7 +158,7 @@ fun EventDetailPhotoDetail(
 private fun EventDetailPhotoDetailPreview() {
     TaskyTheme {
         EventDetailPhotoDetail(
-            photo = PhotoId.PhotoResId(R.drawable.test_wedding),
+            photo = Photo.Local(LocalPhotoId.LocalPhotoResId(R.drawable.test_wedding)),
             editEnabled = true,
             onCloseClick = { },
             onDeleteClick = { },

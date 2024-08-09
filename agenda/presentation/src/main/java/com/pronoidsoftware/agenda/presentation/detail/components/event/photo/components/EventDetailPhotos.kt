@@ -26,7 +26,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pronoidsoftware.agenda.presentation.R
-import com.pronoidsoftware.agenda.presentation.detail.components.event.photo.model.PhotoId
+import com.pronoidsoftware.agenda.presentation.detail.components.event.photo.model.LocalPhotoId
+import com.pronoidsoftware.core.domain.agendaitem.Photo
 import com.pronoidsoftware.core.presentation.designsystem.Inter
 import com.pronoidsoftware.core.presentation.designsystem.LocalSpacing
 import com.pronoidsoftware.core.presentation.designsystem.PlusIcon
@@ -36,11 +37,11 @@ import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
 
 @Composable
 fun EventDetailPhotos(
-    photos: List<PhotoId>,
+    photos: List<Photo>,
     arePhotosFull: Boolean,
     editEnabled: Boolean,
     onAddClick: () -> Unit,
-    onOpenClick: (PhotoId) -> Unit,
+    onOpenClick: (Photo) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (photos.isEmpty()) {
@@ -114,11 +115,11 @@ private fun NoPhotosCarousel(
 
 @Composable
 private fun PhotoCarousel(
-    photos: List<PhotoId>,
+    photos: List<Photo>,
     arePhotosFull: Boolean,
     editEnabled: Boolean,
     onAddClick: () -> Unit,
-    onOpenClick: (PhotoId) -> Unit,
+    onOpenClick: (Photo) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val spacing = LocalSpacing.current
@@ -158,7 +159,7 @@ private fun PhotoCarousel(
                     items = photos,
                 ) { index, photo ->
                     PhotoThumbnail(
-                        photoId = photo,
+                        photo = photo,
                         onClick = {
                             onOpenClick(photo)
                         },
@@ -220,8 +221,8 @@ private fun EventDetailPhotosPreview_Empty_Editable() {
 @Composable
 private fun EventDetailPhotosPreview_NotEmpty_NotEditable() {
     TaskyTheme {
-        val weddingPhoto = PhotoId.PhotoResId(R.drawable.test_wedding)
-        val orangePhoto = PhotoId.PhotoResId(R.drawable.solid_orange)
+        val weddingPhoto = Photo.Local(LocalPhotoId.LocalPhotoResId(R.drawable.test_wedding))
+        val orangePhoto = Photo.Local(LocalPhotoId.LocalPhotoResId(R.drawable.solid_orange))
         EventDetailPhotos(
             photos = listOf(weddingPhoto, orangePhoto),
             arePhotosFull = false,
@@ -236,8 +237,8 @@ private fun EventDetailPhotosPreview_NotEmpty_NotEditable() {
 @Composable
 private fun EventDetailPhotosPreview_NotEmpty_Editable() {
     TaskyTheme {
-        val weddingPhoto = PhotoId.PhotoResId(R.drawable.test_wedding)
-        val orangePhoto = PhotoId.PhotoResId(R.drawable.solid_orange)
+        val weddingPhoto = Photo.Local(LocalPhotoId.LocalPhotoResId(R.drawable.test_wedding))
+        val orangePhoto = Photo.Local(LocalPhotoId.LocalPhotoResId(R.drawable.solid_orange))
         EventDetailPhotos(
             photos = listOf(weddingPhoto, orangePhoto),
             arePhotosFull = false,
@@ -252,8 +253,8 @@ private fun EventDetailPhotosPreview_NotEmpty_Editable() {
 @Composable
 private fun EventDetailPhotosPreview_NotEmpty_Editable_NearFull() {
     TaskyTheme {
-        val weddingPhoto = PhotoId.PhotoResId(R.drawable.test_wedding)
-        val orangePhoto = PhotoId.PhotoResId(R.drawable.solid_orange)
+        val weddingPhoto = Photo.Local(LocalPhotoId.LocalPhotoResId(R.drawable.test_wedding))
+        val orangePhoto = Photo.Local(LocalPhotoId.LocalPhotoResId(R.drawable.solid_orange))
         EventDetailPhotos(
             photos = listOf(
                 weddingPhoto,
@@ -279,8 +280,8 @@ private fun EventDetailPhotosPreview_NotEmpty_Editable_NearFull() {
 @Composable
 private fun EventDetailPhotosPreview_NotEmpty_Editable_Full() {
     TaskyTheme {
-        val weddingPhoto = PhotoId.PhotoResId(R.drawable.test_wedding)
-        val orangePhoto = PhotoId.PhotoResId(R.drawable.solid_orange)
+        val weddingPhoto = Photo.Local(LocalPhotoId.LocalPhotoResId(R.drawable.test_wedding))
+        val orangePhoto = Photo.Local(LocalPhotoId.LocalPhotoResId(R.drawable.solid_orange))
         EventDetailPhotos(
             photos = listOf(
                 weddingPhoto,

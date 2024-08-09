@@ -2,6 +2,7 @@ package com.pronoidsoftware.core.data.agenda
 
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItem
 import com.pronoidsoftware.core.domain.agendaitem.AgendaRepository
+import com.pronoidsoftware.core.domain.agendaitem.EventId
 import com.pronoidsoftware.core.domain.agendaitem.LocalAgendaDataSource
 import com.pronoidsoftware.core.domain.agendaitem.ReminderId
 import com.pronoidsoftware.core.domain.agendaitem.RemoteAgendaDataSource
@@ -96,6 +97,45 @@ class OfflineFirstAgendaRepository @Inject constructor(
         localAgendaDataSource.deleteTask(id)
         val remoteResult = applicationScope.async {
             remoteAgendaDataSource.deleteTask(id)
+        }.await()
+    }
+
+    // Events
+    override suspend fun createEvent(event: AgendaItem.Event): EmptyResult<DataError> {
+        val localResult = localAgendaDataSource.upsertEvent(event)
+        if (localResult !is Result.Success) {
+            return localResult.asEmptyResult()
+        }
+        return remoteAgendaDataSource.createEvent(event)
+    }
+
+    override fun getEvents(): Flow<List<AgendaItem.Event>> {
+        return localAgendaDataSource.getAllEvents()
+    }
+
+    override suspend fun fetchAllEvents(): EmptyResult<DataError> {
+        return when (val result = remoteAgendaDataSource.getAllEvents()) {
+            is Result.Error -> result.asEmptyResult()
+            is Result.Success -> {
+                applicationScope.async {
+                    localAgendaDataSource.upsertEvents(result.data).asEmptyResult()
+                }.await()
+            }
+        }
+    }
+
+    override suspend fun updateEvent(event: AgendaItem.Event): EmptyResult<DataError> {
+        val localResult = localAgendaDataSource.upsertEvent(event)
+        if (localResult !is Result.Success) {
+            return localResult.asEmptyResult()
+        }
+        return remoteAgendaDataSource.updateEvent(event)
+    }
+
+    override suspend fun deleteEvent(id: EventId) {
+        localAgendaDataSource.deleteEvent(id)
+        val remoteResult = applicationScope.async {
+            remoteAgendaDataSource.deleteEvent(id)
         }.await()
     }
 
