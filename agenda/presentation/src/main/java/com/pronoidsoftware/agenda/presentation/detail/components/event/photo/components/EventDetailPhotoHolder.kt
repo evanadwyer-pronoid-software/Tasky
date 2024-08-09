@@ -1,6 +1,5 @@
 package com.pronoidsoftware.agenda.presentation.detail.components.event.photo.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -15,17 +14,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.pronoidsoftware.agenda.presentation.R
-import com.pronoidsoftware.agenda.presentation.detail.components.event.photo.model.PhotoId
+import com.pronoidsoftware.core.domain.agendaitem.Photo
 import com.pronoidsoftware.core.presentation.designsystem.PlusIcon
 import com.pronoidsoftware.core.presentation.designsystem.TaskyLightBlue2
-import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
 
 @Composable
 private fun PhotoBorder(
@@ -56,7 +52,7 @@ private fun PhotoBorder(
 }
 
 @Composable
-fun AddPhotoButton(
+internal fun AddPhotoButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     addIcon: ImageVector = PlusIcon,
@@ -75,52 +71,20 @@ fun AddPhotoButton(
 }
 
 @Composable
-fun PhotoThumbnail(photoId: PhotoId, onClick: () -> Unit, modifier: Modifier = Modifier) {
+internal fun PhotoThumbnail(photo: Photo, onClick: () -> Unit, modifier: Modifier = Modifier) {
     PhotoBorder(
         modifier = modifier,
         onClick = onClick,
     ) {
-        when (photoId) {
-            is PhotoId.PhotoUri -> {
-                AsyncImage(
-                    model = photoId.uri,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentScale = ContentScale.Crop,
-                )
-            }
-
-            is PhotoId.PhotoResId -> {
-                Image(
-                    painter = painterResource(id = photoId.resId),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentScale = ContentScale.Crop,
-                )
-            }
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun AddPhotoButtonPreview() {
-    TaskyTheme {
-        AddPhotoButton(
-            onClick = { },
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun PhotoThumbnailPreview() {
-    TaskyTheme {
-        PhotoThumbnail(
-            photoId = PhotoId.PhotoResId(R.drawable.test_wedding),
-            onClick = { },
+        AsyncImage(
+            model = when (photo) {
+                is Photo.Local -> photo.compressedPhotoUri
+                is Photo.Remote -> photo.url
+            },
+            contentDescription = null,
+            modifier = Modifier
+                .fillMaxSize(),
+            contentScale = ContentScale.Crop,
         )
     }
 }

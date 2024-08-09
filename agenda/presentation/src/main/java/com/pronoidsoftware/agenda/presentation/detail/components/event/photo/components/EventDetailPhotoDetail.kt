@@ -3,7 +3,6 @@
 package com.pronoidsoftware.agenda.presentation.detail.components.event.photo.components
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,24 +23,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.pronoidsoftware.agenda.presentation.R
-import com.pronoidsoftware.agenda.presentation.detail.components.event.photo.model.PhotoId
+import com.pronoidsoftware.core.domain.agendaitem.Photo
 import com.pronoidsoftware.core.presentation.designsystem.CloseIcon
 import com.pronoidsoftware.core.presentation.designsystem.DeleteIcon
 import com.pronoidsoftware.core.presentation.designsystem.Inter
 import com.pronoidsoftware.core.presentation.designsystem.LocalSpacing
-import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
 
 @Composable
 fun EventDetailPhotoDetail(
-    photo: PhotoId,
+    photo: Photo,
     editEnabled: Boolean,
     onCloseClick: () -> Unit,
     onDeleteClick: () -> Unit,
@@ -110,42 +106,17 @@ fun EventDetailPhotoDetail(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            when (photo) {
-                is PhotoId.PhotoResId -> {
-                    Image(
-                        painter = painterResource(id = photo.resId),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(RoundedCornerShape(spacing.photoDetailCornerRadius)),
-                        contentScale = ContentScale.Crop,
-                    )
-                }
-
-                is PhotoId.PhotoUri -> {
-                    AsyncImage(
-                        model = photo.uri,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(RoundedCornerShape(spacing.photoDetailCornerRadius)),
-                        contentScale = ContentScale.Crop,
-                    )
-                }
-            }
+            AsyncImage(
+                model = when (photo) {
+                    is Photo.Local -> photo.compressedPhotoUri
+                    is Photo.Remote -> photo.url
+                },
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(spacing.photoDetailCornerRadius)),
+                contentScale = ContentScale.Crop,
+            )
         }
-    }
-}
-
-@Preview
-@Composable
-private fun EventDetailPhotoDetailPreview() {
-    TaskyTheme {
-        EventDetailPhotoDetail(
-            photo = PhotoId.PhotoResId(R.drawable.test_wedding),
-            editEnabled = true,
-            onCloseClick = { },
-            onDeleteClick = { },
-        )
     }
 }

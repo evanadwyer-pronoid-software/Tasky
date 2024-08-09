@@ -20,6 +20,7 @@ import com.pronoidsoftware.core.data.networking.put
 import com.pronoidsoftware.core.data.networking.putMultipart
 import com.pronoidsoftware.core.domain.SessionStorage
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItem
+import com.pronoidsoftware.core.domain.agendaitem.Photo
 import com.pronoidsoftware.core.domain.agendaitem.RemoteAgendaDataSource
 import com.pronoidsoftware.core.domain.util.DataError
 import com.pronoidsoftware.core.domain.util.EmptyResult
@@ -135,17 +136,24 @@ class KtorRemoteAgendaDataSource @Inject constructor(
             body = MultiPartFormDataContent(
                 formData {
                     append(EVENT_CREATE_REQUEST, Json.encodeToString(event.toCreateEventRequest()))
-                    event.photos.forEachIndexed { index, photo ->
-                        val photoName = "photo$index"
-                        append(
-                            photoName,
-                            URL(photo.url).readBytes(),
-                            Headers.build {
-                                append(HttpHeaders.ContentType, "image/png")
-                                append(HttpHeaders.ContentDisposition, "filename=$photoName.png")
-                            },
-                        )
-                    }
+                    event.photos
+                        .filterIsInstance<Photo.Local>()
+                        .map { it.compressedPhotoUri }
+                        .forEachIndexed { index, compressedPhotoUri ->
+                            val photoName = "photo$index"
+                            append(
+                                photoName,
+                                URL(compressedPhotoUri).readBytes(),
+                                // TODO: get bytes of created compressed file
+                                Headers.build {
+                                    append(HttpHeaders.ContentType, "image/png")
+                                    append(
+                                        HttpHeaders.ContentDisposition,
+                                        "filename=$photoName.png",
+                                    )
+                                },
+                            )
+                        }
                 },
             ),
         )
@@ -175,17 +183,24 @@ class KtorRemoteAgendaDataSource @Inject constructor(
             body = MultiPartFormDataContent(
                 formData {
                     append(EVENT_CREATE_REQUEST, Json.encodeToString(event.toUpdateEventRequest()))
-                    event.photos.forEachIndexed { index, photo ->
-                        val photoName = "photo$index"
-                        append(
-                            photoName,
-                            URL(photo.url).readBytes(),
-                            Headers.build {
-                                append(HttpHeaders.ContentType, "image/png")
-                                append(HttpHeaders.ContentDisposition, "filename=$photoName.png")
-                            },
-                        )
-                    }
+                    event.photos
+                        .filterIsInstance<Photo.Local>()
+                        .map { it.compressedPhotoUri }
+                        .forEachIndexed { index, compressedPhotoUri ->
+                            val photoName = "photo$index"
+                            append(
+                                photoName,
+                                URL(compressedPhotoUri).readBytes(),
+                                // TODO: get bytes of created compressed file
+                                Headers.build {
+                                    append(HttpHeaders.ContentType, "image/png")
+                                    append(
+                                        HttpHeaders.ContentDisposition,
+                                        "filename=$photoName.png",
+                                    )
+                                },
+                            )
+                        }
                 },
             ),
         )

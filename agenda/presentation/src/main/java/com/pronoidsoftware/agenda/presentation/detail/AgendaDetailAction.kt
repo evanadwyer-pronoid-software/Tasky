@@ -1,8 +1,8 @@
 package com.pronoidsoftware.agenda.presentation.detail
 
-import com.pronoidsoftware.agenda.presentation.detail.components.event.photo.model.PhotoId
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.model.VisitorUI
 import com.pronoidsoftware.agenda.presentation.detail.model.NotificationDuration
+import com.pronoidsoftware.core.domain.agendaitem.Photo
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 
@@ -30,10 +30,10 @@ sealed interface AgendaDetailAction {
     data class OnSaveDescription(val newDescription: String) : AgendaDetailAction
 
     // photo actions
-    data class OnAddPhotoClick(val photo: PhotoId) : AgendaDetailAction
-    data class OnOpenPhotoClick(val photo: PhotoId) : AgendaDetailAction
+    data class OnAddPhotoClick(val photo: Photo.Local) : AgendaDetailAction
+    data class OnOpenPhotoClick(val photo: Photo) : AgendaDetailAction
     data object OnClosePhotoClick : AgendaDetailAction
-    data class OnDeletePhotoClick(val photo: PhotoId) : AgendaDetailAction
+    data class OnDeletePhotoClick(val photo: Photo) : AgendaDetailAction
 
     // time picker actions
     data object OnToggleStartTimePickerExpanded : AgendaDetailAction

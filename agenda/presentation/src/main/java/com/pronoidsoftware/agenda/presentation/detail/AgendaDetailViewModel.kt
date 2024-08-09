@@ -12,6 +12,7 @@ import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.m
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItem
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItemType
 import com.pronoidsoftware.core.domain.agendaitem.AgendaRepository
+import com.pronoidsoftware.core.domain.agendaitem.Photo
 import com.pronoidsoftware.core.domain.util.Result
 import com.pronoidsoftware.core.domain.util.now
 import com.pronoidsoftware.core.domain.util.today
@@ -287,6 +288,11 @@ class AgendaDetailViewModel @Inject constructor(
                     state = state.copy(
                         typeSpecificDetails = eventDetails.copy(
                             photos = eventDetails.photos.filterNot { it == action.photo },
+                            deletedPhotos = if (action.photo is Photo.Remote) {
+                                eventDetails.deletedPhotos + action.photo
+                            } else {
+                                eventDetails.deletedPhotos
+                            },
                             selectedPhotoToView = null,
                         ),
                     )

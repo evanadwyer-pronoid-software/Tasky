@@ -85,7 +85,7 @@ fun AttendeeDto.toAttendee(): Attendee {
 }
 
 fun PhotoDto.toPhoto(): Photo {
-    return Photo(
+    return Photo.Remote(
         key = key,
         url = url,
     )
