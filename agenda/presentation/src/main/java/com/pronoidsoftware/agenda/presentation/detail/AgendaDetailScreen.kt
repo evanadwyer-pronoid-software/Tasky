@@ -110,7 +110,6 @@ internal fun AgendaDetailScreen(state: AgendaDetailState, onAction: (AgendaDetai
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri ->
             uri?.let {
-                // TODO: compress photo here and save uri to compressed file
                 onAction(AgendaDetailAction.OnAddPhotoClick(Photo.Local(uri.toString())))
             }
         },

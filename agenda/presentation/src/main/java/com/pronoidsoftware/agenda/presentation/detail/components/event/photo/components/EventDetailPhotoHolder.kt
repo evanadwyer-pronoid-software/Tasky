@@ -78,7 +78,7 @@ internal fun PhotoThumbnail(photo: Photo, onClick: () -> Unit, modifier: Modifie
     ) {
         AsyncImage(
             model = when (photo) {
-                is Photo.Local -> photo.compressedPhotoUri
+                is Photo.Local -> photo.localPhotoUri
                 is Photo.Remote -> photo.url
             },
             contentDescription = null,

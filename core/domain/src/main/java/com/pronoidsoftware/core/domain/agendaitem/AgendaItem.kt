@@ -75,6 +75,6 @@ sealed interface Photo {
     ) : Photo
 
     data class Local(
-        val compressedPhotoUri: String,
+        val localPhotoUri: String,
     ) : Photo
 }

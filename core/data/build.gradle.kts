@@ -14,6 +14,7 @@ dependencies {
 
     implementation(libs.timber)
     implementation(libs.kotlinx.datetime)
+    implementation(libs.androidx.work)
 
     // Crypto
     implementation(libs.androidx.security.crypto.ktx)

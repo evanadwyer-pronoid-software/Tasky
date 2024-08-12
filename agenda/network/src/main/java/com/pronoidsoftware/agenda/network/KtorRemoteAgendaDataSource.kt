@@ -138,7 +138,7 @@ class KtorRemoteAgendaDataSource @Inject constructor(
                     append(EVENT_CREATE_REQUEST, Json.encodeToString(event.toCreateEventRequest()))
                     event.photos
                         .filterIsInstance<Photo.Local>()
-                        .map { it.compressedPhotoUri }
+                        .map { it.localPhotoUri }
                         .forEachIndexed { index, compressedPhotoUri ->
                             val photoName = "photo$index"
                             append(
@@ -185,7 +185,7 @@ class KtorRemoteAgendaDataSource @Inject constructor(
                     append(EVENT_CREATE_REQUEST, Json.encodeToString(event.toUpdateEventRequest()))
                     event.photos
                         .filterIsInstance<Photo.Local>()
-                        .map { it.compressedPhotoUri }
+                        .map { it.localPhotoUri }
                         .forEachIndexed { index, compressedPhotoUri ->
                             val photoName = "photo$index"
                             append(
