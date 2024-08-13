@@ -41,6 +41,7 @@ import com.pronoidsoftware.agenda.presentation.detail.components.event.photo.com
 import com.pronoidsoftware.agenda.presentation.detail.components.event.photo.components.EventDetailPhotos
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.components.AddVisitorDialog
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.components.EventDetailVisitorList
+import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.model.toVisitorUi
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItemType
 import com.pronoidsoftware.core.domain.agendaitem.Photo
 import com.pronoidsoftware.core.presentation.designsystem.LocalClock
@@ -382,8 +383,22 @@ internal fun AgendaDetailScreen(state: AgendaDetailState, onAction: (AgendaDetai
                             onAction(AgendaDetailAction.OnDeleteVisitorClick(visitor))
                         },
                         selectedFilterType = eventDetails.selectedVisitorFilter,
-                        goingVisitors = eventDetails.visitors.filter { it.isGoing },
-                        notGoingVisitors = eventDetails.visitors.filterNot { it.isGoing },
+                        goingVisitors = eventDetails.attendees
+                            .filter { it.isGoing }
+                            .map {
+                                it.toVisitorUi(
+                                    eventDetails.isUserEventCreator &&
+                                        it.userId == eventDetails.host,
+                                )
+                            },
+                        notGoingVisitors = eventDetails.attendees
+                            .filterNot { it.isGoing }
+                            .map {
+                                it.toVisitorUi(
+                                    eventDetails.isUserEventCreator &&
+                                        it.userId == eventDetails.host,
+                                )
+                            },
                         editEnabled = state.isEditing,
                     )
                 }

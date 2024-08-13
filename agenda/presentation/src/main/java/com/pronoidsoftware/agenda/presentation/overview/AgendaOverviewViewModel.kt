@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.pronoidsoftware.agenda.presentation.overview.mappers.toEventUi
 import com.pronoidsoftware.agenda.presentation.overview.mappers.toReminderUi
 import com.pronoidsoftware.agenda.presentation.overview.mappers.toTaskUi
 import com.pronoidsoftware.core.domain.SessionStorage
@@ -40,7 +41,7 @@ class AgendaOverviewViewModel @Inject constructor(
         agendaRepository.getAllAgendaItems().onEach { agendaItems ->
             val items = agendaItems.map { agendaItem ->
                 when (agendaItem) {
-                    is AgendaItem.Event -> TODO()
+                    is AgendaItem.Event -> agendaItem.toEventUi()
                     is AgendaItem.Reminder -> agendaItem.toReminderUi()
                     is AgendaItem.Task -> agendaItem.toTaskUi()
                 }
@@ -86,7 +87,7 @@ class AgendaOverviewViewModel @Inject constructor(
             is AgendaOverviewAction.OnDeleteClick -> {
                 viewModelScope.launch {
                     when (action.type) {
-                        AgendaItemType.EVENT -> TODO()
+                        AgendaItemType.EVENT -> agendaRepository.deleteEvent(action.id)
                         AgendaItemType.TASK -> agendaRepository.deleteTask(action.id)
                         AgendaItemType.REMINDER -> agendaRepository.deleteReminder(action.id)
                     }

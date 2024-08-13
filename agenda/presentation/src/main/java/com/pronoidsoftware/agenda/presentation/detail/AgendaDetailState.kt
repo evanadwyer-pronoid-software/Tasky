@@ -2,9 +2,9 @@ package com.pronoidsoftware.agenda.presentation.detail
 
 import androidx.compose.foundation.text.input.TextFieldState
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.model.VisitorFilterType
-import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.model.VisitorUI
 import com.pronoidsoftware.agenda.presentation.detail.model.NotificationDuration
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItemType
+import com.pronoidsoftware.core.domain.agendaitem.Attendee
 import com.pronoidsoftware.core.domain.agendaitem.Photo
 import com.pronoidsoftware.core.domain.util.now
 import com.pronoidsoftware.core.domain.util.today
@@ -50,6 +50,10 @@ data class AgendaDetailState(
 
 sealed interface AgendaItemDetails {
     data class Event(
+        val host: String = "",
+        val isUserEventCreator: Boolean = false,
+        val isLocalUserGoing: Boolean = false,
+
         // photos
         val photos: List<Photo> = emptyList(),
         val selectedPhotoToView: Photo? = null,
@@ -65,7 +69,7 @@ sealed interface AgendaItemDetails {
 
         // visitors
         val selectedVisitorFilter: VisitorFilterType = VisitorFilterType.ALL,
-        val visitors: List<VisitorUI> = emptyList(),
+        val attendees: List<Attendee> = emptyList(),
         val isShowingAddVisitorDialog: Boolean = false,
         val isAddingVisitor: Boolean = false,
         val visitorToAddEmail: TextFieldState = TextFieldState(),

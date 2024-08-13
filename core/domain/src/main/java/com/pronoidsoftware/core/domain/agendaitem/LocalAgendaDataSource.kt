@@ -4,10 +4,6 @@ import com.pronoidsoftware.core.domain.util.DataError
 import com.pronoidsoftware.core.domain.util.Result
 import kotlinx.coroutines.flow.Flow
 
-typealias ReminderId = String
-typealias TaskId = String
-typealias EventId = String
-
 interface LocalAgendaDataSource {
     // Reminders
     fun getAllReminders(): Flow<List<AgendaItem.Reminder>>
