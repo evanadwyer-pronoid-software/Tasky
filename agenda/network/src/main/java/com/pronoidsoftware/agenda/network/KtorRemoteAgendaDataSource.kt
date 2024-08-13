@@ -130,8 +130,10 @@ class KtorRemoteAgendaDataSource @Inject constructor(
     }
 
     // Events
-    override suspend fun createEvent(event: AgendaItem.Event): EmptyResult<DataError.Network> {
-        return httpClient.postMultipart(
+    override suspend fun createEvent(
+        event: AgendaItem.Event,
+    ): Result<AgendaItem.Event, DataError.Network> {
+        return httpClient.postMultipart<EventDto>(
             route = AgendaRoutes.EVENT,
             body = MultiPartFormDataContent(
                 formData {
@@ -156,7 +158,7 @@ class KtorRemoteAgendaDataSource @Inject constructor(
                         }
                 },
             ),
-        )
+        ).map { it.toEvent(sessionStorage.get()?.userId) }
     }
 
     override suspend fun getEvent(id: String): Result<AgendaItem.Event, DataError.Network> {
@@ -177,8 +179,10 @@ class KtorRemoteAgendaDataSource @Inject constructor(
             }
     }
 
-    override suspend fun updateEvent(event: AgendaItem.Event): EmptyResult<DataError.Network> {
-        return httpClient.putMultipart(
+    override suspend fun updateEvent(
+        event: AgendaItem.Event,
+    ): Result<AgendaItem.Event, DataError.Network> {
+        return httpClient.putMultipart<EventDto>(
             route = AgendaRoutes.EVENT,
             body = MultiPartFormDataContent(
                 formData {
@@ -203,7 +207,7 @@ class KtorRemoteAgendaDataSource @Inject constructor(
                         }
                 },
             ),
-        )
+        ).map { it.toEvent(sessionStorage.get()?.userId) }
     }
 
     override suspend fun deleteEvent(id: String): EmptyResult<DataError.Network> {
