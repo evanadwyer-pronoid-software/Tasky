@@ -106,8 +106,18 @@ class OfflineFirstAgendaRepository @Inject constructor(
         if (localResult !is Result.Success) {
             return localResult.asEmptyResult()
         }
-        return remoteAgendaDataSource.createEvent(event)
-        // TODO update event with photo URLs
+        return when (val remoteResult = remoteAgendaDataSource.createEvent(event)) {
+            is Result.Error -> {
+                // TODO: schedule remote sync
+                Result.Success(Unit)
+            }
+
+            is Result.Success -> {
+                applicationScope.async {
+                    localAgendaDataSource.upsertEvent(remoteResult.data).asEmptyResult()
+                }.await()
+            }
+        }
     }
 
     override fun getEvents(): Flow<List<AgendaItem.Event>> {
@@ -130,8 +140,18 @@ class OfflineFirstAgendaRepository @Inject constructor(
         if (localResult !is Result.Success) {
             return localResult.asEmptyResult()
         }
-        return remoteAgendaDataSource.updateEvent(event)
-        // TODO update event with photo URLs
+        return when (val remoteResult = remoteAgendaDataSource.updateEvent(event)) {
+            is Result.Error -> {
+                // TODO: schedule remote sync
+                Result.Success(Unit)
+            }
+
+            is Result.Success -> {
+                applicationScope.async {
+                    localAgendaDataSource.upsertEvent(remoteResult.data).asEmptyResult()
+                }.await()
+            }
+        }
     }
 
     override suspend fun deleteEvent(id: EventId) {
