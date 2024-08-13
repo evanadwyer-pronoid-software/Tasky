@@ -83,10 +83,10 @@ fun AgendaOverviewItem(
             .height(spacing.agendaItemHeight)
             .clip(RoundedCornerShape(spacing.agendaItemCornerRadius))
             .background(backgroundColor)
-            .padding(start = spacing.agendaItemPaddingHorizontal)
             .clickable {
                 onOpenClick(agendaOverviewItemContents.id)
-            },
+            }
+            .padding(start = spacing.agendaItemPaddingHorizontal),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),

@@ -9,6 +9,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.model.VisitorFilterType
+import com.pronoidsoftware.core.domain.SessionStorage
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItem
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItemType
 import com.pronoidsoftware.core.domain.agendaitem.AgendaRepository
@@ -38,6 +39,7 @@ import timber.log.Timber
 class AgendaDetailViewModel @Inject constructor(
     clock: Clock,
     userDataValidator: UserDataValidator,
+    private val sessionStorage: SessionStorage,
     private val savedStateHandle: SavedStateHandle,
     private val agendaRepository: AgendaRepository,
 ) : ViewModel() {
@@ -118,8 +120,65 @@ class AgendaDetailViewModel @Inject constructor(
                         isSaving = true,
                     )
                     val id = savedStateHandle.getId()
+                    val isCreateAgendaItem = id == null
+                    // TODO move isCreateAgendaItem to state initialization
                     when (state.agendaItemType) {
                         AgendaItemType.EVENT -> {
+                            val eventDetails = state.typeSpecificDetails as AgendaItemDetails.Event
+                            val event = AgendaItem.Event(
+                                id = id ?: UUID.randomUUID().toString(),
+                                title = state.title,
+                                description = state.description,
+                                startDateTime = state.startDateTime,
+                                endDateTime = eventDetails.endDateTime,
+                                notificationDateTime = state.startDateTime
+                                    .toInstant(TimeZone.currentSystemDefault())
+                                    .minus(state.notificationDuration.duration)
+                                    .toLocalDateTime(TimeZone.currentSystemDefault()),
+                                host = if (isCreateAgendaItem) {
+                                    sessionStorage.get()?.userId ?: ""
+                                } else {
+                                    eventDetails.host
+                                },
+                                isUserEventCreator = if (isCreateAgendaItem) {
+                                    true
+                                } else {
+                                    eventDetails.isUserEventCreator
+                                },
+                                attendees = eventDetails.attendees,
+                                photos = eventDetails.photos,
+                                deletedPhotos = if (isCreateAgendaItem) {
+                                    emptyList()
+                                } else {
+                                    eventDetails.deletedPhotos
+                                },
+                                isLocalUserGoing = if (isCreateAgendaItem) {
+                                    true
+                                } else {
+                                    eventDetails.isLocalUserGoing
+                                },
+                            )
+                            val result = if (isCreateAgendaItem) {
+                                agendaRepository.createEvent(event)
+                            } else {
+                                agendaRepository.updateEvent(event)
+                            }
+                            when (result) {
+                                is Result.Error -> {
+                                    eventChannel.send(
+                                        AgendaDetailEvent.OnError(result.error.asUiText()),
+                                    )
+                                }
+
+                                is Result.Success -> {
+                                    state = state.copy(
+                                        typeSpecificDetails = eventDetails.copy(
+                                            deletedPhotos = emptyList(),
+                                        ),
+                                    )
+                                    eventChannel.send(AgendaDetailEvent.OnSaved)
+                                }
+                            }
                         }
 
                         AgendaItemType.TASK -> {
@@ -134,7 +193,7 @@ class AgendaDetailViewModel @Inject constructor(
                                     .toLocalDateTime(TimeZone.currentSystemDefault()),
                                 isCompleted = false,
                             )
-                            val result = if (id == null) {
+                            val result = if (isCreateAgendaItem) {
                                 agendaRepository.createTask(task)
                             } else {
                                 agendaRepository.updateTask(task)
@@ -163,7 +222,7 @@ class AgendaDetailViewModel @Inject constructor(
                                     .minus(state.notificationDuration.duration)
                                     .toLocalDateTime(TimeZone.currentSystemDefault()),
                             )
-                            val result = if (id == null) {
+                            val result = if (isCreateAgendaItem) {
                                 agendaRepository.createReminder(reminder)
                             } else {
                                 agendaRepository.updateReminder(reminder)
@@ -520,7 +579,9 @@ class AgendaDetailViewModel @Inject constructor(
                 getDetailsAsEvent()?.let { eventDetails ->
                     state = state.copy(
                         typeSpecificDetails = eventDetails.copy(
-                            visitors = eventDetails.visitors.filterNot { it == action.visitor },
+                            attendees = eventDetails.attendees.filterNot {
+                                it.userId == action.visitor.userId
+                            },
                         ),
                     )
                 }

@@ -139,11 +139,11 @@ class KtorRemoteAgendaDataSource @Inject constructor(
                     event.photos
                         .filterIsInstance<Photo.Local>()
                         .map { it.localPhotoUri }
-                        .forEachIndexed { index, compressedPhotoUri ->
+                        .forEachIndexed { index, localPhotoUri ->
                             val photoName = "photo$index"
                             append(
                                 photoName,
-                                URL(compressedPhotoUri).readBytes(),
+                                URL(localPhotoUri).readBytes(),
                                 // TODO: get bytes of created compressed file
                                 Headers.build {
                                     append(HttpHeaders.ContentType, "image/png")

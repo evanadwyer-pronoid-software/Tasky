@@ -27,3 +27,15 @@ fun AgendaItem.Task.toTaskUi(): AgendaOverviewItemUi {
         ),
     )
 }
+
+fun AgendaItem.Event.toEventUi(): AgendaOverviewItemUi {
+    return AgendaOverviewItemUi.Item(
+        item = AgendaOverviewItemContents.EventOverviewUiContents(
+            id = id,
+            title = title,
+            description = description ?: "",
+            startDateTime = startDateTime.formatOverview(),
+            endDateTime = endDateTime.formatOverview(),
+        ),
+    )
+}
