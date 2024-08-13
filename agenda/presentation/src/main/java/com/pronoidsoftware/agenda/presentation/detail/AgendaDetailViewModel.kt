@@ -39,8 +39,8 @@ import timber.log.Timber
 class AgendaDetailViewModel @Inject constructor(
     clock: Clock,
     userDataValidator: UserDataValidator,
+    savedStateHandle: SavedStateHandle,
     private val sessionStorage: SessionStorage,
-    private val savedStateHandle: SavedStateHandle,
     private val agendaRepository: AgendaRepository,
 ) : ViewModel() {
 
@@ -59,6 +59,7 @@ class AgendaDetailViewModel @Inject constructor(
 
     var state by mutableStateOf(
         AgendaDetailState(
+            agendaItemId = savedStateHandle.getId(),
             selectedDate = today(clock),
             startDateTime = now(clock)
                 .toInstant(TimeZone.currentSystemDefault())
@@ -119,14 +120,13 @@ class AgendaDetailViewModel @Inject constructor(
                         isEditing = false,
                         isSaving = true,
                     )
-                    val id = savedStateHandle.getId()
-                    val isCreateAgendaItem = id == null
+                    val isCreateAgendaItem = state.agendaItemId == null
                     // TODO move isCreateAgendaItem to state initialization
                     when (state.agendaItemType) {
                         AgendaItemType.EVENT -> {
                             val eventDetails = state.typeSpecificDetails as AgendaItemDetails.Event
                             val event = AgendaItem.Event(
-                                id = id ?: UUID.randomUUID().toString(),
+                                id = state.agendaItemId ?: UUID.randomUUID().toString(),
                                 title = state.title,
                                 description = state.description,
                                 startDateTime = state.startDateTime,
@@ -183,7 +183,7 @@ class AgendaDetailViewModel @Inject constructor(
 
                         AgendaItemType.TASK -> {
                             val task = AgendaItem.Task(
-                                id = id ?: UUID.randomUUID().toString(),
+                                id = state.agendaItemId ?: UUID.randomUUID().toString(),
                                 title = state.title,
                                 description = state.description,
                                 startDateTime = state.startDateTime,
@@ -213,7 +213,7 @@ class AgendaDetailViewModel @Inject constructor(
 
                         AgendaItemType.REMINDER -> {
                             val reminder = AgendaItem.Reminder(
-                                id = id ?: UUID.randomUUID().toString(),
+                                id = state.agendaItemId ?: UUID.randomUUID().toString(),
                                 title = state.title,
                                 description = state.description,
                                 startDateTime = state.startDateTime,
@@ -243,7 +243,7 @@ class AgendaDetailViewModel @Inject constructor(
                         null -> {
                         }
                     }
-
+                    // TODO: update state with local data store
                     state = state.copy(isSaving = false)
                 }
             }

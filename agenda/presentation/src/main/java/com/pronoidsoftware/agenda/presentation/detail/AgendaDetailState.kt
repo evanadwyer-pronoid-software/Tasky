@@ -16,6 +16,7 @@ import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 
 data class AgendaDetailState(
+    val agendaItemId: String? = null,
     val agendaItemType: AgendaItemType? = null,
     val selectedDate: LocalDate = today(),
     val isEditing: Boolean = false,

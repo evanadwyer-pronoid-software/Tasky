@@ -27,16 +27,16 @@ class CompressPhotosWorker @AssistedInject constructor(
 ) : CoroutineWorker(appContext, params) {
     override suspend fun doWork(): Result {
         return withContext(dispatchers.io) {
-            val stringUris = params.inputData.getStringArray(KEY_CONTENT_URIS)
+            val stringUris = params.inputData.getStringArray(KEY_URIS_TO_COMPRESS)
             val compressionThresholdInBytes = params.inputData.getLong(
                 KEY_COMPRESSION_THRESHOLD,
                 0L,
             )
             val deferredCompressedFilePaths = mutableListOf<Deferred<String>>()
 
-            stringUris?.forEach { localUri ->
+            stringUris?.forEach { uriToCompress ->
                 val compressedPhotoUriString = async {
-                    val uri = Uri.parse(localUri)
+                    val uri = Uri.parse(uriToCompress)
                     val bytes = appContext.contentResolver.openInputStream(uri)?.use {
                         it.readBytes()
                     } ?: return@async ""
@@ -52,7 +52,7 @@ class CompressPhotosWorker @AssistedInject constructor(
                         }
                     } while (outputBytes.size > compressionThresholdInBytes && quality > 5)
 
-                    val file = File(appContext.cacheDir, "$localUri-compressed.png")
+                    val file = File(appContext.cacheDir, "$uri-compressed.png")
                     file.writeBytes(outputBytes)
                     return@async file.absolutePath
                 }
@@ -63,15 +63,16 @@ class CompressPhotosWorker @AssistedInject constructor(
 
             Result.success(
                 workDataOf(
-                    KEY_RESULT_PATHS to compressedPhotoFilePaths,
+                    KEY_COMPRESSED_URIS_RESULT_PATHS to compressedPhotoFilePaths.toTypedArray(),
+                    KEY_COMPRESSION_THRESHOLD to compressionThresholdInBytes,
                 ),
             )
         }
     }
 
     companion object {
-        const val KEY_CONTENT_URIS = "KEY_CONTENT_URIS"
+        const val KEY_URIS_TO_COMPRESS = "KEY_URIS_TO_COMPRESS"
         const val KEY_COMPRESSION_THRESHOLD = "KEY_COMPRESSION_THRESHOLD"
-        const val KEY_RESULT_PATHS = "KEY_RESULT_PATHS"
+        const val KEY_COMPRESSED_URIS_RESULT_PATHS = "KEY_COMPRESSED_URIS_RESULT_PATHS"
     }
 }

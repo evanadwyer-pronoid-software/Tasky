@@ -1,5 +1,15 @@
 package com.pronoidsoftware.agenda.network
 
+import android.content.Context
+import android.widget.Toast
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
+import androidx.work.await
+import androidx.work.workDataOf
 import com.pronoidsoftware.agenda.network.dto.AgendaDto
 import com.pronoidsoftware.agenda.network.dto.EventDto
 import com.pronoidsoftware.agenda.network.dto.ReminderDto
@@ -11,13 +21,15 @@ import com.pronoidsoftware.agenda.network.mappers.toTask
 import com.pronoidsoftware.agenda.network.mappers.toUpdateEventRequest
 import com.pronoidsoftware.agenda.network.mappers.toUpsertReminderRequest
 import com.pronoidsoftware.agenda.network.mappers.toUpsertTaskRequest
+import com.pronoidsoftware.agenda.network.work.CreateEventWorker
+import com.pronoidsoftware.core.data.agenda.CompressPhotosWorker
 import com.pronoidsoftware.core.data.networking.AgendaRoutes
 import com.pronoidsoftware.core.data.networking.delete
 import com.pronoidsoftware.core.data.networking.get
 import com.pronoidsoftware.core.data.networking.post
-import com.pronoidsoftware.core.data.networking.postMultipart
 import com.pronoidsoftware.core.data.networking.put
 import com.pronoidsoftware.core.data.networking.putMultipart
+import com.pronoidsoftware.core.domain.DispatcherProvider
 import com.pronoidsoftware.core.domain.SessionStorage
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItem
 import com.pronoidsoftware.core.domain.agendaitem.Photo
@@ -26,6 +38,7 @@ import com.pronoidsoftware.core.domain.util.DataError
 import com.pronoidsoftware.core.domain.util.EmptyResult
 import com.pronoidsoftware.core.domain.util.Result
 import com.pronoidsoftware.core.domain.util.map
+import dagger.hilt.android.qualifiers.ApplicationContext
 import io.ktor.client.HttpClient
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
@@ -33,12 +46,15 @@ import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import java.net.URL
 import javax.inject.Inject
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 class KtorRemoteAgendaDataSource @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val httpClient: HttpClient,
     private val sessionStorage: SessionStorage,
+    private val dispatchers: DispatcherProvider,
 ) : RemoteAgendaDataSource {
 
     // Reminders
@@ -133,32 +149,75 @@ class KtorRemoteAgendaDataSource @Inject constructor(
     override suspend fun createEvent(
         event: AgendaItem.Event,
     ): Result<AgendaItem.Event, DataError.Network> {
-        return httpClient.postMultipart<EventDto>(
-            route = AgendaRoutes.EVENT,
-            body = MultiPartFormDataContent(
-                formData {
-                    append(EVENT_CREATE_REQUEST, Json.encodeToString(event.toCreateEventRequest()))
-                    event.photos
-                        .filterIsInstance<Photo.Local>()
-                        .map { it.localPhotoUri }
-                        .forEachIndexed { index, localPhotoUri ->
-                            val photoName = "photo$index"
-                            append(
-                                photoName,
-                                URL(localPhotoUri).readBytes(),
-                                // TODO: get bytes of created compressed file
-                                Headers.build {
-                                    append(HttpHeaders.ContentType, "image/png")
-                                    append(
-                                        HttpHeaders.ContentDisposition,
-                                        "filename=$photoName.png",
-                                    )
-                                },
-                            )
-                        }
-                },
-            ),
-        ).map { it.toEvent(sessionStorage.get()?.userId) }
+        val compressRequest = OneTimeWorkRequestBuilder<CompressPhotosWorker>()
+            .setInputData(
+                workDataOf(
+                    "KEY_URIS_TO_COMPRESS" to
+                        event.photos
+                            .filterIsInstance<Photo.Local>()
+                            .map { it.localPhotoUri }
+                            .toTypedArray(),
+                    "KEY_COMPRESSION_THRESHOLD" to 1_048_576L,
+
+                ),
+            )
+            .build()
+        val createEventWorkRequest = OneTimeWorkRequestBuilder<CreateEventWorker>()
+            .setConstraints(
+                Constraints.Builder()
+                    .setRequiredNetworkType(
+                        NetworkType.CONNECTED,
+                    )
+                    .build(),
+            )
+            .setInputData(
+                workDataOf(
+                    "KEY_CREATE_EVENT_REQUEST" to Json.encodeToString(event.toCreateEventRequest()),
+                ),
+            )
+            .build()
+        val workManager = WorkManager.getInstance(context)
+        workManager
+            .beginUniqueWork(
+                "createEvent",
+                ExistingWorkPolicy.REPLACE,
+                compressRequest,
+            )
+            .then(createEventWorkRequest)
+            .enqueue()
+            .await()
+        val workInfos = withContext(dispatchers.io) {
+            workManager.getWorkInfosForUniqueWork("createEvent").get()
+        }
+        val createInfo = workInfos.find { it.id == createEventWorkRequest.id }
+        return when (createInfo?.state) {
+            WorkInfo.State.SUCCEEDED -> {
+                val skippedPhotoCount = createInfo.outputData.getInt("SKIPPED_PHOTO_COUNT", 0)
+                if (skippedPhotoCount > 0) {
+                    Toast
+                        .makeText(
+                            context,
+                            "$skippedPhotoCount photos were skipped because they were too large",
+                            Toast.LENGTH_LONG,
+                        )
+                        .show()
+                }
+                val remoteEvent = createInfo.outputData.getString("KEY_EVENT_DTO")?.let {
+                    Json.decodeFromString<EventDto>(it).toEvent(sessionStorage.get()?.userId)
+                } ?: return Result.Error(DataError.Network.UNKNOWN)
+                Result.Success(remoteEvent)
+            }
+
+            WorkInfo.State.FAILED, WorkInfo.State.CANCELLED -> {
+                Result.Error(
+                    createInfo.outputData.getString("ERROR")
+                        ?.let { DataError.Network.valueOf(it) }
+                        ?: DataError.Network.UNKNOWN,
+                )
+            }
+
+            else -> Result.Error(DataError.Network.UNKNOWN)
+        }
     }
 
     override suspend fun getEvent(id: String): Result<AgendaItem.Event, DataError.Network> {
