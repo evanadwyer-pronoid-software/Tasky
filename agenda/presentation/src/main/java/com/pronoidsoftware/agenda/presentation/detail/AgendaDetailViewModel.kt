@@ -492,6 +492,18 @@ class AgendaDetailViewModel @Inject constructor(
                 )
             }
 
+            is AgendaDetailAction.SubmitNotificationPermissionInfo -> {
+                state = state.copy(
+                    showNotificationRationale = action.showNotificationRationale,
+                )
+            }
+
+            AgendaDetailAction.DismissNotificationRationaleDialog -> {
+                state = state.copy(
+                    showNotificationRationale = false,
+                )
+            }
+
             AgendaDetailAction.OnAllVisitorsClick -> {
                 getDetailsAsEvent()?.let { eventDetails ->
                     state = state.copy(

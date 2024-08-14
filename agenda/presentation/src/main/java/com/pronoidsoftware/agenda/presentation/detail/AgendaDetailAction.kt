@@ -47,11 +47,18 @@ sealed interface AgendaDetailAction {
     data object OnToggleEndDatePickerExpanded : AgendaDetailAction
     data class OnSelectEndDate(val endDate: LocalDate) : AgendaDetailAction
 
-    // notification duration actions
+    // notification actions
     data object OnToggleNotificationDurationExpanded : AgendaDetailAction
     data class OnSelectNotificationDuration(
         val notificationDuration: NotificationDuration,
     ) : AgendaDetailAction
+
+    data class SubmitNotificationPermissionInfo(
+        val acceptedNotificationPermission: Boolean,
+        val showNotificationRationale: Boolean,
+    ) : AgendaDetailAction
+
+    data object DismissNotificationRationaleDialog : AgendaDetailAction
 
     // visitor actions
     data object OnAllVisitorsClick : AgendaDetailAction

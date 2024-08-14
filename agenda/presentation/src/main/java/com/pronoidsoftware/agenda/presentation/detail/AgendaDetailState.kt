@@ -35,6 +35,7 @@ data class AgendaDetailState(
     // notification
     val notificationDuration: NotificationDuration = NotificationDuration.Minutes30,
     val isEditingNotificationDuration: Boolean = false,
+    val showNotificationRationale: Boolean = false,
 
     // confirmation dialogs
     val isShowingDeleteConfirmationDialog: Boolean = false,
