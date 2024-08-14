@@ -53,4 +53,6 @@
     <string name="new_agenda_item">New %s</string>
     <string name="from">From</string>
     <string name="to">To</string>
+    <string name="permission_required">Permission required</string>
+    <string name="notification_rationale">This app needs your permission in order to receive notification reminders for your agenda items. Please click \"OK\" to grant it.</string>
 </resources>

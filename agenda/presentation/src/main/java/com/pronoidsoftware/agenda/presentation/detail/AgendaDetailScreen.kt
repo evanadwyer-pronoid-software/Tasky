@@ -2,9 +2,14 @@
 
 package com.pronoidsoftware.agenda.presentation.detail
 
+import android.Manifest
+import android.content.Context
+import android.os.Build
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -21,6 +26,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
@@ -42,6 +48,8 @@ import com.pronoidsoftware.agenda.presentation.detail.components.event.photo.com
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.components.AddVisitorDialog
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.components.EventDetailVisitorList
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.model.toVisitorUi
+import com.pronoidsoftware.agenda.presentation.util.hasNotificationPermission
+import com.pronoidsoftware.agenda.presentation.util.shouldShowNotificationPermissionRationale
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItemType
 import com.pronoidsoftware.core.domain.agendaitem.Photo
 import com.pronoidsoftware.core.presentation.designsystem.LocalClock
@@ -115,6 +123,38 @@ internal fun AgendaDetailScreen(state: AgendaDetailState, onAction: (AgendaDetai
             }
         },
     )
+    val context = LocalContext.current
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+    ) { isPermissionGranted ->
+        val hasNotificationPermission = if (Build.VERSION.SDK_INT >= 33) {
+            isPermissionGranted
+        } else {
+            true
+        }
+        val activity = context as ComponentActivity
+        val showNotificationRationale = activity.shouldShowNotificationPermissionRationale()
+        onAction(
+            AgendaDetailAction.SubmitNotificationPermissionInfo(
+                acceptedNotificationPermission = hasNotificationPermission,
+                showNotificationRationale = showNotificationRationale,
+            ),
+        )
+    }
+
+    LaunchedEffect(true) {
+        val activity = context as ComponentActivity
+        val showNotificationRationale = activity.shouldShowNotificationPermissionRationale()
+        onAction(
+            AgendaDetailAction.SubmitNotificationPermissionInfo(
+                acceptedNotificationPermission = context.hasNotificationPermission(),
+                showNotificationRationale = showNotificationRationale,
+            ),
+        )
+        if (!showNotificationRationale) {
+            permissionLauncher.requestTaskyPermissions(context)
+        }
+    }
 
     if (state.isShowingCloseConfirmationDialog) {
         val onCancelAction = when {
@@ -200,6 +240,17 @@ internal fun AgendaDetailScreen(state: AgendaDetailState, onAction: (AgendaDetai
                     errorMessage = eventDetails.addVisitorErrorMessage,
                 )
             }
+        }
+        if (state.showNotificationRationale) {
+            TaskyDialog(
+                title = stringResource(R.string.permission_required),
+                description = stringResource(R.string.notification_rationale),
+                onCancel = { /* Dismissal not allowed for permissions */ },
+                onConfirm = {
+                    onAction(AgendaDetailAction.DismissNotificationRationaleDialog)
+                    permissionLauncher.requestTaskyPermissions(context)
+                },
+            )
         }
         TaskyScaffold(
             topAppBar = {
@@ -450,6 +501,19 @@ private fun getDetailAsTask(state: AgendaDetailState): AgendaItemDetails.Task? {
 
 private fun getDetailAsReminder(state: AgendaDetailState): AgendaItemDetails.Reminder? {
     return (state.typeSpecificDetails as? AgendaItemDetails.Reminder)
+}
+
+private fun ActivityResultLauncher<String>.requestTaskyPermissions(context: Context) {
+    val hasNotificationPermission = context.hasNotificationPermission()
+    val notificationPermission = if (Build.VERSION.SDK_INT >= 33) {
+        Manifest.permission.POST_NOTIFICATIONS
+    } else {
+        return
+    }
+
+    if (!hasNotificationPermission) {
+        launch(notificationPermission)
+    }
 }
 
 @Preview
