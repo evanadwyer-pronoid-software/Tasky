@@ -15,7 +15,9 @@ import com.pronoidsoftware.core.domain.agendaitem.AgendaItemType
 import com.pronoidsoftware.core.domain.agendaitem.AgendaRepository
 import com.pronoidsoftware.core.domain.agendaitem.Photo
 import com.pronoidsoftware.core.domain.util.Result
+import com.pronoidsoftware.core.domain.util.minus
 import com.pronoidsoftware.core.domain.util.now
+import com.pronoidsoftware.core.domain.util.plus
 import com.pronoidsoftware.core.domain.util.today
 import com.pronoidsoftware.core.domain.validation.UserDataValidator
 import com.pronoidsoftware.core.presentation.ui.asUiText
@@ -30,9 +32,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toInstant
-import kotlinx.datetime.toLocalDateTime
 import timber.log.Timber
 
 @HiltViewModel
@@ -60,10 +59,7 @@ class AgendaDetailViewModel @Inject constructor(
     var state by mutableStateOf(
         AgendaDetailState(
             selectedDate = today(clock),
-            startDateTime = now(clock)
-                .toInstant(TimeZone.currentSystemDefault())
-                .plus(60.minutes)
-                .toLocalDateTime(TimeZone.currentSystemDefault()),
+            startDateTime = now(clock).plus(60.minutes),
             isEditing = savedStateHandle.isEditing(),
             agendaItemType = savedStateHandle.getAgendaItemType(),
             typeSpecificDetails = when (savedStateHandle.getAgendaItemType()) {
@@ -132,9 +128,7 @@ class AgendaDetailViewModel @Inject constructor(
                                 startDateTime = state.startDateTime,
                                 endDateTime = eventDetails.endDateTime,
                                 notificationDateTime = state.startDateTime
-                                    .toInstant(TimeZone.currentSystemDefault())
-                                    .minus(state.notificationDuration.duration)
-                                    .toLocalDateTime(TimeZone.currentSystemDefault()),
+                                    .minus(state.notificationDuration.duration),
                                 host = if (isCreateAgendaItem) {
                                     sessionStorage.get()?.userId ?: ""
                                 } else {
@@ -188,9 +182,7 @@ class AgendaDetailViewModel @Inject constructor(
                                 description = state.description,
                                 startDateTime = state.startDateTime,
                                 notificationDateTime = state.startDateTime
-                                    .toInstant(TimeZone.currentSystemDefault())
-                                    .minus(state.notificationDuration.duration)
-                                    .toLocalDateTime(TimeZone.currentSystemDefault()),
+                                    .minus(state.notificationDuration.duration),
                                 isCompleted = false,
                             )
                             val result = if (isCreateAgendaItem) {
@@ -218,9 +210,7 @@ class AgendaDetailViewModel @Inject constructor(
                                 description = state.description,
                                 startDateTime = state.startDateTime,
                                 notificationDateTime = state.startDateTime
-                                    .toInstant(TimeZone.currentSystemDefault())
-                                    .minus(state.notificationDuration.duration)
-                                    .toLocalDateTime(TimeZone.currentSystemDefault()),
+                                    .minus(state.notificationDuration.duration),
                             )
                             val result = if (isCreateAgendaItem) {
                                 agendaRepository.createReminder(reminder)
@@ -372,10 +362,7 @@ class AgendaDetailViewModel @Inject constructor(
                 )
                 getDetailsAsEvent()?.let { eventDetails ->
                     val newEndDateTime = if (newStartDateTime > eventDetails.endDateTime) {
-                        newStartDateTime
-                            .toInstant(TimeZone.currentSystemDefault())
-                            .plus(30.minutes)
-                            .toLocalDateTime(TimeZone.currentSystemDefault())
+                        newStartDateTime.plus(30.minutes)
                     } else {
                         eventDetails.endDateTime
                     }
@@ -401,10 +388,7 @@ class AgendaDetailViewModel @Inject constructor(
                 )
                 getDetailsAsEvent()?.let { eventDetails ->
                     val newEndDateTime = if (newStartDateTime > eventDetails.endDateTime) {
-                        newStartDateTime
-                            .toInstant(TimeZone.currentSystemDefault())
-                            .plus(30.minutes)
-                            .toLocalDateTime(TimeZone.currentSystemDefault())
+                        newStartDateTime.plus(30.minutes)
                     } else {
                         eventDetails.endDateTime
                     }
@@ -427,10 +411,7 @@ class AgendaDetailViewModel @Inject constructor(
                         eventDetails.endDateTime.minute,
                     )
                     val newStartDateTime = if (newEndDateTime < state.startDateTime) {
-                        newEndDateTime
-                            .toInstant(TimeZone.currentSystemDefault())
-                            .minus(30.minutes)
-                            .toLocalDateTime(TimeZone.currentSystemDefault())
+                        newEndDateTime.minus(30.minutes)
                     } else {
                         state.startDateTime
                     }
@@ -454,10 +435,7 @@ class AgendaDetailViewModel @Inject constructor(
                         time.minute,
                     )
                     val newStartDateTime = if (newEndDateTime < state.startDateTime) {
-                        newEndDateTime
-                            .toInstant(TimeZone.currentSystemDefault())
-                            .minus(30.minutes)
-                            .toLocalDateTime(TimeZone.currentSystemDefault())
+                        newEndDateTime.minus(30.minutes)
                     } else {
                         state.startDateTime
                     }

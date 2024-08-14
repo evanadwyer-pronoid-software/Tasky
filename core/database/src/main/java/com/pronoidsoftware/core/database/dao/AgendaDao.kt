@@ -27,10 +27,10 @@ interface AgendaDao {
 
     @Query(
         "SELECT * FROM reminderentity " +
-            "WHERE strftime('%m-%d-%Y', startDateTime/1000, 'unixepoch') = :targetDate " +
+            "WHERE strftime('%m-%d-%Y', startDateTime/1000, 'unixepoch') = :targetDateUtc " +
             "ORDER BY startDateTime",
     )
-    fun getRemindersForDate(targetDate: String): Flow<List<ReminderEntity>>
+    fun getRemindersForDate(targetDateUtc: String): Flow<List<ReminderEntity>>
 
     @Query("DELETE FROM reminderentity WHERE id=:id")
     suspend fun deleteReminder(id: String)
@@ -50,10 +50,10 @@ interface AgendaDao {
 
     @Query(
         "SELECT * FROM taskentity " +
-            "WHERE strftime('%m-%d-%Y', startDateTime/1000, 'unixepoch') = :targetDate " +
+            "WHERE strftime('%m-%d-%Y', startDateTime/1000, 'unixepoch') = :targetDateUtc " +
             "ORDER BY startDateTime",
     )
-    fun getTasksForDate(targetDate: String): Flow<List<TaskEntity>>
+    fun getTasksForDate(targetDateUtc: String): Flow<List<TaskEntity>>
 
     @Query("DELETE FROM taskentity WHERE id=:id")
     suspend fun deleteTask(id: String)
@@ -109,10 +109,10 @@ interface AgendaDao {
     @Transaction
     @Query(
         "SELECT * FROM evententity " +
-            "WHERE strftime('%m-%d-%Y', startDateTime/1000, 'unixepoch') = :targetDate " +
+            "WHERE strftime('%m-%d-%Y', startDateTime/1000, 'unixepoch') = :targetDateUtc " +
             "ORDER BY startDateTime",
     )
-    fun getEventsForDate(targetDate: String): Flow<List<EventWithAttendeesAndPhotos>>
+    fun getEventsForDate(targetDateUtc: String): Flow<List<EventWithAttendeesAndPhotos>>
 
     @Query("DELETE FROM evententity WHERE id=:id")
     suspend fun deleteEvent(id: String)

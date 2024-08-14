@@ -1,12 +1,12 @@
 package com.pronoidsoftware.core.domain.util
 
+import kotlin.time.Duration
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.plus
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
@@ -58,30 +58,26 @@ fun today(clock: Clock = Clock.System): LocalDate = clock.todayIn(TimeZone.curre
 fun now(clock: Clock = Clock.System): LocalDateTime =
     clock.now().toLocalDateTime(TimeZone.currentSystemDefault())
 
-fun LocalDate.toMillis(): Long {
-    return this.atStartOfDayIn(TimeZone.currentSystemDefault()).toEpochMilliseconds()
-}
-
 fun LocalDateTime.toMillis(): Long {
     return this.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
 }
 
-fun Long.toLocalDate(): LocalDate {
-    return Instant
-        .fromEpochMilliseconds(this)
+fun LocalDateTime.plus(duration: Duration): LocalDateTime {
+    return this
+        .toInstant(TimeZone.currentSystemDefault())
+        .plus(duration)
         .toLocalDateTime(TimeZone.currentSystemDefault())
-        .date
+}
+
+fun LocalDateTime.minus(duration: Duration): LocalDateTime {
+    return this
+        .toInstant(TimeZone.currentSystemDefault())
+        .minus(duration)
+        .toLocalDateTime(TimeZone.currentSystemDefault())
 }
 
 fun Long.toLocalDateTime(): LocalDateTime {
     return Instant
         .fromEpochMilliseconds(this)
         .toLocalDateTime(TimeZone.currentSystemDefault())
-}
-
-fun Long.toLocalDateFromUTC(): LocalDate {
-    return Instant
-        .fromEpochMilliseconds(this)
-        .toLocalDateTime(TimeZone.UTC)
-        .date
 }

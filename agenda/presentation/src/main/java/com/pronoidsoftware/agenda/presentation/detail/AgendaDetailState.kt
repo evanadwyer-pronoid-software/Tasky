@@ -7,13 +7,11 @@ import com.pronoidsoftware.core.domain.agendaitem.AgendaItemType
 import com.pronoidsoftware.core.domain.agendaitem.Attendee
 import com.pronoidsoftware.core.domain.agendaitem.Photo
 import com.pronoidsoftware.core.domain.util.now
+import com.pronoidsoftware.core.domain.util.plus
 import com.pronoidsoftware.core.domain.util.today
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toInstant
-import kotlinx.datetime.toLocalDateTime
 
 data class AgendaDetailState(
     val agendaItemType: AgendaItemType? = null,
@@ -30,10 +28,7 @@ data class AgendaDetailState(
     val isEditingDescription: Boolean = false,
 
     // date time
-    val startDateTime: LocalDateTime = now()
-        .toInstant(TimeZone.currentSystemDefault())
-        .plus(60.minutes)
-        .toLocalDateTime(TimeZone.currentSystemDefault()),
+    val startDateTime: LocalDateTime = now().plus(60.minutes),
     val isEditingStartTime: Boolean = false,
     val isEditingStartDate: Boolean = false,
 
@@ -60,10 +55,7 @@ sealed interface AgendaItemDetails {
         val deletedPhotos: List<Photo.Remote> = emptyList(),
 
         // date time
-        val endDateTime: LocalDateTime = now()
-            .toInstant(TimeZone.currentSystemDefault())
-            .plus(90.minutes)
-            .toLocalDateTime(TimeZone.currentSystemDefault()),
+        val endDateTime: LocalDateTime = now().plus(90.minutes),
         val isEditingEndTime: Boolean = false,
         val isEditingEndDate: Boolean = false,
 
