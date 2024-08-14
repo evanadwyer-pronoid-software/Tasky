@@ -5,7 +5,6 @@ import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
 import com.pronoidsoftware.testutil.jvmtest.core.data.time.TestClock
 import kotlinx.datetime.Clock
-import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
@@ -14,8 +13,6 @@ import kotlinx.datetime.format.DateTimeFormat
 import kotlinx.datetime.format.MonthNames
 import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
-import kotlinx.datetime.minus
-import kotlinx.datetime.plus
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import org.junit.Before
@@ -65,30 +62,6 @@ class DateTimeUtilTest {
         val endDate = selectedDate.endOfMonth()
         val dateRange = startDate.rangeTo(endDate).toList()
         assertThat(dateRange).hasSize(28)
-    }
-
-    @Test
-    fun conversionBetweenLocalDateAndMillis() {
-        val today = today()
-        val millis = today.toMillis()
-        val todayFromMillis = millis.toLocalDate()
-        assertThat(todayFromMillis).isEqualTo(today)
-    }
-
-    @Test
-    fun conversionBetweenLocalDateAndMillisFuture() {
-        val future = today().plus(1, DateTimeUnit.MONTH)
-        val millis = future.toMillis()
-        val futureFromMillis = millis.toLocalDate()
-        assertThat(futureFromMillis).isEqualTo(future)
-    }
-
-    @Test
-    fun conversionBetweenLocalDateAndMillisPast() {
-        val past = today().minus(1, DateTimeUnit.MONTH)
-        val millis = past.toMillis()
-        val pastFromMillis = millis.toLocalDate()
-        assertThat(pastFromMillis).isEqualTo(past)
     }
 
     @Test

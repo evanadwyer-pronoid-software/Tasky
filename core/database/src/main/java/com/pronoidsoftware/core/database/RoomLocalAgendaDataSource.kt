@@ -38,8 +38,8 @@ class RoomLocalAgendaDataSource @Inject constructor(
             }
     }
 
-    override fun getRemindersForDate(targetDate: String): Flow<List<AgendaItem.Reminder>> {
-        return agendaDao.getRemindersForDate(targetDate)
+    override fun getRemindersForDate(targetDateUtc: String): Flow<List<AgendaItem.Reminder>> {
+        return agendaDao.getRemindersForDate(targetDateUtc)
             .map { reminderEntities ->
                 reminderEntities.map { it.toReminder() }
             }
@@ -85,8 +85,8 @@ class RoomLocalAgendaDataSource @Inject constructor(
             }
     }
 
-    override fun getTasksForDate(targetDate: String): Flow<List<AgendaItem.Task>> {
-        return agendaDao.getTasksForDate(targetDate)
+    override fun getTasksForDate(targetDateUtc: String): Flow<List<AgendaItem.Task>> {
+        return agendaDao.getTasksForDate(targetDateUtc)
             .map { taskEntities ->
                 taskEntities.map { it.toTask() }
             }
@@ -130,8 +130,8 @@ class RoomLocalAgendaDataSource @Inject constructor(
             }
     }
 
-    override fun getEventsForDate(targetDate: String): Flow<List<AgendaItem.Event>> {
-        return agendaDao.getEventsForDate(targetDate)
+    override fun getEventsForDate(targetDateUtc: String): Flow<List<AgendaItem.Event>> {
+        return agendaDao.getEventsForDate(targetDateUtc)
             .map { eventEntities ->
                 eventEntities.map { it.toEvent() }
             }
@@ -238,11 +238,11 @@ class RoomLocalAgendaDataSource @Inject constructor(
         }
     }
 
-    override fun getAgendaItemsForDate(targetDate: String): Flow<List<AgendaItem>> {
+    override fun getAgendaItemsForDate(targetDateUtc: String): Flow<List<AgendaItem>> {
         return combine(
-            getRemindersForDate(targetDate),
-            getTasksForDate(targetDate),
-            getEventsForDate(targetDate),
+            getRemindersForDate(targetDateUtc),
+            getTasksForDate(targetDateUtc),
+            getEventsForDate(targetDateUtc),
         ) { reminders, tasks, events ->
             (reminders + tasks + events).sortedBy { it.startDateTime }
         }

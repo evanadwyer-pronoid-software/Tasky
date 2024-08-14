@@ -13,12 +13,14 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.pronoidsoftware.core.domain.util.toLocalDateFromUTC
-import com.pronoidsoftware.core.domain.util.toMillis
 import com.pronoidsoftware.core.domain.util.today
 import com.pronoidsoftware.core.presentation.designsystem.R
 import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
+import kotlinx.datetime.toLocalDateTime
 
 @Composable
 fun TaskyDatePicker(
@@ -73,4 +75,15 @@ fun TaskyDatePicker(
             DatePicker(state = datePickerState, showModeToggle = false)
         }
     }
+}
+
+private fun LocalDate.toMillis(): Long {
+    return this.atStartOfDayIn(TimeZone.currentSystemDefault()).toEpochMilliseconds()
+}
+
+private fun Long.toLocalDateFromUTC(): LocalDate {
+    return Instant
+        .fromEpochMilliseconds(this)
+        .toLocalDateTime(TimeZone.UTC)
+        .date
 }
