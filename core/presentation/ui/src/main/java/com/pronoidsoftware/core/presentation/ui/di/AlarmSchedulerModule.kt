@@ -1,7 +1,7 @@
-package com.pronoidsoftware.core.data.di
+package com.pronoidsoftware.core.presentation.ui.di
 
-import com.pronoidsoftware.core.data.agenda.alarm.AgendaAlarmScheduler
 import com.pronoidsoftware.core.domain.agendaitem.AlarmScheduler
+import com.pronoidsoftware.core.presentation.ui.alarm.AgendaAlarmScheduler
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

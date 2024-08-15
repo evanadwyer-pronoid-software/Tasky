@@ -1,4 +1,4 @@
-package com.pronoidsoftware.core.data.agenda.alarm
+package com.pronoidsoftware.core.presentation.ui.alarm
 
 object AlarmIntentKeys {
     const val EXTRA_AGENDA_ITEM_TYPE = "EXTRA_AGENDA_ITEM_TYPE"
