@@ -1,4 +1,4 @@
-package com.pronoidsoftware.core.data.agenda.alarm
+package com.pronoidsoftware.core.presentation.ui.alarm
 
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -40,6 +40,7 @@ class AgendaAlarmScheduler @Inject constructor(
             putExtra(AlarmIntentKeys.EXTRA_AGENDA_ITEM_ID, agendaItem.id)
             putExtra(AlarmIntentKeys.EXTRA_AGENDA_ITEM_TITLE, agendaItem.title)
             putExtra(AlarmIntentKeys.EXTRA_AGENDA_ITEM_DESCRIPTION, agendaItem.description)
+            putExtra(AlarmIntentKeys.EXTRA_AGENDA_ITEM_DESCRIPTION, agendaItem.description ?: "")
         }
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,

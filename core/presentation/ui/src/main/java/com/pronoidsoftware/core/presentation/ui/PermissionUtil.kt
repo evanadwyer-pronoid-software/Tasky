@@ -1,4 +1,4 @@
-package com.pronoidsoftware.agenda.presentation.util
+package com.pronoidsoftware.core.presentation.ui
 
 import android.Manifest
 import android.content.Context
