@@ -29,6 +29,7 @@
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
             tools:node="remove" />
+        <receiver android:name="com.pronoidsoftware.core.data.agenda.alarm.AlarmReceiver" />
     </application>
 
 </manifest>
