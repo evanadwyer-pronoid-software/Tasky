@@ -2,6 +2,7 @@ package com.pronoidsoftware.core.data.agenda
 
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItem
 import com.pronoidsoftware.core.domain.agendaitem.AgendaRepository
+import com.pronoidsoftware.core.domain.agendaitem.AlarmScheduler
 import com.pronoidsoftware.core.domain.agendaitem.EventId
 import com.pronoidsoftware.core.domain.agendaitem.LocalAgendaDataSource
 import com.pronoidsoftware.core.domain.agendaitem.ReminderId
@@ -20,6 +21,7 @@ class OfflineFirstAgendaRepository @Inject constructor(
     private val localAgendaDataSource: LocalAgendaDataSource,
     private val remoteAgendaDataSource: RemoteAgendaDataSource,
     private val applicationScope: CoroutineScope,
+    private val alarmScheduler: AlarmScheduler,
 ) : AgendaRepository {
 
     // Reminders
@@ -28,6 +30,7 @@ class OfflineFirstAgendaRepository @Inject constructor(
         if (localResult !is Result.Success) {
             return localResult.asEmptyResult()
         }
+        alarmScheduler.schedule(reminder)
         return remoteAgendaDataSource.createReminder(reminder)
     }
 
@@ -51,11 +54,13 @@ class OfflineFirstAgendaRepository @Inject constructor(
         if (localResult !is Result.Success) {
             return localResult.asEmptyResult()
         }
+        alarmScheduler.schedule(reminder)
         return remoteAgendaDataSource.updateReminder(reminder)
     }
 
     override suspend fun deleteReminder(id: ReminderId) {
         localAgendaDataSource.deleteReminder(id)
+        alarmScheduler.cancel(id)
         val remoteResult = applicationScope.async {
             remoteAgendaDataSource.deleteReminder(id)
         }.await()
@@ -67,6 +72,7 @@ class OfflineFirstAgendaRepository @Inject constructor(
         if (localResult !is Result.Success) {
             return localResult.asEmptyResult()
         }
+        alarmScheduler.schedule(task)
         return remoteAgendaDataSource.createTask(task)
     }
 
@@ -90,11 +96,13 @@ class OfflineFirstAgendaRepository @Inject constructor(
         if (localResult !is Result.Success) {
             return localResult.asEmptyResult()
         }
+        alarmScheduler.schedule(task)
         return remoteAgendaDataSource.updateTask(task)
     }
 
     override suspend fun deleteTask(id: TaskId) {
         localAgendaDataSource.deleteTask(id)
+        alarmScheduler.cancel(id)
         val remoteResult = applicationScope.async {
             remoteAgendaDataSource.deleteTask(id)
         }.await()
@@ -106,6 +114,7 @@ class OfflineFirstAgendaRepository @Inject constructor(
         if (localResult !is Result.Success) {
             return localResult.asEmptyResult()
         }
+        alarmScheduler.schedule(event)
         return when (val remoteResult = remoteAgendaDataSource.createEvent(event)) {
             is Result.Error -> {
                 // TODO: schedule remote sync
@@ -140,6 +149,7 @@ class OfflineFirstAgendaRepository @Inject constructor(
         if (localResult !is Result.Success) {
             return localResult.asEmptyResult()
         }
+        alarmScheduler.schedule(event)
         return when (val remoteResult = remoteAgendaDataSource.updateEvent(event)) {
             is Result.Error -> {
                 // TODO: schedule remote sync
@@ -156,6 +166,7 @@ class OfflineFirstAgendaRepository @Inject constructor(
 
     override suspend fun deleteEvent(id: EventId) {
         localAgendaDataSource.deleteEvent(id)
+        alarmScheduler.cancel(id)
         val remoteResult = applicationScope.async {
             remoteAgendaDataSource.deleteEvent(id)
         }.await()
