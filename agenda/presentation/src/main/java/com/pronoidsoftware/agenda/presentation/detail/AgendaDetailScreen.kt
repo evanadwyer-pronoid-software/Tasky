@@ -48,8 +48,6 @@ import com.pronoidsoftware.agenda.presentation.detail.components.event.photo.com
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.components.AddVisitorDialog
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.components.EventDetailVisitorList
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.model.toVisitorUi
-import com.pronoidsoftware.agenda.presentation.util.hasNotificationPermission
-import com.pronoidsoftware.agenda.presentation.util.shouldShowNotificationPermissionRationale
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItemType
 import com.pronoidsoftware.core.domain.agendaitem.Photo
 import com.pronoidsoftware.core.presentation.designsystem.LocalClock
@@ -61,6 +59,9 @@ import com.pronoidsoftware.core.presentation.designsystem.components.TaskyScaffo
 import com.pronoidsoftware.core.presentation.designsystem.util.ignoreColumnPadding
 import com.pronoidsoftware.core.presentation.ui.ObserveAsEvents
 import com.pronoidsoftware.core.presentation.ui.formatFullDate
+import com.pronoidsoftware.core.presentation.ui.getTypeString
+import com.pronoidsoftware.core.presentation.ui.hasNotificationPermission
+import com.pronoidsoftware.core.presentation.ui.shouldShowNotificationPermissionRationale
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
@@ -473,21 +474,6 @@ internal fun AgendaDetailScreen(state: AgendaDetailState, onAction: (AgendaDetai
                 Spacer(modifier = Modifier.height(spacing.agendaDetailSpaceBottom))
             }
         }
-    }
-}
-
-@Composable
-private fun getTypeString(type: AgendaItemType?, isUppercase: Boolean = false): String {
-    val result = when (type) {
-        AgendaItemType.EVENT -> stringResource(id = R.string.event)
-        AgendaItemType.TASK -> stringResource(id = R.string.task)
-        AgendaItemType.REMINDER -> stringResource(id = R.string.reminder)
-        null -> ""
-    }
-    return if (isUppercase) {
-        result.uppercase()
-    } else {
-        result
     }
 }
 

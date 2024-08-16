@@ -10,6 +10,8 @@ import com.pronoidsoftware.core.domain.agendaitem.AgendaItemType
 import com.pronoidsoftware.core.domain.agendaitem.AlarmScheduler
 import com.pronoidsoftware.core.domain.util.now
 import com.pronoidsoftware.core.domain.util.toMillis
+import com.pronoidsoftware.core.presentation.ui.R
+import com.pronoidsoftware.core.presentation.ui.getTypeString
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlinx.datetime.Clock
@@ -38,8 +40,22 @@ class AgendaAlarmScheduler @Inject constructor(
                 },
             )
             putExtra(AlarmIntentKeys.EXTRA_AGENDA_ITEM_ID, agendaItem.id)
-            putExtra(AlarmIntentKeys.EXTRA_AGENDA_ITEM_TITLE, agendaItem.title)
-            putExtra(AlarmIntentKeys.EXTRA_AGENDA_ITEM_DESCRIPTION, agendaItem.description)
+            putExtra(
+                AlarmIntentKeys.EXTRA_AGENDA_ITEM_TITLE,
+                agendaItem.title.ifEmpty {
+                    context.resources.getString(
+                        R.string.new_agenda_item,
+                        getTypeString(
+                            type = when (agendaItem) {
+                                is AgendaItem.Event -> AgendaItemType.EVENT
+                                is AgendaItem.Reminder -> AgendaItemType.REMINDER
+                                is AgendaItem.Task -> AgendaItemType.TASK
+                            },
+                            context = context,
+                        ),
+                    )
+                },
+            )
             putExtra(AlarmIntentKeys.EXTRA_AGENDA_ITEM_DESCRIPTION, agendaItem.description ?: "")
         }
         alarmManager.setExactAndAllowWhileIdle(

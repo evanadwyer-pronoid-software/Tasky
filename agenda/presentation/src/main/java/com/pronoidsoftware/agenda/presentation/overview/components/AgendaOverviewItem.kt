@@ -49,6 +49,7 @@ import com.pronoidsoftware.core.presentation.designsystem.TaskyLightGreen
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
 import com.pronoidsoftware.core.presentation.designsystem.TaskyWhite
 import com.pronoidsoftware.core.presentation.designsystem.components.TaskyDropdownMenu
+import com.pronoidsoftware.core.presentation.ui.getTypeString
 import timber.log.Timber
 
 @Composable
@@ -112,7 +113,14 @@ fun AgendaOverviewItem(
                         },
                     ),
                 ) {
-                    append(agendaOverviewItemContents.title)
+                    append(
+                        agendaOverviewItemContents.title.ifEmpty {
+                            stringResource(
+                                id = R.string.new_agenda_item,
+                                getTypeString(agendaOverviewItemContents),
+                            )
+                        },
+                    )
                 }
             }
             Text(
@@ -251,6 +259,25 @@ private data class ContentColors(
     val description: Color,
     val time: Color,
 )
+
+@Composable
+private fun getTypeString(agendaOverviewItemContents: AgendaOverviewItemContents): String {
+    return getTypeString(
+        type = when (agendaOverviewItemContents) {
+            is AgendaOverviewItemContents.EventOverviewUiContents -> {
+                AgendaItemType.EVENT
+            }
+
+            is AgendaOverviewItemContents.ReminderOverviewUiContents -> {
+                AgendaItemType.REMINDER
+            }
+
+            is AgendaOverviewItemContents.TaskOverviewUiContents -> {
+                AgendaItemType.TASK
+            }
+        },
+    )
+}
 
 @Preview
 @Composable

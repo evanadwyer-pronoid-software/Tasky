@@ -11,4 +11,8 @@
     <string name="today">Today</string>
     <string name="tomorrow">Tomorrow</string>
     <string name="yesterday">Yesterday</string>
+    <string name="new_agenda_item">New %s</string>
+    <string name="reminder">Reminder</string>
+    <string name="task">Task</string>
+    <string name="event">Event</string>
 </resources>
