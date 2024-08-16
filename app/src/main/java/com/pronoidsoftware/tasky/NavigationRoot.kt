@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import androidx.navigation.navDeepLink
 import com.pronoidsoftware.agenda.presentation.detail.AgendaDetailScreenRoot
 import com.pronoidsoftware.agenda.presentation.overview.AgendaOverviewScreenRoot
 import com.pronoidsoftware.auth.presentation.login.LoginScreenRoot
@@ -83,7 +84,13 @@ private fun NavGraphBuilder.agendaGraph(navController: NavHostController) {
                 },
             )
         }
-        composable<DetailScreen> {
+        composable<DetailScreen>(
+            deepLinks = listOf(
+                navDeepLink<DetailScreen>(
+                    basePath = "details://item",
+                ),
+            ),
+        ) {
             AgendaDetailScreenRoot(
                 onCloseClick = {
                     navController.navigateUp()
