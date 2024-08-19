@@ -5,12 +5,21 @@ import kotlinx.datetime.LocalDate
 
 sealed interface AgendaOverviewAction {
     data class OnTickClick(val id: String) : AgendaOverviewAction
-    data class OnOpenClick(val id: String) : AgendaOverviewAction
-    data class OnEditClick(val id: String) : AgendaOverviewAction
+    data class OnOpenClick(
+        val type: AgendaItemType,
+        val id: String,
+    ) : AgendaOverviewAction
+
+    data class OnEditClick(
+        val type: AgendaItemType,
+        val id: String,
+    ) : AgendaOverviewAction
+
     data class OnDeleteClick(
         val type: AgendaItemType,
         val id: String,
     ) : AgendaOverviewAction
+
     data class OnCreateClick(val type: AgendaItemType) : AgendaOverviewAction
     data object OnLogoutClick : AgendaOverviewAction
     data class OnSelectDate(val date: LocalDate) : AgendaOverviewAction

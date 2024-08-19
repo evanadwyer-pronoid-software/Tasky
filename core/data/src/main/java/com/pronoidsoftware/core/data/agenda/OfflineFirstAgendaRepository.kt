@@ -34,6 +34,10 @@ class OfflineFirstAgendaRepository @Inject constructor(
         return remoteAgendaDataSource.createReminder(reminder)
     }
 
+    override suspend fun getReminder(id: ReminderId): AgendaItem.Reminder? {
+        return localAgendaDataSource.getReminder(id)
+    }
+
     override fun getReminders(): Flow<List<AgendaItem.Reminder>> {
         return localAgendaDataSource.getAllReminders()
     }
@@ -74,6 +78,10 @@ class OfflineFirstAgendaRepository @Inject constructor(
         }
         alarmScheduler.schedule(task)
         return remoteAgendaDataSource.createTask(task)
+    }
+
+    override suspend fun getTask(id: TaskId): AgendaItem.Task? {
+        return localAgendaDataSource.getTask(id)
     }
 
     override fun getTasks(): Flow<List<AgendaItem.Task>> {
@@ -127,6 +135,10 @@ class OfflineFirstAgendaRepository @Inject constructor(
                 }.await()
             }
         }
+    }
+
+    override suspend fun getEvent(id: EventId): AgendaItem.Event? {
+        return localAgendaDataSource.getEvent(id)
     }
 
     override fun getEvents(): Flow<List<AgendaItem.Event>> {

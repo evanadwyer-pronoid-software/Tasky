@@ -9,6 +9,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.model.VisitorFilterType
+import com.pronoidsoftware.agenda.presentation.detail.model.NotificationDuration
 import com.pronoidsoftware.core.domain.SessionStorage
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItem
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItemType
@@ -25,6 +26,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.UUID
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.DurationUnit
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -32,6 +34,8 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
 import timber.log.Timber
 
 @HiltViewModel
@@ -87,6 +91,92 @@ class AgendaDetailViewModel @Inject constructor(
                 )
             }
             .launchIn(viewModelScope)
+
+        savedStateHandle.getId()?.let { agendaItemId ->
+            viewModelScope.launch {
+                state = state.copy(
+                    isLoading = true,
+                )
+                when (savedStateHandle.getAgendaItemType()) {
+                    AgendaItemType.EVENT -> {
+                        agendaRepository.getEvent(agendaItemId)?.let { event ->
+                            state = state.copy(
+                                title = event.title,
+                                description = event.description,
+                                startDateTime = event.startDateTime,
+                                notificationDuration = calculateNotificationDuration(
+                                    startDateTime = event.startDateTime,
+                                    notificationDateTime = event.notificationDateTime,
+                                ),
+                                typeSpecificDetails =
+                                (state.typeSpecificDetails as AgendaItemDetails.Event).copy(
+                                    host = event.host,
+                                    isUserEventCreator = event.isUserEventCreator,
+                                    isLocalUserGoing = event.isLocalUserGoing,
+                                    photos = event.photos,
+                                    endDateTime = event.endDateTime,
+                                    attendees = event.attendees,
+                                ),
+                            )
+                        }
+                    }
+
+                    AgendaItemType.TASK -> {
+                        agendaRepository.getTask(agendaItemId)?.let { task ->
+                            state = state.copy(
+                                title = task.title,
+                                description = task.description,
+                                startDateTime = task.startDateTime,
+                                notificationDuration = calculateNotificationDuration(
+                                    startDateTime = task.startDateTime,
+                                    notificationDateTime = task.notificationDateTime,
+                                ),
+                                typeSpecificDetails =
+                                (state.typeSpecificDetails as AgendaItemDetails.Task).copy(
+                                    completed = task.isCompleted,
+                                ),
+                            )
+                        }
+                    }
+
+                    AgendaItemType.REMINDER -> {
+                        agendaRepository.getReminder(agendaItemId)?.let { reminder ->
+                            state = state.copy(
+                                title = reminder.title,
+                                description = reminder.description,
+                                startDateTime = reminder.startDateTime,
+                                notificationDuration = calculateNotificationDuration(
+                                    startDateTime = reminder.startDateTime,
+                                    notificationDateTime = reminder.notificationDateTime,
+                                ),
+                            )
+                        }
+                    }
+
+                    null -> Unit
+                }
+                state = state.copy(
+                    isLoading = false,
+                )
+            }
+        }
+    }
+
+    private fun calculateNotificationDuration(
+        startDateTime: LocalDateTime,
+        notificationDateTime: LocalDateTime,
+    ): NotificationDuration {
+        val startInstant = startDateTime.toInstant(TimeZone.currentSystemDefault())
+        val notificationInstant = notificationDateTime.toInstant(TimeZone.currentSystemDefault())
+        val difference = (startInstant - notificationInstant).toInt(DurationUnit.MINUTES)
+        return when (difference) {
+            10 -> NotificationDuration.Minutes10
+            30 -> NotificationDuration.Minutes30
+            60 -> NotificationDuration.Hours1
+            6 * 60 -> NotificationDuration.Hours6
+            24 * 60 -> NotificationDuration.Days1
+            else -> NotificationDuration.Minutes30
+        }
     }
 
     private fun getDetailsAsEvent(): AgendaItemDetails.Event? {

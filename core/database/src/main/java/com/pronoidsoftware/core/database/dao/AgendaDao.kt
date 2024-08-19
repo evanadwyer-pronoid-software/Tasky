@@ -10,6 +10,9 @@ import com.pronoidsoftware.core.database.entity.EventWithAttendeesAndPhotos
 import com.pronoidsoftware.core.database.entity.PhotoEntity
 import com.pronoidsoftware.core.database.entity.ReminderEntity
 import com.pronoidsoftware.core.database.entity.TaskEntity
+import com.pronoidsoftware.core.domain.agendaitem.EventId
+import com.pronoidsoftware.core.domain.agendaitem.ReminderId
+import com.pronoidsoftware.core.domain.agendaitem.TaskId
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -21,6 +24,9 @@ interface AgendaDao {
 
     @Upsert
     suspend fun upsertReminders(reminder: List<ReminderEntity>)
+
+    @Query("SELECT * FROM reminderentity WHERE id=:id")
+    suspend fun getReminder(id: ReminderId): ReminderEntity?
 
     @Query("SELECT * FROM reminderentity ORDER BY startDateTime")
     fun getAllReminders(): Flow<List<ReminderEntity>>
@@ -44,6 +50,9 @@ interface AgendaDao {
 
     @Upsert
     suspend fun upsertTasks(task: List<TaskEntity>)
+
+    @Query("SELECT * FROM taskentity WHERE id=:id")
+    suspend fun getTask(id: TaskId): TaskEntity?
 
     @Query("SELECT * FROM taskentity ORDER BY startDateTime")
     fun getAllTasks(): Flow<List<TaskEntity>>
@@ -101,6 +110,10 @@ interface AgendaDao {
         upsertPhotos(photos)
         upsertAttendees(attendees)
     }
+
+    @Transaction
+    @Query("SELECT * FROM evententity where id=:id")
+    suspend fun getEvent(id: EventId): EventWithAttendeesAndPhotos?
 
     @Transaction
     @Query("SELECT * FROM evententity ORDER BY startDateTime")
