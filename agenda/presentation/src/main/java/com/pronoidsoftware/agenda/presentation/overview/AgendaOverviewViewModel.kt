@@ -84,6 +84,18 @@ class AgendaOverviewViewModel @Inject constructor(
                 )
             }
 
+            is AgendaOverviewAction.OnTickClick -> {
+                viewModelScope.launch {
+                    agendaRepository.getTask(action.id)?.let { task ->
+                        agendaRepository.updateTask(
+                            task = task.copy(
+                                isCompleted = !task.isCompleted,
+                            ),
+                        )
+                    }
+                }
+            }
+
             is AgendaOverviewAction.OnDeleteClick -> {
                 viewModelScope.launch {
                     when (action.type) {

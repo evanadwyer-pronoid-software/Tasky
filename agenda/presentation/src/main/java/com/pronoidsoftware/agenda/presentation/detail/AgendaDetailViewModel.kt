@@ -108,8 +108,7 @@ class AgendaDetailViewModel @Inject constructor(
                                     startDateTime = event.startDateTime,
                                     notificationDateTime = event.notificationDateTime,
                                 ),
-                                typeSpecificDetails =
-                                (state.typeSpecificDetails as AgendaItemDetails.Event).copy(
+                                typeSpecificDetails = AgendaItemDetails.Event(
                                     host = event.host,
                                     isUserEventCreator = event.isUserEventCreator,
                                     isLocalUserGoing = event.isLocalUserGoing,
@@ -131,8 +130,7 @@ class AgendaDetailViewModel @Inject constructor(
                                     startDateTime = task.startDateTime,
                                     notificationDateTime = task.notificationDateTime,
                                 ),
-                                typeSpecificDetails =
-                                (state.typeSpecificDetails as AgendaItemDetails.Task).copy(
+                                typeSpecificDetails = AgendaItemDetails.Task(
                                     completed = task.isCompleted,
                                 ),
                             )
