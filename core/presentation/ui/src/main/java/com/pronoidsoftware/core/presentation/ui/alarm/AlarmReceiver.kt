@@ -14,6 +14,9 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class AlarmReceiver : BroadcastReceiver() {
+
+    // TODO: Inject notification manager here?
+
     override fun onReceive(context: Context, intent: Intent) {
         if (context.hasNotificationPermission()) {
             val agendaItemType =
