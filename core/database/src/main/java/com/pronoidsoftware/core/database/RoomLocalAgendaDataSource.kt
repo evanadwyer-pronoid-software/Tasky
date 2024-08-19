@@ -31,6 +31,10 @@ class RoomLocalAgendaDataSource @Inject constructor(
 ) : LocalAgendaDataSource {
 
     // Reminders
+    override suspend fun getReminder(id: ReminderId): AgendaItem.Reminder? {
+        return agendaDao.getReminder(id)?.toReminder()
+    }
+
     override fun getAllReminders(): Flow<List<AgendaItem.Reminder>> {
         return agendaDao.getAllReminders()
             .map { reminderEntities ->
@@ -78,6 +82,10 @@ class RoomLocalAgendaDataSource @Inject constructor(
     }
 
     // Tasks
+    override suspend fun getTask(id: TaskId): AgendaItem.Task? {
+        return agendaDao.getTask(id)?.toTask()
+    }
+
     override fun getAllTasks(): Flow<List<AgendaItem.Task>> {
         return agendaDao.getAllTasks()
             .map { taskEntities ->
@@ -123,6 +131,10 @@ class RoomLocalAgendaDataSource @Inject constructor(
     }
 
     // Events
+    override suspend fun getEvent(id: EventId): AgendaItem.Event? {
+        return agendaDao.getEvent(id)?.toEvent()
+    }
+
     override fun getAllEvents(): Flow<List<AgendaItem.Event>> {
         return agendaDao.getAllEvents()
             .map { eventEntities ->

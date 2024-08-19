@@ -12,6 +12,7 @@ interface AgendaRepository {
 
     // Reminders
     suspend fun createReminder(reminder: AgendaItem.Reminder): EmptyResult<DataError>
+    suspend fun getReminder(id: ReminderId): AgendaItem.Reminder?
     fun getReminders(): Flow<List<AgendaItem.Reminder>>
     suspend fun fetchAllReminders(): EmptyResult<DataError>
     suspend fun updateReminder(reminder: AgendaItem.Reminder): EmptyResult<DataError>
@@ -19,6 +20,7 @@ interface AgendaRepository {
 
     // Tasks
     suspend fun createTask(task: AgendaItem.Task): EmptyResult<DataError>
+    suspend fun getTask(id: TaskId): AgendaItem.Task?
     fun getTasks(): Flow<List<AgendaItem.Task>>
     suspend fun fetchAllTasks(): EmptyResult<DataError>
     suspend fun updateTask(task: AgendaItem.Task): EmptyResult<DataError>
@@ -26,6 +28,7 @@ interface AgendaRepository {
 
     // Events
     suspend fun createEvent(event: AgendaItem.Event): EmptyResult<DataError>
+    suspend fun getEvent(id: EventId): AgendaItem.Event?
     fun getEvents(): Flow<List<AgendaItem.Event>>
     suspend fun fetchAllEvents(): EmptyResult<DataError>
     suspend fun updateEvent(event: AgendaItem.Event): EmptyResult<DataError>

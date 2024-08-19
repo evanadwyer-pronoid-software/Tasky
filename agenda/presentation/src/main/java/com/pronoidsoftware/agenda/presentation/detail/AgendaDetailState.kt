@@ -18,6 +18,7 @@ data class AgendaDetailState(
     val selectedDate: LocalDate = today(),
     val isEditing: Boolean = false,
     val isSaving: Boolean = false,
+    val isLoading: Boolean = false,
 
     // title
     val title: String = "",

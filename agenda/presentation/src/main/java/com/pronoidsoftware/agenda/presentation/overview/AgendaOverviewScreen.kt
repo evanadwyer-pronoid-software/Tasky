@@ -44,7 +44,7 @@ import timber.log.Timber
 
 @Composable
 fun AgendaOverviewScreenRoot(
-    onCreateAgendaItem: (AgendaItemType, Boolean, String?) -> Unit,
+    onNavigateToAgendaItemDetailsScreen: (AgendaItemType, Boolean, String?) -> Unit,
     viewModel: AgendaOverviewViewModel = hiltViewModel(),
 ) {
     ObserveAsEvents(flow = viewModel.events) { event ->
@@ -60,10 +60,26 @@ fun AgendaOverviewScreenRoot(
         onAction = { action ->
             when (action) {
                 is AgendaOverviewAction.OnCreateClick -> {
-                    onCreateAgendaItem(
+                    onNavigateToAgendaItemDetailsScreen(
                         action.type,
                         true,
                         null,
+                    )
+                }
+
+                is AgendaOverviewAction.OnOpenClick -> {
+                    onNavigateToAgendaItemDetailsScreen(
+                        action.type,
+                        false,
+                        action.id,
+                    )
+                }
+
+                is AgendaOverviewAction.OnEditClick -> {
+                    onNavigateToAgendaItemDetailsScreen(
+                        action.type,
+                        true,
+                        action.id,
                     )
                 }
 
@@ -188,10 +204,20 @@ internal fun AgendaOverviewScreen(
                                     )
                                 },
                                 onOpenClick = { id ->
-                                    onAction(AgendaOverviewAction.OnOpenClick(id))
+                                    onAction(
+                                        AgendaOverviewAction.OnOpenClick(
+                                            type = getAgendaItemType(agendaOverviewItem),
+                                            id = id,
+                                        ),
+                                    )
                                 },
                                 onEditClick = { id ->
-                                    onAction(AgendaOverviewAction.OnEditClick(id))
+                                    onAction(
+                                        AgendaOverviewAction.OnEditClick(
+                                            type = getAgendaItemType(agendaOverviewItem),
+                                            id = id,
+                                        ),
+                                    )
                                 },
                                 onDeleteClick = { id ->
                                     onAction(
@@ -211,6 +237,9 @@ internal fun AgendaOverviewScreen(
                             TimeMarker()
                         }
                     }
+                }
+                item {
+                    Spacer(modifier = Modifier.height(80.dp))
                 }
             }
         }

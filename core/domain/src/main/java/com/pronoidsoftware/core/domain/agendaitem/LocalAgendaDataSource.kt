@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface LocalAgendaDataSource {
     // Reminders
+    suspend fun getReminder(id: ReminderId): AgendaItem.Reminder?
     fun getAllReminders(): Flow<List<AgendaItem.Reminder>>
     fun getRemindersForDate(targetDateUtc: String): Flow<List<AgendaItem.Reminder>>
     suspend fun upsertReminder(reminder: AgendaItem.Reminder): Result<ReminderId, DataError.Local>
@@ -13,25 +14,27 @@ interface LocalAgendaDataSource {
         reminders: List<AgendaItem.Reminder>,
     ): Result<List<ReminderId>, DataError.Local>
 
-    suspend fun deleteReminder(id: String)
+    suspend fun deleteReminder(id: ReminderId)
     suspend fun deleteAllReminders()
 
     // Tasks
+    suspend fun getTask(id: TaskId): AgendaItem.Task?
     fun getAllTasks(): Flow<List<AgendaItem.Task>>
     fun getTasksForDate(targetDateUtc: String): Flow<List<AgendaItem.Task>>
     suspend fun upsertTask(task: AgendaItem.Task): Result<TaskId, DataError.Local>
     suspend fun upsertTasks(tasks: List<AgendaItem.Task>): Result<List<TaskId>, DataError.Local>
 
-    suspend fun deleteTask(id: String)
+    suspend fun deleteTask(id: TaskId)
     suspend fun deleteAllTasks()
 
     // Events
+    suspend fun getEvent(id: EventId): AgendaItem.Event?
     fun getAllEvents(): Flow<List<AgendaItem.Event>>
     fun getEventsForDate(targetDateUtc: String): Flow<List<AgendaItem.Event>>
     suspend fun upsertEvent(event: AgendaItem.Event): Result<EventId, DataError.Local>
     suspend fun upsertEvents(events: List<AgendaItem.Event>): Result<List<EventId>, DataError.Local>
 
-    suspend fun deleteEvent(id: String)
+    suspend fun deleteEvent(id: EventId)
     suspend fun deleteAllEvents()
 
     // All
