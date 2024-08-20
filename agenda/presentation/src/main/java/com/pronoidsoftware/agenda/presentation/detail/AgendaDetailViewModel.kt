@@ -42,8 +42,8 @@ import timber.log.Timber
 class AgendaDetailViewModel @Inject constructor(
     clock: Clock,
     userDataValidator: UserDataValidator,
+    savedStateHandle: SavedStateHandle,
     private val sessionStorage: SessionStorage,
-    private val savedStateHandle: SavedStateHandle,
     private val agendaRepository: AgendaRepository,
 ) : ViewModel() {
 
@@ -62,6 +62,7 @@ class AgendaDetailViewModel @Inject constructor(
 
     var state by mutableStateOf(
         AgendaDetailState(
+            agendaItemId = savedStateHandle.getId(),
             selectedDate = today(clock),
             startDateTime = now(clock).plus(60.minutes),
             isEditing = savedStateHandle.isEditing(),
@@ -203,14 +204,13 @@ class AgendaDetailViewModel @Inject constructor(
                         isEditing = false,
                         isSaving = true,
                     )
-                    val id = savedStateHandle.getId()
-                    val isCreateAgendaItem = id == null
-                    // TODO move isCreateAgendaItem to state initialization
+                    val isCreateAgendaItem = state.agendaItemId == null
+                    val localUserId = sessionStorage.get()?.userId ?: return@launch
                     when (state.agendaItemType) {
                         AgendaItemType.EVENT -> {
                             val eventDetails = state.typeSpecificDetails as AgendaItemDetails.Event
                             val event = AgendaItem.Event(
-                                id = id ?: UUID.randomUUID().toString(),
+                                id = state.agendaItemId ?: UUID.randomUUID().toString(),
                                 title = state.title,
                                 description = state.description,
                                 startDateTime = state.startDateTime,
@@ -218,7 +218,7 @@ class AgendaDetailViewModel @Inject constructor(
                                 notificationDateTime = state.startDateTime
                                     .minus(state.notificationDuration.duration),
                                 host = if (isCreateAgendaItem) {
-                                    sessionStorage.get()?.userId ?: ""
+                                    localUserId
                                 } else {
                                     eventDetails.host
                                 },
@@ -241,7 +241,7 @@ class AgendaDetailViewModel @Inject constructor(
                                 },
                             )
                             val result = if (isCreateAgendaItem) {
-                                agendaRepository.createEvent(event)
+                                agendaRepository.createEventLocallyEnqueueRemote(event)
                             } else {
                                 agendaRepository.updateEvent(event)
                             }
@@ -256,6 +256,7 @@ class AgendaDetailViewModel @Inject constructor(
                                     state = state.copy(
                                         typeSpecificDetails = eventDetails.copy(
                                             deletedPhotos = emptyList(),
+                                            uploadWorkId = UUID.fromString(result.data),
                                         ),
                                     )
                                     eventChannel.send(AgendaDetailEvent.OnSaved)
@@ -265,7 +266,7 @@ class AgendaDetailViewModel @Inject constructor(
 
                         AgendaItemType.TASK -> {
                             val task = AgendaItem.Task(
-                                id = id ?: UUID.randomUUID().toString(),
+                                id = state.agendaItemId ?: UUID.randomUUID().toString(),
                                 title = state.title,
                                 description = state.description,
                                 startDateTime = state.startDateTime,
@@ -293,7 +294,7 @@ class AgendaDetailViewModel @Inject constructor(
 
                         AgendaItemType.REMINDER -> {
                             val reminder = AgendaItem.Reminder(
-                                id = id ?: UUID.randomUUID().toString(),
+                                id = state.agendaItemId ?: UUID.randomUUID().toString(),
                                 title = state.title,
                                 description = state.description,
                                 startDateTime = state.startDateTime,

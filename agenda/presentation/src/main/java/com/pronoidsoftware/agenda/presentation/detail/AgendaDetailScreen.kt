@@ -29,6 +29,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -37,6 +39,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import com.pronoidsoftware.agenda.presentation.R
 import com.pronoidsoftware.agenda.presentation.detail.components.AgendaDetailActionText
 import com.pronoidsoftware.agenda.presentation.detail.components.AgendaDetailDescription
@@ -146,6 +150,73 @@ internal fun AgendaDetailScreen(state: AgendaDetailState, onAction: (AgendaDetai
                 showNotificationRationale = showNotificationRationale,
             ),
         )
+    }
+
+    val workManager = WorkManager.getInstance(context)
+    val workInfos = workManager
+        .getWorkInfosForUniqueWorkLiveData("createEvent")
+        .observeAsState()
+        .value
+    val createEventInfo = remember(key1 = workInfos) {
+        workInfos?.find { it.id == getDetailAsEvent(state)?.uploadWorkId }
+    }
+    LaunchedEffect(createEventInfo?.outputData) {
+        if (createEventInfo?.outputData != null) {
+            when (createEventInfo.state) {
+                WorkInfo.State.ENQUEUED -> {
+                    Toast.makeText(
+                        context,
+                        "${createEventInfo.id} enqueued",
+                        Toast.LENGTH_LONG,
+                    ).show()
+                }
+
+                WorkInfo.State.RUNNING -> {
+                    Toast.makeText(
+                        context,
+                        "${createEventInfo.id} running...",
+                        Toast.LENGTH_LONG,
+                    ).show()
+                }
+
+                WorkInfo.State.SUCCEEDED -> {
+                    val skippedPhotos = createEventInfo.outputData.getInt("SKIPPED_PHOTO_COUNT", 0)
+                    if (skippedPhotos > 0) {
+                        Toast.makeText(
+                            context,
+                            "$skippedPhotos photos were skipped because they were too large",
+                            Toast.LENGTH_LONG,
+                        ).show()
+                    }
+                }
+
+                WorkInfo.State.FAILED -> {
+                    Toast.makeText(
+                        context,
+                        "${createEventInfo.id} failed",
+                        Toast.LENGTH_LONG,
+                    ).show()
+                }
+
+                WorkInfo.State.BLOCKED -> {
+                    Toast.makeText(
+                        context,
+                        "${createEventInfo.id} blocked",
+                        Toast.LENGTH_LONG,
+                    ).show()
+                }
+
+                WorkInfo.State.CANCELLED -> {
+                    Toast.makeText(
+                        context,
+                        "${createEventInfo.id} cancelled",
+                        Toast.LENGTH_LONG,
+                    ).show()
+                }
+
+                else -> Unit
+            }
+        }
     }
 
     LaunchedEffect(true) {

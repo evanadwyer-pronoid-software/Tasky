@@ -13,7 +13,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
-import io.ktor.client.engine.cio.CIO
+import io.ktor.client.engine.okhttp.OkHttp
 import javax.inject.Singleton
 
 @Module
@@ -22,8 +22,8 @@ object CoreDataModule {
 
     @Provides
     @Singleton
-    fun provideCIOEngine(): HttpClientEngine {
-        return CIO.create()
+    fun provideHttpEngine(): HttpClientEngine {
+        return OkHttp.create()
     }
 
     @Provides

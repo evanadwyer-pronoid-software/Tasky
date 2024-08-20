@@ -41,6 +41,10 @@
             android:authorities="${applicationId}.androidx-startup"
             tools:node="remove" />
         <receiver android:name="com.pronoidsoftware.core.presentation.ui.alarm.AlarmReceiver" />
+        <!--        <service android:name="uploadService" android:foregroundServiceType="specialUse">-->
+        <!--            <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"-->
+        <!--                android:value="uploading_images"/>-->
+        <!--        </service>-->
     </application>
 
 </manifest>

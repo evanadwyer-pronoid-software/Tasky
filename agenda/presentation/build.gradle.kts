@@ -14,6 +14,7 @@ dependencies {
     implementation(libs.timber)
     implementation(libs.kotlinx.datetime)
     implementation(libs.coil)
+    implementation(libs.androidx.compose.runtime.livedata)
 
     screenshotTestImplementation(projects.testUtil.jvmTest)
 }

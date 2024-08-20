@@ -6,7 +6,7 @@ import android.app.NotificationManager
 import android.content.Context
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
-import com.pronoidsoftware.core.presentation.ui.alarm.NotificationConstants
+import com.pronoidsoftware.core.domain.notification.NotificationConstants
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
@@ -26,14 +26,20 @@ class TaskyApp : Application(), Configuration.Provider {
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
-        val notificationChannel = NotificationChannel(
-            NotificationConstants.NOTIFICATION_CHANNEL_ID,
-            NotificationConstants.NOTIFICATION_CHANNEL_NAME,
+        val alarmNotificationChannel = NotificationChannel(
+            NotificationConstants.ALARM_NOTIFICATION_CHANNEL_ID,
+            NotificationConstants.ALARM_NOTIFICATION_CHANNEL_NAME,
             NotificationManager.IMPORTANCE_HIGH,
+        )
+        val uploadNotificationChannel = NotificationChannel(
+            NotificationConstants.UPLOAD_NOTIFICATION_CHANNEL_ID,
+            NotificationConstants.UPLOAD_NOTIFICATION_CHANNEL_NAME,
+            NotificationManager.IMPORTANCE_LOW,
         )
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(notificationChannel)
+        notificationManager.createNotificationChannel(alarmNotificationChannel)
+        notificationManager.createNotificationChannel(uploadNotificationChannel)
     }
 
     override val workManagerConfiguration: Configuration

@@ -9,11 +9,13 @@ import com.pronoidsoftware.core.domain.agendaitem.Photo
 import com.pronoidsoftware.core.domain.util.now
 import com.pronoidsoftware.core.domain.util.plus
 import com.pronoidsoftware.core.domain.util.today
+import java.util.UUID
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 
 data class AgendaDetailState(
+    val agendaItemId: String? = null,
     val agendaItemType: AgendaItemType? = null,
     val selectedDate: LocalDate = today(),
     val isEditing: Boolean = false,
@@ -47,6 +49,8 @@ data class AgendaDetailState(
 
 sealed interface AgendaItemDetails {
     data class Event(
+        val uploadWorkId: UUID? = null,
+
         val host: String = "",
         val isUserEventCreator: Boolean = false,
         val isLocalUserGoing: Boolean = false,

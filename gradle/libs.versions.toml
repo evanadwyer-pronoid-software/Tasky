@@ -41,6 +41,7 @@ activityCompose = "1.9.1"
 composeBom = "2024.06.00"
 chrisBanesComposeBom = "2024.05.00-alpha03"
 composeNavigation = "2.8.0-beta06"
+composeRuntimeLivedata = "1.6.8"
 
 # Lifecycle versions
 lifecycleRuntimeKtx = "2.8.4"
@@ -107,6 +108,7 @@ androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "u
 androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "composeNavigation" }
+androidx-compose-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "composeRuntimeLivedata" }
 
 # Lifecycle Libraries
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
@@ -116,6 +118,7 @@ androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-
 # Ktor Libraries
 ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktorClientLogging" }
@@ -193,6 +196,7 @@ compose-debug = [
 ktor = [
     "ktor-client-auth",
     "ktor-client-cio",
+    "ktor-client-okhttp",
     "ktor-client-content-negotiation",
     "ktor-client-core",
     "ktor-client-logging",

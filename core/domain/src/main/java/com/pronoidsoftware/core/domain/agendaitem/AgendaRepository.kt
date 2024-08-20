@@ -2,6 +2,7 @@ package com.pronoidsoftware.core.domain.agendaitem
 
 import com.pronoidsoftware.core.domain.util.DataError
 import com.pronoidsoftware.core.domain.util.EmptyResult
+import com.pronoidsoftware.core.domain.util.Result
 import kotlinx.coroutines.flow.Flow
 
 typealias ReminderId = String
@@ -27,11 +28,11 @@ interface AgendaRepository {
     suspend fun deleteTask(id: TaskId)
 
     // Events
-    suspend fun createEvent(event: AgendaItem.Event): EmptyResult<DataError>
+    suspend fun createEventLocallyEnqueueRemote(event: AgendaItem.Event): Result<String, DataError>
     suspend fun getEvent(id: EventId): AgendaItem.Event?
     fun getEvents(): Flow<List<AgendaItem.Event>>
     suspend fun fetchAllEvents(): EmptyResult<DataError>
-    suspend fun updateEvent(event: AgendaItem.Event): EmptyResult<DataError>
+    suspend fun updateEvent(event: AgendaItem.Event): Result<String, DataError>
     suspend fun deleteEvent(id: EventId)
 
     // All

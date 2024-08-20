@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
+import com.pronoidsoftware.core.domain.notification.NotificationConstants
 import com.pronoidsoftware.core.presentation.designsystem.R
 import com.pronoidsoftware.core.presentation.ui.hasNotificationPermission
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,7 +45,10 @@ class AlarmReceiver : BroadcastReceiver() {
             val notificationManager =
                 context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             val notification =
-                NotificationCompat.Builder(context, NotificationConstants.NOTIFICATION_CHANNEL_ID)
+                NotificationCompat.Builder(
+                    context,
+                    NotificationConstants.ALARM_NOTIFICATION_CHANNEL_ID,
+                )
                     .setContentTitle(agendaItemTitle)
                     .setContentText(agendaItemDescription)
                     .setSmallIcon(R.drawable.tasky_logo)
