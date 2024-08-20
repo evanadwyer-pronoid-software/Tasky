@@ -1,21 +1,25 @@
 package com.pronoidsoftware.agenda.network
 
+import android.content.Context
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.OutOfQuotaPolicy
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import com.pronoidsoftware.agenda.network.dto.AgendaDto
 import com.pronoidsoftware.agenda.network.dto.EventDto
 import com.pronoidsoftware.agenda.network.dto.ReminderDto
 import com.pronoidsoftware.agenda.network.dto.TaskDto
-import com.pronoidsoftware.agenda.network.mappers.toCreateEventRequest
 import com.pronoidsoftware.agenda.network.mappers.toEvent
 import com.pronoidsoftware.agenda.network.mappers.toReminder
 import com.pronoidsoftware.agenda.network.mappers.toTask
 import com.pronoidsoftware.agenda.network.mappers.toUpdateEventRequest
 import com.pronoidsoftware.agenda.network.mappers.toUpsertReminderRequest
 import com.pronoidsoftware.agenda.network.mappers.toUpsertTaskRequest
+import com.pronoidsoftware.core.data.agenda.CompressPhotosWorker
 import com.pronoidsoftware.core.data.networking.AgendaRoutes
 import com.pronoidsoftware.core.data.networking.delete
 import com.pronoidsoftware.core.data.networking.get
 import com.pronoidsoftware.core.data.networking.post
-import com.pronoidsoftware.core.data.networking.postMultipart
 import com.pronoidsoftware.core.data.networking.put
 import com.pronoidsoftware.core.data.networking.putMultipart
 import com.pronoidsoftware.core.domain.SessionStorage
@@ -26,17 +30,20 @@ import com.pronoidsoftware.core.domain.util.DataError
 import com.pronoidsoftware.core.domain.util.EmptyResult
 import com.pronoidsoftware.core.domain.util.Result
 import com.pronoidsoftware.core.domain.util.map
+import dagger.hilt.android.qualifiers.ApplicationContext
 import io.ktor.client.HttpClient
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import java.net.URL
+import java.util.UUID
 import javax.inject.Inject
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 class KtorRemoteAgendaDataSource @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val httpClient: HttpClient,
     private val sessionStorage: SessionStorage,
 ) : RemoteAgendaDataSource {
@@ -130,35 +137,22 @@ class KtorRemoteAgendaDataSource @Inject constructor(
     }
 
     // Events
-    override suspend fun createEvent(
-        event: AgendaItem.Event,
-    ): Result<AgendaItem.Event, DataError.Network> {
-        return httpClient.postMultipart<EventDto>(
-            route = AgendaRoutes.EVENT,
-            body = MultiPartFormDataContent(
-                formData {
-                    append(EVENT_CREATE_REQUEST, Json.encodeToString(event.toCreateEventRequest()))
-                    event.photos
-                        .filterIsInstance<Photo.Local>()
-                        .map { it.localPhotoUri }
-                        .forEachIndexed { index, localPhotoUri ->
-                            val photoName = "photo$index"
-                            append(
-                                photoName,
-                                URL(localPhotoUri).readBytes(),
-                                // TODO: get bytes of created compressed file
-                                Headers.build {
-                                    append(HttpHeaders.ContentType, "image/png")
-                                    append(
-                                        HttpHeaders.ContentDisposition,
-                                        "filename=$photoName.png",
-                                    )
-                                },
-                            )
-                        }
-                },
-            ),
-        ).map { it.toEvent(sessionStorage.get()?.userId) }
+    override fun createEvent(event: AgendaItem.Event): UUID {
+        val compressPhotosWorkRequest = OneTimeWorkRequestBuilder<CompressPhotosWorker>()
+            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+            .setInputData(
+                workDataOf(
+                    CompressPhotosWorker.KEY_URIS_TO_COMPRESS
+                        to event.photos
+                            .filterIsInstance<Photo.Local>()
+                            .map { it.localPhotoUri }
+                            .toTypedArray(),
+                    CompressPhotosWorker.KEY_COMPRESSION_THRESHOLD to 1_048_576L,
+                ),
+            )
+            .build()
+        WorkManager.getInstance(context).enqueue(compressPhotosWorkRequest)
+        return compressPhotosWorkRequest.id
     }
 
     override suspend fun getEvent(id: String): Result<AgendaItem.Event, DataError.Network> {
@@ -197,10 +191,10 @@ class KtorRemoteAgendaDataSource @Inject constructor(
                                 URL(compressedPhotoUri).readBytes(),
                                 // TODO: get bytes of created compressed file
                                 Headers.build {
-                                    append(HttpHeaders.ContentType, "image/png")
+                                    append(HttpHeaders.ContentType, "image/jpg")
                                     append(
                                         HttpHeaders.ContentDisposition,
-                                        "filename=$photoName.png",
+                                        "filename=$photoName.jpg",
                                     )
                                 },
                             )

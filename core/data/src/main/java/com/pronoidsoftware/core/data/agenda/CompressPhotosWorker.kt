@@ -13,6 +13,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.IOException
 import kotlin.math.roundToInt
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -27,16 +28,16 @@ class CompressPhotosWorker @AssistedInject constructor(
 ) : CoroutineWorker(appContext, params) {
     override suspend fun doWork(): Result {
         return withContext(dispatchers.io) {
-            val stringUris = params.inputData.getStringArray(KEY_CONTENT_URIS)
+            val stringUris = params.inputData.getStringArray(KEY_URIS_TO_COMPRESS)
             val compressionThresholdInBytes = params.inputData.getLong(
                 KEY_COMPRESSION_THRESHOLD,
                 0L,
             )
             val deferredCompressedFilePaths = mutableListOf<Deferred<String>>()
 
-            stringUris?.forEach { localUri ->
+            stringUris?.forEach { uriToCompress ->
                 val compressedPhotoUriString = async {
-                    val uri = Uri.parse(localUri)
+                    val uri = Uri.parse(uriToCompress)
                     val bytes = appContext.contentResolver.openInputStream(uri)?.use {
                         it.readBytes()
                     } ?: return@async ""
@@ -46,15 +47,24 @@ class CompressPhotosWorker @AssistedInject constructor(
                     do {
                         val outputStream = ByteArrayOutputStream()
                         outputStream.use {
-                            bitmap.compress(Bitmap.CompressFormat.PNG, quality, it)
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, it)
                             outputBytes = it.toByteArray()
                             quality -= (quality * 0.1).roundToInt()
                         }
                     } while (outputBytes.size > compressionThresholdInBytes && quality > 5)
 
-                    val file = File(appContext.cacheDir, "$localUri-compressed.png")
-                    file.writeBytes(outputBytes)
-                    return@async file.absolutePath
+                    return@async try {
+                        val file = File.createTempFile(
+                            "compressed-",
+                            ".jpg",
+                            appContext.cacheDir,
+                        )
+                        file.writeBytes(outputBytes)
+                        file.absolutePath
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                        ""
+                    }
                 }
                 deferredCompressedFilePaths.add(compressedPhotoUriString)
             }
@@ -63,15 +73,16 @@ class CompressPhotosWorker @AssistedInject constructor(
 
             Result.success(
                 workDataOf(
-                    KEY_RESULT_PATHS to compressedPhotoFilePaths,
+                    KEY_COMPRESSED_URIS_RESULT_PATHS to compressedPhotoFilePaths.toTypedArray(),
+                    KEY_COMPRESSION_THRESHOLD to compressionThresholdInBytes,
                 ),
             )
         }
     }
 
     companion object {
-        const val KEY_CONTENT_URIS = "KEY_CONTENT_URIS"
+        const val KEY_URIS_TO_COMPRESS = "KEY_URIS_TO_COMPRESS"
         const val KEY_COMPRESSION_THRESHOLD = "KEY_COMPRESSION_THRESHOLD"
-        const val KEY_RESULT_PATHS = "KEY_RESULT_PATHS"
+        const val KEY_COMPRESSED_URIS_RESULT_PATHS = "KEY_COMPRESSED_URIS_RESULT_PATHS"
     }
 }

@@ -241,7 +241,7 @@ class AgendaDetailViewModel @Inject constructor(
                                 },
                             )
                             val result = if (isCreateAgendaItem) {
-                                agendaRepository.createEvent(event)
+                                agendaRepository.createEventLocallyEnqueueRemote(event)
                             } else {
                                 agendaRepository.updateEvent(event)
                             }
