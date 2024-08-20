@@ -81,7 +81,6 @@ class CompressPhotosWorker @AssistedInject constructor(
                         to compressedPhotoFilePaths
                             .filterNot { it.isBlank() }
                             .toTypedArray(),
-                    KEY_COMPRESSION_THRESHOLD to compressionThresholdInBytes,
                     KEY_NUMBER_URIS_BEYOND_COMPRESSION
                         to compressedPhotoFilePaths
                             .count { it.isEmpty() },
