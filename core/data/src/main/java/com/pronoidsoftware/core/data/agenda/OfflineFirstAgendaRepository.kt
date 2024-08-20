@@ -12,6 +12,7 @@ import com.pronoidsoftware.core.domain.util.DataError
 import com.pronoidsoftware.core.domain.util.EmptyResult
 import com.pronoidsoftware.core.domain.util.Result
 import com.pronoidsoftware.core.domain.util.asEmptyResult
+import com.pronoidsoftware.core.domain.util.onSuccess
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
@@ -195,6 +196,9 @@ class OfflineFirstAgendaRepository @Inject constructor(
                         events = events,
                     ).asEmptyResult()
                 }.await()
+                    .onSuccess {
+                        alarmScheduler.scheduleAll(result.data)
+                    }
             }
         }
     }
