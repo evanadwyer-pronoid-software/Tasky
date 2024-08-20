@@ -147,7 +147,7 @@ class KtorRemoteAgendaDataSource @Inject constructor(
                             .filterIsInstance<Photo.Local>()
                             .map { it.localPhotoUri }
                             .toTypedArray(),
-                    CompressPhotosWorker.KEY_COMPRESSION_THRESHOLD to 1_048_576L,
+                    CompressPhotosWorker.KEY_COMPRESSION_THRESHOLD to 1_000_000L,
                 ),
             )
             .build()
