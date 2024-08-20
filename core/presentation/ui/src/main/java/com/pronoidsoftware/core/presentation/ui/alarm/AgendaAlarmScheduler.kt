@@ -70,6 +70,10 @@ class AgendaAlarmScheduler @Inject constructor(
         )
     }
 
+    override fun scheduleAll(agendaItems: List<AgendaItem>) {
+        agendaItems.forEach(::schedule)
+    }
+
     override fun cancel(agendaItemId: String) {
         alarmManager.cancel(
             PendingIntent.getBroadcast(
