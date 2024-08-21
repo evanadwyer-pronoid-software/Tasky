@@ -1,6 +1,7 @@
 package com.pronoidsoftware.core.database.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
@@ -92,11 +93,13 @@ interface AgendaDao {
     @Transaction
     suspend fun upsertEventWithPhotosAndAttendees(
         event: EventEntity,
-        photos: List<PhotoEntity>,
+        photosToAdd: List<PhotoEntity>,
+        photosToDelete: List<PhotoEntity>,
         attendees: List<AttendeeEntity>,
     ) {
         upsertEvent(event)
-        upsertPhotos(photos)
+        upsertPhotos(photosToAdd)
+        deletePhotos(photosToDelete)
         upsertAttendees(attendees)
     }
 
@@ -144,6 +147,9 @@ interface AgendaDao {
 
     @Query("DELETE FROM photoentity WHERE `key`=:id")
     suspend fun deletePhoto(id: String)
+
+    @Delete
+    suspend fun deletePhotos(photos: List<PhotoEntity>)
 
     @Query("DELETE FROM photoentity WHERE eventId=:id")
     suspend fun deletePhotosFromEvent(id: String)

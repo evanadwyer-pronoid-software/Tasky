@@ -20,13 +20,13 @@ import com.pronoidsoftware.agenda.network.mappers.toUpdateEventRequest
 import com.pronoidsoftware.agenda.network.mappers.toUpsertReminderRequest
 import com.pronoidsoftware.agenda.network.mappers.toUpsertTaskRequest
 import com.pronoidsoftware.agenda.network.work.CreateEventWorker
+import com.pronoidsoftware.agenda.network.work.UpdateEventWorker
 import com.pronoidsoftware.core.data.agenda.CompressPhotosWorker
 import com.pronoidsoftware.core.data.networking.AgendaRoutes
 import com.pronoidsoftware.core.data.networking.delete
 import com.pronoidsoftware.core.data.networking.get
 import com.pronoidsoftware.core.data.networking.post
 import com.pronoidsoftware.core.data.networking.put
-import com.pronoidsoftware.core.data.networking.putMultipart
 import com.pronoidsoftware.core.domain.SessionStorage
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItem
 import com.pronoidsoftware.core.domain.agendaitem.Photo
@@ -37,11 +37,6 @@ import com.pronoidsoftware.core.domain.util.Result
 import com.pronoidsoftware.core.domain.util.map
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.ktor.client.HttpClient
-import io.ktor.client.request.forms.MultiPartFormDataContent
-import io.ktor.client.request.forms.formData
-import io.ktor.http.Headers
-import io.ktor.http.HttpHeaders
-import java.net.URL
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -168,8 +163,8 @@ class KtorRemoteAgendaDataSource @Inject constructor(
             )
             .setBackoffCriteria(
                 backoffPolicy = BackoffPolicy.EXPONENTIAL,
-                backoffDelay = 2000L,
-                timeUnit = TimeUnit.MILLISECONDS,
+                backoffDelay = 10L,
+                timeUnit = TimeUnit.SECONDS,
             )
             .setInputData(
                 workDataOf(
@@ -203,35 +198,46 @@ class KtorRemoteAgendaDataSource @Inject constructor(
             }
     }
 
-    override suspend fun updateEvent(
-        event: AgendaItem.Event,
-    ): Result<AgendaItem.Event, DataError.Network> {
-        return httpClient.putMultipart<EventDto>(
-            route = AgendaRoutes.EVENT,
-            body = MultiPartFormDataContent(
-                formData {
-                    append(EVENT_CREATE_REQUEST, Json.encodeToString(event.toUpdateEventRequest()))
-                    event.photos
-                        .filterIsInstance<Photo.Local>()
-                        .map { it.localPhotoUri }
-                        .forEachIndexed { index, compressedPhotoUri ->
-                            val photoName = "photo$index"
-                            append(
-                                photoName,
-                                URL(compressedPhotoUri).readBytes(),
-                                // TODO: get bytes of created compressed file
-                                Headers.build {
-                                    append(HttpHeaders.ContentType, "image/jpg")
-                                    append(
-                                        HttpHeaders.ContentDisposition,
-                                        "filename=$photoName.jpg",
-                                    )
-                                },
-                            )
-                        }
-                },
-            ),
-        ).map { it.toEvent(sessionStorage.get()?.userId) }
+    override fun updateEvent(event: AgendaItem.Event): UUID {
+        val compressPhotosWorkRequest = OneTimeWorkRequestBuilder<CompressPhotosWorker>()
+            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+            .setInputData(
+                workDataOf(
+                    CompressPhotosWorker.KEY_URIS_TO_COMPRESS
+                        to event.photos
+                            .filterIsInstance<Photo.Local>()
+                            .map { it.localPhotoUri }
+                            .toTypedArray(),
+                    CompressPhotosWorker.KEY_COMPRESSION_THRESHOLD to 1_000_000L,
+                ),
+            )
+            .build()
+        val updateEventWorkRequest = OneTimeWorkRequestBuilder<UpdateEventWorker>()
+            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+            .setConstraints(
+                Constraints.Builder()
+                    .setRequiredNetworkType(
+                        NetworkType.CONNECTED,
+                    )
+                    .build(),
+            )
+            .setBackoffCriteria(
+                backoffPolicy = BackoffPolicy.EXPONENTIAL,
+                backoffDelay = 10L,
+                timeUnit = TimeUnit.SECONDS,
+            )
+            .setInputData(
+                workDataOf(
+                    UpdateEventWorker.UPDATE_EVENT_REQUEST
+                        to Json.encodeToString(event.toUpdateEventRequest()),
+                ),
+            )
+            .build()
+        WorkManager.getInstance(context)
+            .beginWith(compressPhotosWorkRequest)
+            .then(updateEventWorkRequest)
+            .enqueue()
+        return updateEventWorkRequest.id
     }
 
     override suspend fun deleteEvent(id: String): EmptyResult<DataError.Network> {
@@ -261,6 +267,5 @@ class KtorRemoteAgendaDataSource @Inject constructor(
         const val REMINDER_ID_QUERY_PARAM = "reminderId"
         const val TASK_ID_QUERY_PARAM = "taskId"
         const val EVENT_ID_QUERY_PARAM = "eventId"
-        const val EVENT_CREATE_REQUEST = "create_event_request"
     }
 }
