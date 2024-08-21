@@ -1,6 +1,9 @@
 package com.pronoidsoftware.agenda.network
 
 import android.content.Context
+import androidx.work.BackoffPolicy
+import androidx.work.Constraints
+import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkManager
@@ -9,12 +12,14 @@ import com.pronoidsoftware.agenda.network.dto.AgendaDto
 import com.pronoidsoftware.agenda.network.dto.EventDto
 import com.pronoidsoftware.agenda.network.dto.ReminderDto
 import com.pronoidsoftware.agenda.network.dto.TaskDto
+import com.pronoidsoftware.agenda.network.mappers.toCreateEventRequest
 import com.pronoidsoftware.agenda.network.mappers.toEvent
 import com.pronoidsoftware.agenda.network.mappers.toReminder
 import com.pronoidsoftware.agenda.network.mappers.toTask
 import com.pronoidsoftware.agenda.network.mappers.toUpdateEventRequest
 import com.pronoidsoftware.agenda.network.mappers.toUpsertReminderRequest
 import com.pronoidsoftware.agenda.network.mappers.toUpsertTaskRequest
+import com.pronoidsoftware.agenda.network.work.CreateEventWorker
 import com.pronoidsoftware.core.data.agenda.CompressPhotosWorker
 import com.pronoidsoftware.core.data.networking.AgendaRoutes
 import com.pronoidsoftware.core.data.networking.delete
@@ -38,6 +43,7 @@ import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import java.net.URL
 import java.util.UUID
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -151,8 +157,32 @@ class KtorRemoteAgendaDataSource @Inject constructor(
                 ),
             )
             .build()
-        WorkManager.getInstance(context).enqueue(compressPhotosWorkRequest)
-        return compressPhotosWorkRequest.id
+        val createEventWorkRequest = OneTimeWorkRequestBuilder<CreateEventWorker>()
+            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+            .setConstraints(
+                Constraints.Builder()
+                    .setRequiredNetworkType(
+                        NetworkType.CONNECTED,
+                    )
+                    .build(),
+            )
+            .setBackoffCriteria(
+                backoffPolicy = BackoffPolicy.EXPONENTIAL,
+                backoffDelay = 2000L,
+                timeUnit = TimeUnit.MILLISECONDS,
+            )
+            .setInputData(
+                workDataOf(
+                    CreateEventWorker.CREATE_EVENT_REQUEST
+                        to Json.encodeToString(event.toCreateEventRequest()),
+                ),
+            )
+            .build()
+        WorkManager.getInstance(context)
+            .beginWith(compressPhotosWorkRequest)
+            .then(createEventWorkRequest)
+            .enqueue()
+        return createEventWorkRequest.id
     }
 
     override suspend fun getEvent(id: String): Result<AgendaItem.Event, DataError.Network> {
