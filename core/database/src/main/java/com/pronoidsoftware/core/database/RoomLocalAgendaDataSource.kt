@@ -152,17 +152,20 @@ class RoomLocalAgendaDataSource @Inject constructor(
     override suspend fun upsertEvent(event: AgendaItem.Event): Result<EventId, DataError.Local> {
         return try {
             val eventEntity = event.toEventEntity()
-            val photoEntities = event.photos
+            val photoEntitiesToAdd = event.photos
                 .filterIsInstance<Photo.Remote>()
                 .map {
                     it.toPhotoEntity(event.id)
                 }
+            val photoEntitiesToDelete = event.deletedPhotos
+                .map { it.toPhotoEntity(event.id) }
             val attendeeEntities = event.attendees.map {
                 it.toAttendeeEntity(event.id)
             }
             agendaDao.upsertEventWithPhotosAndAttendees(
                 event = eventEntity,
-                photos = photoEntities,
+                photosToAdd = photoEntitiesToAdd,
+                photosToDelete = photoEntitiesToDelete,
                 attendees = attendeeEntities,
             )
             Result.Success(eventEntity.id)

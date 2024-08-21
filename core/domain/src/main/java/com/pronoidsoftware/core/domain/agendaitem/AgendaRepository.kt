@@ -32,7 +32,7 @@ interface AgendaRepository {
     suspend fun getEvent(id: EventId): AgendaItem.Event?
     fun getEvents(): Flow<List<AgendaItem.Event>>
     suspend fun fetchAllEvents(): EmptyResult<DataError>
-    suspend fun updateEvent(event: AgendaItem.Event): EmptyResult<DataError>
+    suspend fun updateEventLocallyEnqueueRemote(event: AgendaItem.Event): Result<String, DataError>
     suspend fun deleteEvent(id: EventId)
 
     // All

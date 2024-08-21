@@ -149,24 +149,16 @@ class OfflineFirstAgendaRepository @Inject constructor(
         }
     }
 
-    override suspend fun updateEvent(event: AgendaItem.Event): EmptyResult<DataError> {
+    override suspend fun updateEventLocallyEnqueueRemote(
+        event: AgendaItem.Event,
+    ): Result<String, DataError> {
         val localResult = localAgendaDataSource.upsertEvent(event)
         if (localResult !is Result.Success) {
-            return localResult.asEmptyResult()
+            return localResult
         }
         alarmScheduler.schedule(event)
-        return when (val remoteResult = remoteAgendaDataSource.updateEvent(event)) {
-            is Result.Error -> {
-                // TODO: schedule remote sync
-                Result.Success(Unit)
-            }
-
-            is Result.Success -> {
-                applicationScope.async {
-                    localAgendaDataSource.upsertEvent(remoteResult.data).asEmptyResult()
-                }.await()
-            }
-        }
+        val eventWorkId = remoteAgendaDataSource.updateEvent(event)
+        return Result.Success(eventWorkId.toString())
     }
 
     override suspend fun deleteEvent(id: EventId) {
