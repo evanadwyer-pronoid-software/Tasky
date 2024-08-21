@@ -20,6 +20,7 @@ coreSplashscreen = "1.0.1"
 slf4j = "2.0.13"
 coil = "2.7.0"
 work = "2.9.1"
+exif = "1.3.7"
 
 # Hilt
 hilt = "2.51.1"
@@ -64,6 +65,7 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 androidx-security-crypto-ktx = { group = "androidx.security", name = "security-crypto-ktx", version.ref = "securityCryptoKtx" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-work = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work" }
+androidx-exif = { group = "androidx.exifinterface", name = "exifinterface", version.ref = "exif" }
 
 # Miscellanous Libraries
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
