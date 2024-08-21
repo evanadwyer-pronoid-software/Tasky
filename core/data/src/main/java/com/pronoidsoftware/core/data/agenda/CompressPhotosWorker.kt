@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import androidx.exifinterface.media.ExifInterface
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
@@ -38,6 +39,9 @@ class CompressPhotosWorker @AssistedInject constructor(
             stringUris?.forEach { uriToCompress ->
                 val compressedPhotoUriString = async {
                     val uri = Uri.parse(uriToCompress)
+                    val orientation = appContext.contentResolver.openInputStream(uri)?.use {
+                        ExifInterface(it).getAttributeInt(ExifInterface.TAG_ORIENTATION, 1)
+                    }
                     val bytes = appContext.contentResolver.openInputStream(uri)?.use {
                         it.readBytes()
                     } ?: return@async ""
@@ -63,6 +67,9 @@ class CompressPhotosWorker @AssistedInject constructor(
                                 appContext.cacheDir,
                             )
                             file.writeBytes(outputBytes)
+                            val newExif = ExifInterface(file)
+                            newExif.setAttribute(ExifInterface.TAG_ORIENTATION, "$orientation")
+                            newExif.saveAttributes()
                             file.absolutePath
                         }
                     } catch (e: IOException) {
