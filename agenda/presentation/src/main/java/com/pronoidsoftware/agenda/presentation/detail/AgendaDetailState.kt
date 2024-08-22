@@ -9,6 +9,7 @@ import com.pronoidsoftware.core.domain.agendaitem.Photo
 import com.pronoidsoftware.core.domain.util.now
 import com.pronoidsoftware.core.domain.util.plus
 import com.pronoidsoftware.core.domain.util.today
+import java.util.UUID
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
@@ -51,6 +52,7 @@ sealed interface AgendaItemDetails {
         val host: String = "",
         val isUserEventCreator: Boolean = false,
         val isLocalUserGoing: Boolean = false,
+        val workId: UUID? = null,
 
         // photos
         val photos: List<Photo> = emptyList(),

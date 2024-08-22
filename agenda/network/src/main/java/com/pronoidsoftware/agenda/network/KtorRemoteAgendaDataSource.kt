@@ -35,6 +35,10 @@ import com.pronoidsoftware.core.domain.util.DataError
 import com.pronoidsoftware.core.domain.util.EmptyResult
 import com.pronoidsoftware.core.domain.util.Result
 import com.pronoidsoftware.core.domain.util.map
+import com.pronoidsoftware.core.domain.work.WorkKeys.CREATE_EVENT_REQUEST
+import com.pronoidsoftware.core.domain.work.WorkKeys.KEY_COMPRESSION_THRESHOLD
+import com.pronoidsoftware.core.domain.work.WorkKeys.KEY_URIS_TO_COMPRESS
+import com.pronoidsoftware.core.domain.work.WorkKeys.UPDATE_EVENT_REQUEST
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.ktor.client.HttpClient
 import java.util.UUID
@@ -143,12 +147,12 @@ class KtorRemoteAgendaDataSource @Inject constructor(
             .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
             .setInputData(
                 workDataOf(
-                    CompressPhotosWorker.KEY_URIS_TO_COMPRESS
+                    KEY_URIS_TO_COMPRESS
                         to event.photos
                             .filterIsInstance<Photo.Local>()
                             .map { it.localPhotoUri }
                             .toTypedArray(),
-                    CompressPhotosWorker.KEY_COMPRESSION_THRESHOLD to 1_000_000L,
+                    KEY_COMPRESSION_THRESHOLD to 1_000_000L,
                 ),
             )
             .build()
@@ -168,7 +172,7 @@ class KtorRemoteAgendaDataSource @Inject constructor(
             )
             .setInputData(
                 workDataOf(
-                    CreateEventWorker.CREATE_EVENT_REQUEST
+                    CREATE_EVENT_REQUEST
                         to Json.encodeToString(event.toCreateEventRequest()),
                 ),
             )
@@ -203,12 +207,12 @@ class KtorRemoteAgendaDataSource @Inject constructor(
             .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
             .setInputData(
                 workDataOf(
-                    CompressPhotosWorker.KEY_URIS_TO_COMPRESS
+                    KEY_URIS_TO_COMPRESS
                         to event.photos
                             .filterIsInstance<Photo.Local>()
                             .map { it.localPhotoUri }
                             .toTypedArray(),
-                    CompressPhotosWorker.KEY_COMPRESSION_THRESHOLD to 1_000_000L,
+                    KEY_COMPRESSION_THRESHOLD to 1_000_000L,
                 ),
             )
             .build()
@@ -228,7 +232,7 @@ class KtorRemoteAgendaDataSource @Inject constructor(
             )
             .setInputData(
                 workDataOf(
-                    UpdateEventWorker.UPDATE_EVENT_REQUEST
+                    UPDATE_EVENT_REQUEST
                         to Json.encodeToString(event.toUpdateEventRequest()),
                 ),
             )

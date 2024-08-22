@@ -7,12 +7,14 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.pronoidsoftware.agenda.network.dto.EventDto
 import com.pronoidsoftware.agenda.network.mappers.toEvent
-import com.pronoidsoftware.core.data.agenda.CompressPhotosWorker
 import com.pronoidsoftware.core.data.networking.AgendaRoutes
 import com.pronoidsoftware.core.data.networking.putMultipart
 import com.pronoidsoftware.core.domain.DispatcherProvider
 import com.pronoidsoftware.core.domain.SessionStorage
 import com.pronoidsoftware.core.domain.agendaitem.LocalAgendaDataSource
+import com.pronoidsoftware.core.domain.work.WorkKeys.KEY_COMPRESSED_URIS_RESULT_PATHS
+import com.pronoidsoftware.core.domain.work.WorkKeys.KEY_NUMBER_URIS_BEYOND_COMPRESSION
+import com.pronoidsoftware.core.domain.work.WorkKeys.UPDATE_EVENT_REQUEST
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import io.ktor.client.HttpClient
@@ -41,7 +43,7 @@ class UpdateEventWorker @AssistedInject constructor(
         val localUserId = sessionStorage.get()?.userId ?: return Result.failure()
 
         val compressedPhotoUris =
-            params.inputData.getStringArray(CompressPhotosWorker.KEY_COMPRESSED_URIS_RESULT_PATHS)
+            params.inputData.getStringArray(KEY_COMPRESSED_URIS_RESULT_PATHS)
         val eventRequest =
             params.inputData.getString(UPDATE_EVENT_REQUEST) ?: return Result.failure()
         val remoteResult = withContext(dispatchers.io) {
@@ -89,18 +91,14 @@ class UpdateEventWorker @AssistedInject constructor(
                 localAgendaDataSource.upsertEvent(remoteResult.data.toEvent(localUserId))
                 Result.success(
                     workDataOf(
-                        CompressPhotosWorker.KEY_NUMBER_URIS_BEYOND_COMPRESSION
+                        KEY_NUMBER_URIS_BEYOND_COMPRESSION
                             to params.inputData.getInt(
-                                CompressPhotosWorker.KEY_NUMBER_URIS_BEYOND_COMPRESSION,
+                                KEY_NUMBER_URIS_BEYOND_COMPRESSION,
                                 0,
                             ),
                     ),
                 )
             }
         }
-    }
-
-    companion object {
-        const val UPDATE_EVENT_REQUEST = "update_event_request"
     }
 }
