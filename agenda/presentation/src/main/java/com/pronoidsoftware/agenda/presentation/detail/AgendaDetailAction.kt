@@ -8,6 +8,8 @@ import kotlinx.datetime.LocalTime
 
 sealed interface AgendaDetailAction {
 
+    data object LoadEvent : AgendaDetailAction
+
     // toolbar actions
     data object OnClose : AgendaDetailAction
     data object OnConfirmClose : AgendaDetailAction

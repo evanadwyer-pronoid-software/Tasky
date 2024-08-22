@@ -3,6 +3,7 @@
 package com.pronoidsoftware.agenda.presentation.detail.components
 
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,6 +35,7 @@ fun AgendaDetailToolbar(
     onEditClick: () -> Unit,
     onSaveClick: () -> Unit,
     modifier: Modifier = Modifier,
+    canEnableEdit: Boolean = true,
     scrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(),
 ) {
     val textStyle = TextStyle(
@@ -78,12 +80,18 @@ fun AgendaDetailToolbar(
                     )
                 }
             } else {
-                IconButton(onClick = onEditClick) {
-                    Icon(
-                        imageVector = EditIcon,
-                        contentDescription = stringResource(id = R.string.edit),
-                        tint = contentColor,
-                    )
+                if (canEnableEdit) {
+                    IconButton(
+                        onClick = onEditClick,
+                    ) {
+                        Icon(
+                            imageVector = EditIcon,
+                            contentDescription = stringResource(id = R.string.edit),
+                            tint = contentColor,
+                        )
+                    }
+                } else {
+                    CircularProgressIndicator()
                 }
             }
         },
@@ -100,6 +108,21 @@ private fun AgendaDetailToolbarPreview_Read() {
             isEditing = false,
             onEditClick = { },
             onSaveClick = { },
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun AgendaDetailToolbarPreview_Read_Disabled_from_editing() {
+    TaskyTheme {
+        AgendaDetailToolbar(
+            title = LocalDate(2022, 3, 5).formatFullDate(),
+            onCloseClick = { },
+            isEditing = false,
+            onEditClick = { },
+            onSaveClick = { },
+            canEnableEdit = false,
         )
     }
 }

@@ -62,7 +62,8 @@ class AgendaDetailViewModel @Inject constructor(
 
     var state by mutableStateOf(
         AgendaDetailState(
-            agendaItemId = savedStateHandle.getId(),
+            agendaItemId = savedStateHandle.getId() ?: UUID.randomUUID().toString(),
+            isCreateAgendaItem = savedStateHandle.getId() == null,
             selectedDate = today(clock),
             startDateTime = now(clock).plus(60.minutes),
             isEditing = savedStateHandle.isEditing(),
@@ -100,25 +101,7 @@ class AgendaDetailViewModel @Inject constructor(
                 )
                 when (savedStateHandle.getAgendaItemType()) {
                     AgendaItemType.EVENT -> {
-                        agendaRepository.getEvent(agendaItemId)?.let { event ->
-                            state = state.copy(
-                                title = event.title,
-                                description = event.description,
-                                startDateTime = event.startDateTime,
-                                notificationDuration = calculateNotificationDuration(
-                                    startDateTime = event.startDateTime,
-                                    notificationDateTime = event.notificationDateTime,
-                                ),
-                                typeSpecificDetails = AgendaItemDetails.Event(
-                                    host = event.host,
-                                    isUserEventCreator = event.isUserEventCreator,
-                                    isLocalUserGoing = event.isLocalUserGoing,
-                                    photos = event.photos,
-                                    endDateTime = event.endDateTime,
-                                    attendees = event.attendees,
-                                ),
-                            )
-                        }
+                        loadEvent(agendaItemId)
                     }
 
                     AgendaItemType.TASK -> {
@@ -161,6 +144,30 @@ class AgendaDetailViewModel @Inject constructor(
         }
     }
 
+    private suspend fun loadEvent(agendaItemId: String) {
+        // Used after saving remotely to refresh the photos
+        // This keeps the UI consistent if the user stays on the detail screen
+        agendaRepository.getEvent(agendaItemId)?.let { event ->
+            state = state.copy(
+                title = event.title,
+                description = event.description,
+                startDateTime = event.startDateTime,
+                notificationDuration = calculateNotificationDuration(
+                    startDateTime = event.startDateTime,
+                    notificationDateTime = event.notificationDateTime,
+                ),
+                typeSpecificDetails = AgendaItemDetails.Event(
+                    host = event.host,
+                    isUserEventCreator = event.isUserEventCreator,
+                    isLocalUserGoing = event.isLocalUserGoing,
+                    photos = event.photos,
+                    endDateTime = event.endDateTime,
+                    attendees = event.attendees,
+                ),
+            )
+        }
+    }
+
     private fun calculateNotificationDuration(
         startDateTime: LocalDateTime,
         notificationDateTime: LocalDateTime,
@@ -192,6 +199,12 @@ class AgendaDetailViewModel @Inject constructor(
 
     fun onAction(action: AgendaDetailAction) {
         when (action) {
+            AgendaDetailAction.LoadEvent -> {
+                viewModelScope.launch {
+                    loadEvent(state.agendaItemId)
+                }
+            }
+
             AgendaDetailAction.OnEnableEdit -> {
                 state = state.copy(
                     isEditing = true,
@@ -205,42 +218,41 @@ class AgendaDetailViewModel @Inject constructor(
                         isSaving = true,
                     )
                     val localUserId = sessionStorage.get()?.userId ?: return@launch
-                    val isCreateAgendaItem = state.agendaItemId == null
                     when (state.agendaItemType) {
                         AgendaItemType.EVENT -> {
                             val eventDetails = state.typeSpecificDetails as AgendaItemDetails.Event
                             val event = AgendaItem.Event(
-                                id = state.agendaItemId ?: UUID.randomUUID().toString(),
+                                id = state.agendaItemId,
                                 title = state.title,
                                 description = state.description,
                                 startDateTime = state.startDateTime,
                                 endDateTime = eventDetails.endDateTime,
                                 notificationDateTime = state.startDateTime
                                     .minus(state.notificationDuration.duration),
-                                host = if (isCreateAgendaItem) {
+                                host = if (state.isCreateAgendaItem) {
                                     localUserId
                                 } else {
                                     eventDetails.host
                                 },
-                                isUserEventCreator = if (isCreateAgendaItem) {
+                                isUserEventCreator = if (state.isCreateAgendaItem) {
                                     true
                                 } else {
                                     eventDetails.isUserEventCreator
                                 },
                                 attendees = eventDetails.attendees,
                                 photos = eventDetails.photos,
-                                deletedPhotos = if (isCreateAgendaItem) {
+                                deletedPhotos = if (state.isCreateAgendaItem) {
                                     emptyList()
                                 } else {
                                     eventDetails.deletedPhotos
                                 },
-                                isLocalUserGoing = if (isCreateAgendaItem) {
+                                isLocalUserGoing = if (state.isCreateAgendaItem) {
                                     true
                                 } else {
                                     eventDetails.isLocalUserGoing
                                 },
                             )
-                            val result = if (isCreateAgendaItem) {
+                            val result = if (state.isCreateAgendaItem) {
                                 agendaRepository.createEventLocallyEnqueueRemote(event)
                             } else {
                                 agendaRepository.updateEventLocallyEnqueueRemote(event)
@@ -253,6 +265,7 @@ class AgendaDetailViewModel @Inject constructor(
                                 }
 
                                 is Result.Success -> {
+                                    // TODO send saved event locally iff offline
                                     state = state.copy(
                                         typeSpecificDetails = eventDetails.copy(
                                             deletedPhotos = emptyList(),
@@ -265,7 +278,7 @@ class AgendaDetailViewModel @Inject constructor(
 
                         AgendaItemType.TASK -> {
                             val task = AgendaItem.Task(
-                                id = state.agendaItemId ?: UUID.randomUUID().toString(),
+                                id = state.agendaItemId,
                                 title = state.title,
                                 description = state.description,
                                 startDateTime = state.startDateTime,
@@ -273,7 +286,7 @@ class AgendaDetailViewModel @Inject constructor(
                                     .minus(state.notificationDuration.duration),
                                 isCompleted = false,
                             )
-                            val result = if (isCreateAgendaItem) {
+                            val result = if (state.isCreateAgendaItem) {
                                 agendaRepository.createTask(task)
                             } else {
                                 agendaRepository.updateTask(task)
@@ -293,14 +306,14 @@ class AgendaDetailViewModel @Inject constructor(
 
                         AgendaItemType.REMINDER -> {
                             val reminder = AgendaItem.Reminder(
-                                id = state.agendaItemId ?: UUID.randomUUID().toString(),
+                                id = state.agendaItemId,
                                 title = state.title,
                                 description = state.description,
                                 startDateTime = state.startDateTime,
                                 notificationDateTime = state.startDateTime
                                     .minus(state.notificationDuration.duration),
                             )
-                            val result = if (isCreateAgendaItem) {
+                            val result = if (state.isCreateAgendaItem) {
                                 agendaRepository.createReminder(reminder)
                             } else {
                                 agendaRepository.updateReminder(reminder)
@@ -322,7 +335,10 @@ class AgendaDetailViewModel @Inject constructor(
                         }
                     }
 
-                    state = state.copy(isSaving = false)
+                    state = state.copy(
+                        isSaving = false,
+                        isCreateAgendaItem = false,
+                    )
                 }
             }
 

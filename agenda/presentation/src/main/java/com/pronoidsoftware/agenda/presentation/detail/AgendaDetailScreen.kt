@@ -192,6 +192,7 @@ internal fun AgendaDetailScreen(state: AgendaDetailState, onAction: (AgendaDetai
                     Toast.LENGTH_LONG,
                 ).show()
             }
+            onAction(AgendaDetailAction.LoadEvent)
         }
     }
 
@@ -314,6 +315,7 @@ internal fun AgendaDetailScreen(state: AgendaDetailState, onAction: (AgendaDetai
                     },
                     isEditing = state.isEditing,
                     onEditClick = { onAction(AgendaDetailAction.OnEnableEdit) },
+                    canEnableEdit = eventWorkResult?.state?.isFinished ?: true,
                     onSaveClick = { onAction(AgendaDetailAction.OnSave) },
                 )
             },
