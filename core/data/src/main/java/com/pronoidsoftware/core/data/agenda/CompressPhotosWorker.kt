@@ -10,6 +10,10 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.pronoidsoftware.core.domain.DispatcherProvider
+import com.pronoidsoftware.core.domain.work.WorkKeys.KEY_COMPRESSED_URIS_RESULT_PATHS
+import com.pronoidsoftware.core.domain.work.WorkKeys.KEY_COMPRESSION_THRESHOLD
+import com.pronoidsoftware.core.domain.work.WorkKeys.KEY_NUMBER_URIS_BEYOND_COMPRESSION
+import com.pronoidsoftware.core.domain.work.WorkKeys.KEY_URIS_TO_COMPRESS
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import java.io.ByteArrayOutputStream
@@ -94,12 +98,5 @@ class CompressPhotosWorker @AssistedInject constructor(
                 ),
             )
         }
-    }
-
-    companion object {
-        const val KEY_URIS_TO_COMPRESS = "KEY_URIS_TO_COMPRESS"
-        const val KEY_COMPRESSION_THRESHOLD = "KEY_COMPRESSION_THRESHOLD"
-        const val KEY_COMPRESSED_URIS_RESULT_PATHS = "KEY_COMPRESSED_URIS_RESULT_PATHS"
-        const val KEY_NUMBER_URIS_BEYOND_COMPRESSION = "KEY_NUMBER_URIS_BEYOND_COMPRESSION"
     }
 }

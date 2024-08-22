@@ -56,4 +56,5 @@
     <string name="permission_required">Permission required</string>
     <string name="notification_rationale">This app needs your permission in order to receive notification reminders for your agenda items. Please click \"OK\" to grant it.</string>
     <string name="today_is">Today: %s</string>
+    <string name="skipped_photos">Saved. %d photos could not be saved</string>
 </resources>

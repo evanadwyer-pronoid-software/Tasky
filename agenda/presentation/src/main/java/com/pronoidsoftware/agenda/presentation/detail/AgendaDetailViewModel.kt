@@ -256,9 +256,9 @@ class AgendaDetailViewModel @Inject constructor(
                                     state = state.copy(
                                         typeSpecificDetails = eventDetails.copy(
                                             deletedPhotos = emptyList(),
+                                            workId = UUID.fromString(result.data),
                                         ),
                                     )
-                                    eventChannel.send(AgendaDetailEvent.OnSaved)
                                 }
                             }
                         }

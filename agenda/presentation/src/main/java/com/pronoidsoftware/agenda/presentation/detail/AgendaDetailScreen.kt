@@ -29,6 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -37,6 +38,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import com.pronoidsoftware.agenda.presentation.R
 import com.pronoidsoftware.agenda.presentation.detail.components.AgendaDetailActionText
 import com.pronoidsoftware.agenda.presentation.detail.components.AgendaDetailDescription
@@ -54,6 +57,7 @@ import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.c
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.model.toVisitorUi
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItemType
 import com.pronoidsoftware.core.domain.agendaitem.Photo
+import com.pronoidsoftware.core.domain.work.WorkKeys.KEY_NUMBER_URIS_BEYOND_COMPRESSION
 import com.pronoidsoftware.core.presentation.designsystem.LocalClock
 import com.pronoidsoftware.core.presentation.designsystem.LocalSpacing
 import com.pronoidsoftware.core.presentation.designsystem.TaskyGray
@@ -159,6 +163,35 @@ internal fun AgendaDetailScreen(state: AgendaDetailState, onAction: (AgendaDetai
         )
         if (!showNotificationRationale) {
             permissionLauncher.requestTaskyPermissions(context)
+        }
+    }
+
+    val eventWorkResult = getDetailAsEvent(state)?.workId?.let { eventWorkId ->
+        WorkManager.getInstance(context)
+            .getWorkInfoByIdLiveData(eventWorkId)
+            .observeAsState()
+            .value
+    }
+
+    LaunchedEffect(eventWorkResult?.state) {
+        if (eventWorkResult?.state == WorkInfo.State.SUCCEEDED) {
+            val skippedPhotos = eventWorkResult.outputData.getInt(
+                KEY_NUMBER_URIS_BEYOND_COMPRESSION,
+                0,
+            )
+            if (skippedPhotos > 0) {
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.skipped_photos, skippedPhotos),
+                    Toast.LENGTH_LONG,
+                ).show()
+            } else {
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.saved),
+                    Toast.LENGTH_LONG,
+                ).show()
+            }
         }
     }
 
