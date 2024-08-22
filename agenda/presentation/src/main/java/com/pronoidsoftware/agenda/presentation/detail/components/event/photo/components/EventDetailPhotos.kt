@@ -164,7 +164,9 @@ private fun PhotoCarousel(
                             .then(
                                 if (index == 0) {
                                     Modifier.padding(start = spacing.spaceMedium)
-                                } else if (index == photos.lastIndex && arePhotosFull) {
+                                } else if (
+                                    index == photos.lastIndex && (!editEnabled || arePhotosFull)
+                                ) {
                                     Modifier.padding(end = spacing.spaceMedium)
                                 } else {
                                     Modifier
