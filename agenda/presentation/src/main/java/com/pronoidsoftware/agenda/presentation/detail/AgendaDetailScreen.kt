@@ -241,7 +241,8 @@ internal fun AgendaDetailScreen(state: AgendaDetailState, onAction: (AgendaDetai
         getDetailAsEvent(state)?.selectedPhotoToView?.let { photo ->
             EventDetailPhotoDetail(
                 photo = photo,
-                editEnabled = state.isEditing,
+                editEnabled = state.isEditing &&
+                    getDetailAsEvent(state)?.isUserEventCreator ?: true,
                 onCloseClick = {
                     onAction(AgendaDetailAction.OnClosePhotoClick)
                 },
@@ -354,7 +355,8 @@ internal fun AgendaDetailScreen(state: AgendaDetailState, onAction: (AgendaDetai
                             getTypeString(type = state.agendaItemType),
                         )
                     },
-                    editEnabled = state.isEditing,
+                    editEnabled = state.isEditing &&
+                        getDetailAsEvent(state)?.isUserEventCreator ?: true,
                     onEdit = {
                         onAction(AgendaDetailAction.OnEditTitle)
                     },
@@ -365,7 +367,8 @@ internal fun AgendaDetailScreen(state: AgendaDetailState, onAction: (AgendaDetai
                 Spacer(modifier = Modifier.height(spacing.spaceSmall))
                 AgendaDetailDescription(
                     description = state.description,
-                    editEnabled = state.isEditing,
+                    editEnabled = state.isEditing &&
+                        getDetailAsEvent(state)?.isUserEventCreator ?: true,
                     onEdit = {
                         onAction(AgendaDetailAction.OnEditDescription)
                     },
@@ -375,7 +378,8 @@ internal fun AgendaDetailScreen(state: AgendaDetailState, onAction: (AgendaDetai
                     EventDetailPhotos(
                         photos = eventDetails.photos,
                         arePhotosFull = eventDetails.arePhotosFull,
-                        editEnabled = state.isEditing,
+                        editEnabled = state.isEditing &&
+                            getDetailAsEvent(state)?.isUserEventCreator ?: true,
                         onAddClick = {
                             photoPickerLauncher.launch(
                                 PickVisualMediaRequest(
@@ -400,7 +404,8 @@ internal fun AgendaDetailScreen(state: AgendaDetailState, onAction: (AgendaDetai
                         stringResource(id = R.string.at)
                     },
                     localDateTime = state.startDateTime,
-                    editEnabled = state.isEditing,
+                    editEnabled = state.isEditing &&
+                        getDetailAsEvent(state)?.isUserEventCreator ?: true,
                     onSelectTime = { time ->
                         onAction(AgendaDetailAction.OnSelectStartTime(time))
                     },
@@ -423,7 +428,8 @@ internal fun AgendaDetailScreen(state: AgendaDetailState, onAction: (AgendaDetai
                     AgendaDetailTime(
                         timeDescription = stringResource(id = R.string.to),
                         localDateTime = eventDetails.endDateTime,
-                        editEnabled = state.isEditing,
+                        editEnabled = state.isEditing &&
+                            getDetailAsEvent(state)?.isUserEventCreator ?: true,
                         onSelectTime = { time ->
                             onAction(AgendaDetailAction.OnSelectEndTime(time))
                         },
@@ -488,7 +494,8 @@ internal fun AgendaDetailScreen(state: AgendaDetailState, onAction: (AgendaDetai
                             .map {
                                 it.toVisitorUi(false)
                             },
-                        editEnabled = state.isEditing,
+                        editEnabled = state.isEditing &&
+                            getDetailAsEvent(state)?.isUserEventCreator ?: true,
                     )
                 }
                 Spacer(modifier = Modifier.weight(1f))

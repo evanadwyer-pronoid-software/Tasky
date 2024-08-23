@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -14,11 +15,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -41,6 +44,7 @@ fun AgendaDetailTitle(
     editEnabled: Boolean = false,
 ) {
     val contentColor = MaterialTheme.colorScheme.onBackground
+    val screenWidthDp = LocalConfiguration.current.screenWidthDp.dp
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -75,6 +79,9 @@ fun AgendaDetailTitle(
             text = titleFormatted,
             style = textStyle,
             color = contentColor,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.widthIn(max = screenWidthDp - 110.dp),
         )
         Spacer(modifier = Modifier.weight(1f))
         IconButton(
@@ -107,8 +114,15 @@ private fun AgendaDetailTitlePreview(
                 }
 
                 AgendaItemType.TASK -> {
-                    AgendaDetailTitle(title = "Project X", onEdit = { })
-                    AgendaDetailTitle(title = "Project X", editEnabled = true, onEdit = { })
+                    AgendaDetailTitle(
+                        title = "Project X asdfj faldkhjo vodhoasd oasihdv",
+                        onEdit = { },
+                    )
+                    AgendaDetailTitle(
+                        title = "Project X asdfj faldkhjo vodhoasd oasihdv",
+                        editEnabled = true,
+                        onEdit = { },
+                    )
                     AgendaDetailTitle(title = "Project X", isCompleted = true, onEdit = { })
                     AgendaDetailTitle(
                         title = "Project X",

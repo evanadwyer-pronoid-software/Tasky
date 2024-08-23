@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
@@ -62,6 +64,7 @@ fun AgendaOverviewItem(
     onTickClick: (() -> Unit)? = null,
 ) {
     val spacing = LocalSpacing.current
+    val screenWidthDp = LocalConfiguration.current.screenWidthDp.dp
     val completed =
         if (agendaOverviewItemContents is AgendaOverviewItemContents.TaskOverviewUiContents) {
             agendaOverviewItemContents.completed
@@ -127,6 +130,9 @@ fun AgendaOverviewItem(
                 text = title,
                 color = contentColors.title,
                 style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.widthIn(max = screenWidthDp - 125.dp),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
             Spacer(modifier = Modifier.weight(1f))
             TaskyDropdownMenu(
