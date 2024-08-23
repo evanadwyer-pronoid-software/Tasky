@@ -8,6 +8,8 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.pronoidsoftware.agenda.domain.AttendeeRepository
+import com.pronoidsoftware.agenda.presentation.R
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.model.VisitorFilterType
 import com.pronoidsoftware.agenda.presentation.detail.model.NotificationDuration
 import com.pronoidsoftware.core.domain.SessionStorage
@@ -22,6 +24,7 @@ import com.pronoidsoftware.core.domain.util.now
 import com.pronoidsoftware.core.domain.util.plus
 import com.pronoidsoftware.core.domain.util.today
 import com.pronoidsoftware.core.domain.validation.UserDataValidator
+import com.pronoidsoftware.core.presentation.ui.UiText
 import com.pronoidsoftware.core.presentation.ui.asUiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.UUID
@@ -46,6 +49,7 @@ class AgendaDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val sessionStorage: SessionStorage,
     private val agendaRepository: AgendaRepository,
+    private val attendeeRepository: AttendeeRepository,
 ) : ViewModel() {
 
     private fun SavedStateHandle.isEditing(): Boolean {
@@ -683,14 +687,62 @@ class AgendaDetailViewModel @Inject constructor(
                                 isAddingVisitor = true,
                             ),
                         )
-                        // TODO: add visitor, update if error
-                        state = state.copy(
-                            typeSpecificDetails = eventDetails.copy(
-                                visitorToAddEmail = TextFieldState(),
-                                isAddingVisitor = false,
-                                isShowingAddVisitorDialog = false,
-                            ),
+
+                        val attendeeResult = attendeeRepository.getAttendee(
+                            eventDetails.visitorToAddEmail.text.toString(),
                         )
+                        when (attendeeResult) {
+                            is Result.Error -> {
+                                eventChannel.send(
+                                    AgendaDetailEvent.OnError(
+                                        attendeeResult.error.asUiText(),
+                                    ),
+                                )
+                                state = state.copy(
+                                    typeSpecificDetails = eventDetails.copy(
+                                        isAddingVisitor = false,
+                                    ),
+                                )
+                            }
+
+                            is Result.Success -> {
+                                if (attendeeResult.data == null) {
+                                    state = state.copy(
+                                        typeSpecificDetails = eventDetails.copy(
+                                            addVisitorErrorMessage = UiText.StringResource(
+                                                R.string.user_does_not_exist,
+                                            ),
+                                        ),
+                                    )
+                                } else {
+                                    attendeeResult.data?.let { attendee ->
+                                        val updatedNotificationAttendee = attendee.copy(
+                                            remindAt = state.startDateTime
+                                                .minus(state.notificationDuration.duration),
+                                        )
+                                        val sortedAttendees =
+                                            (eventDetails.attendees + updatedNotificationAttendee)
+                                                .sortedBy { it.fullName }
+                                        val creatorLedSortedAttendees = sortedAttendees
+                                            .find { it.userId == eventDetails.host }
+                                            ?.let { creator ->
+                                                listOf(creator) + sortedAttendees.filterNot {
+                                                    it == creator
+                                                }
+                                            } ?: sortedAttendees
+                                        state = state.copy(
+                                            typeSpecificDetails = eventDetails.copy(
+                                                visitorToAddEmail = TextFieldState(),
+                                                addVisitorErrorMessage = UiText.DynamicString(""),
+                                                isAddingVisitor = false,
+                                                isShowingAddVisitorDialog = false,
+                                                attendees = creatorLedSortedAttendees,
+                                            ),
+                                        )
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }

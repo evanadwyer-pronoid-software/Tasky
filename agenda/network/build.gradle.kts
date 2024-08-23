@@ -11,6 +11,7 @@ android {
 dependencies {
     implementation(projects.core.domain)
     implementation(projects.core.data)
+    implementation(projects.agenda.domain)
 
     implementation(libs.kotlinx.datetime)
 }

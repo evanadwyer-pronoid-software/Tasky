@@ -13,3 +13,7 @@ object AgendaRoutes {
     const val EVENT = "/event"
     const val FULL_AGENDA = "/fullAgenda" // for syncing
 }
+
+object AttendeeRoutes {
+    const val ATTENDEE = "/attendee"
+}
