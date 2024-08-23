@@ -14,6 +14,7 @@ import com.pronoidsoftware.core.domain.SessionStorage
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItem
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItemType
 import com.pronoidsoftware.core.domain.agendaitem.AgendaRepository
+import com.pronoidsoftware.core.domain.agendaitem.Attendee
 import com.pronoidsoftware.core.domain.agendaitem.Photo
 import com.pronoidsoftware.core.domain.util.Result
 import com.pronoidsoftware.core.domain.util.minus
@@ -93,6 +94,30 @@ class AgendaDetailViewModel @Inject constructor(
                 )
             }
             .launchIn(viewModelScope)
+
+        if (state.isCreateAgendaItem && state.agendaItemType == AgendaItemType.EVENT) {
+            viewModelScope.launch {
+                sessionStorage.get()?.let { localAuthInfo ->
+                    state = state.copy(
+                        typeSpecificDetails = getDetailsAsEvent()?.copy(
+                            host = localAuthInfo.userId,
+                            isUserEventCreator = true,
+                            isLocalUserGoing = true,
+                            attendees = listOf(
+                                Attendee(
+                                    userId = localAuthInfo.userId,
+                                    fullName = localAuthInfo.fullName,
+                                    isGoing = true,
+                                    remindAt = state.startDateTime
+                                        .minus(state.notificationDuration.duration),
+                                    email = localAuthInfo.email,
+                                ),
+                            ),
+                        ),
+                    )
+                }
+            }
+        }
 
         savedStateHandle.getId()?.let { agendaItemId ->
             viewModelScope.launch {
@@ -644,6 +669,7 @@ class AgendaDetailViewModel @Inject constructor(
                         typeSpecificDetails = eventDetails.copy(
                             visitorToAddEmail = TextFieldState(),
                             isShowingAddVisitorDialog = !eventDetails.isShowingAddVisitorDialog,
+                            addVisitorErrorMessage = null,
                         ),
                     )
                 }

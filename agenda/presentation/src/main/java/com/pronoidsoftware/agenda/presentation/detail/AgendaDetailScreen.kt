@@ -277,7 +277,7 @@ internal fun AgendaDetailScreen(state: AgendaDetailState, onAction: (AgendaDetai
                     isAddingAttendee = eventDetails.isAddingVisitor,
                     emailTextFieldState = eventDetails.visitorToAddEmail,
                     isEmailValid = eventDetails.isVisitorToAddEmailValid,
-                    errorMessage = eventDetails.addVisitorErrorMessage,
+                    errorMessage = eventDetails.addVisitorErrorMessage?.asString() ?: "",
                 )
             }
         }
@@ -481,18 +481,12 @@ internal fun AgendaDetailScreen(state: AgendaDetailState, onAction: (AgendaDetai
                         goingVisitors = eventDetails.attendees
                             .filter { it.isGoing }
                             .map {
-                                it.toVisitorUi(
-                                    eventDetails.isUserEventCreator &&
-                                        it.userId == eventDetails.host,
-                                )
+                                it.toVisitorUi(it.userId == eventDetails.host)
                             },
                         notGoingVisitors = eventDetails.attendees
                             .filterNot { it.isGoing }
                             .map {
-                                it.toVisitorUi(
-                                    eventDetails.isUserEventCreator &&
-                                        it.userId == eventDetails.host,
-                                )
+                                it.toVisitorUi(false)
                             },
                         editEnabled = state.isEditing,
                     )

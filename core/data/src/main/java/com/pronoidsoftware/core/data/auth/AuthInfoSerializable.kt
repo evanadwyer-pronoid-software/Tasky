@@ -8,4 +8,5 @@ data class AuthInfoSerializable(
     val refreshToken: String,
     val userId: String,
     val fullName: String,
+    val email: String,
 )

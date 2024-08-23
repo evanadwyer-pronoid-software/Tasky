@@ -8,4 +8,5 @@ fun authInfoStub() = AuthInfo(
     refreshToken = TestConstants.REFRESH_TOKEN,
     userId = TestConstants.USER_ID,
     fullName = TestConstants.FULL_NAME,
+    email = TestConstants.VALID_EMAIL,
 )
