@@ -105,13 +105,44 @@ class AgendaOverviewViewModel @Inject constructor(
             }
 
             is AgendaOverviewAction.OnDeleteClick -> {
+                state = state.copy(
+                    isShowingDeleteConfirmationDialog = true,
+                    agendaTypeToDelete = action.type,
+                    agendaItemIdToDelete = action.id,
+                )
+            }
+
+            AgendaOverviewAction.OnConfirmDelete -> {
                 viewModelScope.launch {
-                    when (action.type) {
-                        AgendaItemType.EVENT -> agendaRepository.deleteEvent(action.id)
-                        AgendaItemType.TASK -> agendaRepository.deleteTask(action.id)
-                        AgendaItemType.REMINDER -> agendaRepository.deleteReminder(action.id)
+                    when (state.agendaTypeToDelete) {
+                        AgendaItemType.EVENT -> agendaRepository.deleteEvent(
+                            state.agendaItemIdToDelete,
+                        )
+                        AgendaItemType.TASK -> agendaRepository.deleteTask(
+                            state.agendaItemIdToDelete,
+                        )
+                        AgendaItemType.REMINDER -> agendaRepository.deleteReminder(
+                            state.agendaItemIdToDelete,
+                        )
+                        null -> Unit
                     }
+                    state = state.copy(
+                        isShowingDeleteConfirmationDialog = false,
+                        agendaTypeToDelete = null,
+                        agendaItemIdToDelete = "",
+                    )
+                    eventChannel.send(
+                        AgendaOverviewEvent.OnDelete,
+                    )
                 }
+            }
+
+            AgendaOverviewAction.OnCancelDelete -> {
+                state = state.copy(
+                    isShowingDeleteConfirmationDialog = false,
+                    agendaTypeToDelete = null,
+                    agendaItemIdToDelete = "",
+                )
             }
 
             AgendaOverviewAction.OnLogoutClick -> {

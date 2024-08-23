@@ -19,6 +19,8 @@ sealed interface AgendaOverviewAction {
         val type: AgendaItemType,
         val id: String,
     ) : AgendaOverviewAction
+    data object OnConfirmDelete : AgendaOverviewAction
+    data object OnCancelDelete : AgendaOverviewAction
 
     data class OnCreateClick(val type: AgendaItemType) : AgendaOverviewAction
     data object OnLogoutClick : AgendaOverviewAction
