@@ -11,4 +11,5 @@ data class AgendaOverviewState(
     val profileDropdownMenuExpanded: Boolean = false,
     val fabDropdownMenuExpanded: Boolean = false,
     val datePickerExpanded: Boolean = false,
+    val isLoading: Boolean = false,
 )

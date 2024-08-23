@@ -77,7 +77,6 @@ fun EventDto.toEvent(localUserId: String?): AgendaItem.Event {
 fun AttendeeDto.toAttendee(): Attendee {
     return Attendee(
         userId = userId,
-        email = email,
         fullName = fullName,
         isGoing = isGoing,
         remindAt = remindAt.toLocalDateTime(),

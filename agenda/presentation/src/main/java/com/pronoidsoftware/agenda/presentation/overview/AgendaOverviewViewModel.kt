@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.pronoidsoftware.agenda.presentation.overview.mappers.toEventUi
 import com.pronoidsoftware.agenda.presentation.overview.mappers.toReminderUi
 import com.pronoidsoftware.agenda.presentation.overview.mappers.toTaskUi
+import com.pronoidsoftware.auth.domain.AuthRepository
 import com.pronoidsoftware.core.domain.SessionStorage
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItem
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItemType
@@ -16,6 +17,7 @@ import com.pronoidsoftware.core.domain.util.initializeAndCapitalize
 import com.pronoidsoftware.core.domain.util.today
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -26,9 +28,11 @@ import timber.log.Timber
 
 @HiltViewModel
 class AgendaOverviewViewModel @Inject constructor(
-    sessionStorage: SessionStorage,
     clock: Clock,
+    private val sessionStorage: SessionStorage,
     private val agendaRepository: AgendaRepository,
+    private val applicationScope: CoroutineScope,
+    private val authRepository: AuthRepository,
 ) : ViewModel() {
 
     var state by mutableStateOf(AgendaOverviewState(selectedDate = today(clock)))
@@ -53,8 +57,12 @@ class AgendaOverviewViewModel @Inject constructor(
             state = state.copy(
                 userInitials = sessionStorage.get()?.fullName?.initializeAndCapitalize()
                     ?: error("User initials not available. Has the user logged out?"),
+                isLoading = true,
             )
             agendaRepository.fetchAllAgendaItems()
+            state = state.copy(
+                isLoading = false,
+            )
         }
     }
 
@@ -106,9 +114,25 @@ class AgendaOverviewViewModel @Inject constructor(
                 }
             }
 
+            AgendaOverviewAction.OnLogoutClick -> {
+                logout()
+            }
+
             else -> {
                 Timber.wtf("Unknown AgendaOverviewAction in VM")
             }
+        }
+    }
+
+    private fun logout() {
+        applicationScope.launch {
+            state = state.copy(
+                isLoading = true,
+            )
+            agendaRepository.deleteAllAgendaItems()
+            authRepository.logout() // Could make this happen with work manager
+            sessionStorage.set(null)
+            eventChannel.send(AgendaOverviewEvent.OnLogout)
         }
     }
 }

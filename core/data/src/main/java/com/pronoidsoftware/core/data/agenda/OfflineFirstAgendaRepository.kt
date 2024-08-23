@@ -131,7 +131,17 @@ class OfflineFirstAgendaRepository @Inject constructor(
     }
 
     override suspend fun getEvent(id: EventId): AgendaItem.Event? {
-        return localAgendaDataSource.getEvent(id)
+        val localEvent = localAgendaDataSource.getEvent(id)
+        val sortedAttendees = localEvent?.let { event ->
+            val attendees = event.attendees
+                .sortedBy { it.fullName }
+            attendees.find { it.userId == event.host }?.let { creator ->
+                listOf(creator) + attendees.filterNot { it == creator }
+            } ?: attendees
+        }
+        return localEvent?.copy(
+            attendees = sortedAttendees ?: emptyList(),
+        )
     }
 
     override fun getEvents(): Flow<List<AgendaItem.Event>> {
@@ -193,5 +203,9 @@ class OfflineFirstAgendaRepository @Inject constructor(
                     }
             }
         }
+    }
+
+    override suspend fun deleteAllAgendaItems() {
+        localAgendaDataSource.deleteAllAgendaItems()
     }
 }

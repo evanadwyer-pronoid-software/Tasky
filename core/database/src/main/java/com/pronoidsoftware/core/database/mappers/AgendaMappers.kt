@@ -74,7 +74,6 @@ fun EventWithAttendeesAndPhotos.toEvent(): AgendaItem.Event {
 fun AttendeeEntity.toAttendee(): Attendee {
     return Attendee(
         userId = userId,
-        email = email,
         fullName = fullName,
         isGoing = isGoing,
         remindAt = remindAt.toLocalDateTime(),
@@ -105,7 +104,6 @@ fun AgendaItem.Event.toEventEntity(): EventEntity {
 fun Attendee.toAttendeeEntity(eventId: String): AttendeeEntity {
     return AttendeeEntity(
         userId = userId,
-        email = email,
         fullName = fullName,
         isGoing = isGoing,
         remindAt = remindAt.toMillis(),

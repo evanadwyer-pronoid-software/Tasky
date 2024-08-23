@@ -177,10 +177,14 @@ interface AgendaDao {
         reminders: List<ReminderEntity>,
         tasks: List<TaskEntity>,
         events: List<EventEntity>,
+        photos: List<PhotoEntity>,
+        attendees: List<AttendeeEntity>,
     ) {
         upsertReminders(reminders)
         upsertTasks(tasks)
         upsertEvents(events)
+        upsertPhotos(photos)
+        upsertAttendees(attendees)
     }
 
     @Transaction

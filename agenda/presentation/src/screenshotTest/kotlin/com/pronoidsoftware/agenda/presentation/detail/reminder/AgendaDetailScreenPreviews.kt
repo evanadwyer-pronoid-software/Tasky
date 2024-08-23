@@ -29,7 +29,6 @@ private val photos = emptyList<Photo>()
 private val attendees = listOf(
     Attendee(
         userId = "1",
-        email = "aa@example.com",
         fullName = "Ann Allen",
         isGoing = true,
         remindAt = startDateTime,
@@ -38,27 +37,23 @@ private val attendees = listOf(
         fullName = "Wade Warren",
         isGoing = true,
         userId = "2",
-        email = "ww@example.com",
         remindAt = startDateTime,
     ),
     Attendee(
         fullName = "Esther Howard",
         isGoing = true,
         userId = "3",
-        email = "eh@example.com",
         remindAt = startDateTime,
     ),
     Attendee(
         fullName = "Jenny Wilson",
         userId = "4",
-        email = "jw@example.com",
         isGoing = false,
         remindAt = startDateTime,
     ),
     Attendee(
         fullName = "Brooklyn Simmons",
         userId = "5",
-        email = "bs@example.com",
         isGoing = false,
         remindAt = startDateTime,
     ),

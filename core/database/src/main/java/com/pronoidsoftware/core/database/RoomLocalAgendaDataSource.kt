@@ -226,10 +226,20 @@ class RoomLocalAgendaDataSource @Inject constructor(
             val reminderEntities = reminders.map { it.toReminderEntity() }
             val taskEntities = tasks.map { it.toTaskEntity() }
             val eventEntities = events.map { it.toEventEntity() }
+            val photoEntities = events.flatMap { event ->
+                event.photos
+                    .filterIsInstance<Photo.Remote>()
+                    .map { it.toPhotoEntity(event.id) }
+            }
+            val attendeeEntities = events.flatMap { event ->
+                event.attendees.map { it.toAttendeeEntity(event.id) }
+            }
             agendaDao.upsertAllAgendaItems(
                 reminders = reminderEntities,
                 tasks = taskEntities,
                 events = eventEntities,
+                photos = photoEntities,
+                attendees = attendeeEntities,
             )
             Result.Success(
                 mapOf(

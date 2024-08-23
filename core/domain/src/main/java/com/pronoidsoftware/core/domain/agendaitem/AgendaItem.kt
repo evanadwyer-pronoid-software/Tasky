@@ -62,7 +62,6 @@ sealed class AgendaItem(
 
 data class Attendee(
     val userId: String,
-    val email: String,
     val fullName: String,
     val isGoing: Boolean,
     val remindAt: LocalDateTime,

@@ -82,6 +82,13 @@ private fun NavGraphBuilder.agendaGraph(navController: NavHostController) {
                         ),
                     )
                 },
+                onLogoutClick = {
+                    navController.navigate(AuthFeature) {
+                        popUpTo(AgendaFeature) {
+                            inclusive = true
+                        }
+                    }
+                },
             )
         }
         composable<DetailScreen>(

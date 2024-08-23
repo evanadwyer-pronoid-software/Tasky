@@ -9,6 +9,7 @@ import com.pronoidsoftware.core.domain.agendaitem.Photo
 import com.pronoidsoftware.core.domain.util.now
 import com.pronoidsoftware.core.domain.util.plus
 import com.pronoidsoftware.core.domain.util.today
+import com.pronoidsoftware.core.presentation.ui.UiText
 import java.util.UUID
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.LocalDate
@@ -72,7 +73,7 @@ sealed interface AgendaItemDetails {
         val isAddingVisitor: Boolean = false,
         val visitorToAddEmail: TextFieldState = TextFieldState(),
         val isVisitorToAddEmailValid: Boolean = false,
-        val addVisitorErrorMessage: String = "",
+        val addVisitorErrorMessage: UiText = UiText.DynamicString(""),
     ) : AgendaItemDetails {
         val arePhotosFull: Boolean = photos.size >= MAX_PHOTOS
 

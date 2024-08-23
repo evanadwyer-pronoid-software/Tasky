@@ -28,6 +28,7 @@
     <string name="at">At</string>
     <string name="delete_agenda_item">DELETE %s</string>
     <string name="enter_description">Enter description…</string>
+    <string name="empty_agenda">Nothing scheduled 🎉</string>
     <string name="go_back">Go back</string>
     <string name="edit_title">EDIT TITLE</string>
     <string name="edit_description">EDIT DESCRIPTION</string>
@@ -57,4 +58,5 @@
     <string name="notification_rationale">This app needs your permission in order to receive notification reminders for your agenda items. Please click \"OK\" to grant it.</string>
     <string name="today_is">Today: %s</string>
     <string name="skipped_photos">Saved. %d photos could not be saved</string>
+    <string name="user_does_not_exist">A user with that email does not exist</string>
 </resources>
