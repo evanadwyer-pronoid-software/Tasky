@@ -4,6 +4,7 @@ object AuthRoutes {
     const val REGISTER = "/register"
     const val LOGIN = "/login"
     const val ACCESS_TOKEN = "/accessToken"
+    const val LOGOUT = "/logout"
 }
 
 object AgendaRoutes {

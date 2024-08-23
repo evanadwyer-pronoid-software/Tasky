@@ -38,4 +38,5 @@ interface AgendaRepository {
     // All
     fun getAllAgendaItems(): Flow<List<AgendaItem>>
     suspend fun fetchAllAgendaItems(): EmptyResult<DataError>
+    suspend fun deleteAllAgendaItems()
 }
