@@ -42,6 +42,10 @@ class RoomLocalAgendaDataSource @Inject constructor(
             }
     }
 
+    override suspend fun getAllReminderIds(): List<ReminderId> {
+        return agendaDao.getAllReminderIds()
+    }
+
     override fun getRemindersForDate(targetDateUtc: String): Flow<List<AgendaItem.Reminder>> {
         return agendaDao.getRemindersForDate(targetDateUtc)
             .map { reminderEntities ->
@@ -93,6 +97,10 @@ class RoomLocalAgendaDataSource @Inject constructor(
             }
     }
 
+    override suspend fun getAllTaskIds(): List<TaskId> {
+        return agendaDao.getAllTaskIds()
+    }
+
     override fun getTasksForDate(targetDateUtc: String): Flow<List<AgendaItem.Task>> {
         return agendaDao.getTasksForDate(targetDateUtc)
             .map { taskEntities ->
@@ -140,6 +148,10 @@ class RoomLocalAgendaDataSource @Inject constructor(
             .map { eventEntities ->
                 eventEntities.map { it.toEvent() }
             }
+    }
+
+    override suspend fun getAllEventIds(): List<EventId> {
+        return agendaDao.getAllEventIds()
     }
 
     override fun getEventsForDate(targetDateUtc: String): Flow<List<AgendaItem.Event>> {
@@ -226,10 +238,20 @@ class RoomLocalAgendaDataSource @Inject constructor(
             val reminderEntities = reminders.map { it.toReminderEntity() }
             val taskEntities = tasks.map { it.toTaskEntity() }
             val eventEntities = events.map { it.toEventEntity() }
+            val photoEntities = events.flatMap { event ->
+                event.photos
+                    .filterIsInstance<Photo.Remote>()
+                    .map { it.toPhotoEntity(event.id) }
+            }
+            val attendeeEntities = events.flatMap { event ->
+                event.attendees.map { it.toAttendeeEntity(event.id) }
+            }
             agendaDao.upsertAllAgendaItems(
                 reminders = reminderEntities,
                 tasks = taskEntities,
                 events = eventEntities,
+                photos = photoEntities,
+                attendees = attendeeEntities,
             )
             Result.Success(
                 mapOf(
@@ -251,6 +273,13 @@ class RoomLocalAgendaDataSource @Inject constructor(
         ) { reminders, tasks, events ->
             (reminders + tasks + events).sortedBy { it.startDateTime }
         }
+    }
+
+    override suspend fun getAllAgendaItemIds(): List<String> {
+        val reminderIds = getAllReminderIds()
+        val taskIds = getAllTaskIds()
+        val eventIds = getAllEventIds()
+        return reminderIds + taskIds + eventIds
     }
 
     override fun getAgendaItemsForDate(targetDateUtc: String): Flow<List<AgendaItem>> {

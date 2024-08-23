@@ -45,10 +45,15 @@ import timber.log.Timber
 @Composable
 fun AgendaOverviewScreenRoot(
     onNavigateToAgendaItemDetailsScreen: (AgendaItemType, Boolean, String?) -> Unit,
+    onLogoutClick: () -> Unit,
     viewModel: AgendaOverviewViewModel = hiltViewModel(),
 ) {
     ObserveAsEvents(flow = viewModel.events) { event ->
         when (event) {
+            AgendaOverviewEvent.OnLogout -> {
+                onLogoutClick()
+            }
+
             else -> {
                 Timber.wtf("Unkown AgendaOverview event in screen")
             }

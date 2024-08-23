@@ -32,6 +32,9 @@ interface AgendaDao {
     @Query("SELECT * FROM reminderentity ORDER BY startDateTime")
     fun getAllReminders(): Flow<List<ReminderEntity>>
 
+    @Query("SELECT id FROM reminderentity")
+    suspend fun getAllReminderIds(): List<String>
+
     @Query(
         "SELECT * FROM reminderentity " +
             "WHERE strftime('%m-%d-%Y', startDateTime/1000, 'unixepoch') = :targetDateUtc " +
@@ -57,6 +60,9 @@ interface AgendaDao {
 
     @Query("SELECT * FROM taskentity ORDER BY startDateTime")
     fun getAllTasks(): Flow<List<TaskEntity>>
+
+    @Query("SELECT id FROM taskentity")
+    suspend fun getAllTaskIds(): List<String>
 
     @Query(
         "SELECT * FROM taskentity " +
@@ -122,6 +128,9 @@ interface AgendaDao {
     @Query("SELECT * FROM evententity ORDER BY startDateTime")
     fun getAllEvents(): Flow<List<EventWithAttendeesAndPhotos>>
 
+    @Query("SELECT id FROM evententity")
+    suspend fun getAllEventIds(): List<String>
+
     @Transaction
     @Query(
         "SELECT * FROM evententity " +
@@ -177,10 +186,14 @@ interface AgendaDao {
         reminders: List<ReminderEntity>,
         tasks: List<TaskEntity>,
         events: List<EventEntity>,
+        photos: List<PhotoEntity>,
+        attendees: List<AttendeeEntity>,
     ) {
         upsertReminders(reminders)
         upsertTasks(tasks)
         upsertEvents(events)
+        upsertPhotos(photos)
+        upsertAttendees(attendees)
     }
 
     @Transaction

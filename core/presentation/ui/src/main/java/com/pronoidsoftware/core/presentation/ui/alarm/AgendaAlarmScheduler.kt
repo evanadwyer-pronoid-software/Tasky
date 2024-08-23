@@ -84,4 +84,8 @@ class AgendaAlarmScheduler @Inject constructor(
             ),
         )
     }
+
+    override fun cancelAll(agendaItems: List<String>) {
+        agendaItems.forEach(::cancel)
+    }
 }
