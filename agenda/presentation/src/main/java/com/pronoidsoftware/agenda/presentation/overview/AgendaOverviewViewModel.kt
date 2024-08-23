@@ -57,8 +57,12 @@ class AgendaOverviewViewModel @Inject constructor(
             state = state.copy(
                 userInitials = sessionStorage.get()?.fullName?.initializeAndCapitalize()
                     ?: error("User initials not available. Has the user logged out?"),
+                isLoading = true,
             )
             agendaRepository.fetchAllAgendaItems()
+            state = state.copy(
+                isLoading = false,
+            )
         }
     }
 
@@ -122,6 +126,9 @@ class AgendaOverviewViewModel @Inject constructor(
 
     private fun logout() {
         applicationScope.launch {
+            state = state.copy(
+                isLoading = true,
+            )
             agendaRepository.deleteAllAgendaItems()
             authRepository.logout()
             sessionStorage.set(null)

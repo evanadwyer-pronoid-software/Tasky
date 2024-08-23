@@ -3,6 +3,7 @@
 package com.pronoidsoftware.agenda.presentation.overview
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,16 +12,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.pronoidsoftware.agenda.presentation.R
 import com.pronoidsoftware.agenda.presentation.overview.components.AgendaOverviewDateWidget
@@ -31,9 +37,11 @@ import com.pronoidsoftware.agenda.presentation.overview.model.AgendaOverviewItem
 import com.pronoidsoftware.agenda.presentation.overview.model.AgendaOverviewItemUi
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItemType
 import com.pronoidsoftware.core.domain.util.today
+import com.pronoidsoftware.core.presentation.designsystem.Inter
 import com.pronoidsoftware.core.presentation.designsystem.LocalClock
 import com.pronoidsoftware.core.presentation.designsystem.LocalSpacing
 import com.pronoidsoftware.core.presentation.designsystem.PlusIcon
+import com.pronoidsoftware.core.presentation.designsystem.TaskyDarkGray
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
 import com.pronoidsoftware.core.presentation.designsystem.components.TaskyDropdownMenu
 import com.pronoidsoftware.core.presentation.designsystem.components.TaskyFloatingActionButton
@@ -181,70 +189,93 @@ internal fun AgendaOverviewScreen(
                 },
             )
             Spacer(modifier = Modifier.height(34.dp))
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = spacing.spaceMedium),
-            ) {
-                item {
-                    Text(
-                        text = state.selectedDate.formatRelativeDate(clock).asString(),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-                    Spacer(modifier = Modifier.height(15.5.dp))
+            if (state.isLoading) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.TopCenter,
+                ) {
+                    CircularProgressIndicator()
                 }
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = spacing.spaceMedium),
+                ) {
+                    item {
+                        Text(
+                            text = state.selectedDate.formatRelativeDate(clock).asString(),
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface,
+                        )
+                        Spacer(modifier = Modifier.height(15.5.dp))
+                    }
 
-                items(
-                    items = state.items,
-                    key = { it.id },
-                ) { agendaOverviewItem ->
-                    when (agendaOverviewItem) {
-                        is AgendaOverviewItemUi.Item -> {
-                            AgendaOverviewItem(
-                                agendaOverviewItemContents = agendaOverviewItem.item,
-                                onTickClick = {
-                                    onAction(
-                                        AgendaOverviewAction.OnTickClick(agendaOverviewItem.id),
-                                    )
-                                },
-                                onOpenClick = { id ->
-                                    onAction(
-                                        AgendaOverviewAction.OnOpenClick(
-                                            type = getAgendaItemType(agendaOverviewItem),
-                                            id = id,
-                                        ),
-                                    )
-                                },
-                                onEditClick = { id ->
-                                    onAction(
-                                        AgendaOverviewAction.OnEditClick(
-                                            type = getAgendaItemType(agendaOverviewItem),
-                                            id = id,
-                                        ),
-                                    )
-                                },
-                                onDeleteClick = { id ->
-                                    onAction(
-                                        AgendaOverviewAction.OnDeleteClick(
-                                            type = getAgendaItemType(agendaOverviewItem),
-                                            id = id,
-                                        ),
-                                    )
-                                },
-                                modifier = Modifier.padding(
-                                    vertical = 7.5.dp,
+                    if (state.items.isEmpty()) {
+                        item {
+                            Text(
+                                text = stringResource(id = R.string.empty_agenda),
+                                style = TextStyle(
+                                    fontFamily = Inter,
+                                    fontWeight = FontWeight.W400,
+                                    fontSize = 16.sp,
+                                    lineHeight = 15.sp,
+                                    color = TaskyDarkGray,
                                 ),
                             )
                         }
+                    }
+                    items(
+                        items = state.items,
+                        key = { it.id },
+                    ) { agendaOverviewItem ->
+                        when (agendaOverviewItem) {
+                            is AgendaOverviewItemUi.Item -> {
+                                AgendaOverviewItem(
+                                    agendaOverviewItemContents = agendaOverviewItem.item,
+                                    onTickClick = {
+                                        onAction(
+                                            AgendaOverviewAction.OnTickClick(agendaOverviewItem.id),
+                                        )
+                                    },
+                                    onOpenClick = { id ->
+                                        onAction(
+                                            AgendaOverviewAction.OnOpenClick(
+                                                type = getAgendaItemType(agendaOverviewItem),
+                                                id = id,
+                                            ),
+                                        )
+                                    },
+                                    onEditClick = { id ->
+                                        onAction(
+                                            AgendaOverviewAction.OnEditClick(
+                                                type = getAgendaItemType(agendaOverviewItem),
+                                                id = id,
+                                            ),
+                                        )
+                                    },
+                                    onDeleteClick = { id ->
+                                        onAction(
+                                            AgendaOverviewAction.OnDeleteClick(
+                                                type = getAgendaItemType(agendaOverviewItem),
+                                                id = id,
+                                            ),
+                                        )
+                                    },
+                                    modifier = Modifier.padding(
+                                        vertical = 7.5.dp,
+                                    ),
+                                )
+                            }
 
-                        is AgendaOverviewItemUi.TimeMarker -> {
-                            TimeMarker()
+                            is AgendaOverviewItemUi.TimeMarker -> {
+                                TimeMarker()
+                            }
                         }
                     }
-                }
-                item {
-                    Spacer(modifier = Modifier.height(80.dp))
+                    item {
+                        Spacer(modifier = Modifier.height(80.dp))
+                    }
                 }
             }
         }
