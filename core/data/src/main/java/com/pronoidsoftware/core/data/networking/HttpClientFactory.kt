@@ -71,6 +71,7 @@ class HttpClientFactory(
                             refreshToken = authInfo?.refreshToken ?: "",
                             userId = authInfo?.userId ?: "",
                             fullName = authInfo?.fullName ?: "",
+                            email = authInfo?.email ?: "",
                         )
                         sessionStorage.set(newAuthInfo)
 

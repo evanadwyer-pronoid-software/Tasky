@@ -52,6 +52,7 @@ class AuthRepositoryImplementation @Inject constructor(
                         refreshToken = it.refreshToken,
                         userId = it.userId,
                         fullName = it.fullName,
+                        email = email,
                     ),
                 )
             }
