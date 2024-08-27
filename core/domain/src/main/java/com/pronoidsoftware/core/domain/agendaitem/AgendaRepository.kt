@@ -34,6 +34,7 @@ interface AgendaRepository {
     suspend fun fetchAllEvents(): EmptyResult<DataError>
     suspend fun updateEventLocallyEnqueueRemote(event: AgendaItem.Event): Result<String, DataError>
     suspend fun deleteEvent(id: EventId)
+    suspend fun removeAttendee(id: EventId)
 
     // All
     fun getAllAgendaItems(): Flow<List<AgendaItem>>

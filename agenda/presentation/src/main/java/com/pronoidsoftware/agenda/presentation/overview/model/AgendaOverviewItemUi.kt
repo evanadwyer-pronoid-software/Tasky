@@ -47,6 +47,7 @@ sealed class AgendaOverviewItemContents(
         override val description: String,
         override val startDateTime: String,
         val endDateTime: String,
+        val hostId: String,
     ) : AgendaOverviewItemContents(
         id = id,
         title = title,

@@ -67,6 +67,7 @@ fun EventWithAttendeesAndPhotos.toEvent(): AgendaItem.Event {
         isLocalUserGoing = event.isLocalUserGoing,
         host = event.host,
         deletedPhotos = emptyList(),
+        deletedAttendees = emptyList(),
         isUserEventCreator = event.isUserEventCreator,
     )
 }

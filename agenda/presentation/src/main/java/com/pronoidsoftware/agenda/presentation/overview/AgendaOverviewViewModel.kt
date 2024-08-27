@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.pronoidsoftware.agenda.domain.AttendeeRepository
 import com.pronoidsoftware.agenda.presentation.overview.mappers.toEventUi
 import com.pronoidsoftware.agenda.presentation.overview.mappers.toReminderUi
 import com.pronoidsoftware.agenda.presentation.overview.mappers.toTaskUi
@@ -31,6 +32,7 @@ class AgendaOverviewViewModel @Inject constructor(
     clock: Clock,
     private val sessionStorage: SessionStorage,
     private val agendaRepository: AgendaRepository,
+    private val attendeeRepository: AttendeeRepository,
     private val applicationScope: CoroutineScope,
     private val authRepository: AuthRepository,
 ) : ViewModel() {
@@ -109,15 +111,28 @@ class AgendaOverviewViewModel @Inject constructor(
                     isShowingDeleteConfirmationDialog = true,
                     agendaTypeToDelete = action.type,
                     agendaItemIdToDelete = action.id,
+                    eventToDeleteHostId = action.eventHostId,
                 )
             }
 
             AgendaOverviewAction.OnConfirmDelete -> {
                 viewModelScope.launch {
+                    val localUserId = sessionStorage.get()?.userId ?: return@launch
                     when (state.agendaTypeToDelete) {
-                        AgendaItemType.EVENT -> agendaRepository.deleteEvent(
-                            state.agendaItemIdToDelete,
-                        )
+                        AgendaItemType.EVENT -> {
+                            if (state.eventToDeleteHostId == localUserId) {
+                                agendaRepository.deleteEvent(
+                                    state.agendaItemIdToDelete,
+                                )
+                            } else {
+                                agendaRepository.removeAttendee(
+                                    id = state.agendaItemIdToDelete,
+                                )
+                                attendeeRepository.removeAttendeeFromEvent(
+                                    eventId = state.agendaItemIdToDelete,
+                                )
+                            }
+                        }
                         AgendaItemType.TASK -> agendaRepository.deleteTask(
                             state.agendaItemIdToDelete,
                         )
@@ -130,6 +145,7 @@ class AgendaOverviewViewModel @Inject constructor(
                         isShowingDeleteConfirmationDialog = false,
                         agendaTypeToDelete = null,
                         agendaItemIdToDelete = "",
+                        eventToDeleteHostId = null,
                     )
                     eventChannel.send(
                         AgendaOverviewEvent.OnDelete,
@@ -142,6 +158,7 @@ class AgendaOverviewViewModel @Inject constructor(
                     isShowingDeleteConfirmationDialog = false,
                     agendaTypeToDelete = null,
                     agendaItemIdToDelete = "",
+                    eventToDeleteHostId = null,
                 )
             }
 

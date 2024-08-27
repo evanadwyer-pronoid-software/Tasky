@@ -27,6 +27,8 @@
     <string name="days1">1 day before</string>
     <string name="at">At</string>
     <string name="delete_agenda_item">DELETE %s</string>
+    <string name="leave_event">LEAVE EVENT</string>
+    <string name="join_event">JOIN EVENT</string>
     <string name="enter_description">Enter description…</string>
     <string name="go_back">Go back</string>
     <string name="edit_title">EDIT TITLE</string>

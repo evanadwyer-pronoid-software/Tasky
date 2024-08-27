@@ -269,6 +269,11 @@ class AgendaDetailViewModel @Inject constructor(
                                     eventDetails.isUserEventCreator
                                 },
                                 attendees = eventDetails.attendees,
+                                deletedAttendees = if (state.isCreateAgendaItem) {
+                                    emptyList()
+                                } else {
+                                    eventDetails.deletedAttendees
+                                },
                                 photos = eventDetails.photos,
                                 deletedPhotos = if (state.isCreateAgendaItem) {
                                     emptyList()
@@ -298,6 +303,7 @@ class AgendaDetailViewModel @Inject constructor(
                                     state = state.copy(
                                         typeSpecificDetails = eventDetails.copy(
                                             deletedPhotos = emptyList(),
+                                            deletedAttendees = emptyList(),
                                             workId = UUID.fromString(result.data),
                                         ),
                                     )
@@ -749,13 +755,18 @@ class AgendaDetailViewModel @Inject constructor(
 
             is AgendaDetailAction.OnDeleteVisitorClick -> {
                 getDetailsAsEvent()?.let { eventDetails ->
-                    state = state.copy(
-                        typeSpecificDetails = eventDetails.copy(
-                            attendees = eventDetails.attendees.filterNot {
-                                it.userId == action.visitor.userId
-                            },
-                        ),
-                    )
+                    eventDetails.attendees.find { it.userId == action.visitor.userId }
+                        ?.let { attendeeToDelete ->
+                            state = state.copy(
+                                typeSpecificDetails = eventDetails.copy(
+                                    attendees = eventDetails.attendees.filterNot {
+                                        it == attendeeToDelete
+                                    },
+                                    deletedAttendees = eventDetails.deletedAttendees +
+                                        attendeeToDelete,
+                                ),
+                            )
+                        }
                 }
             }
 
@@ -765,11 +776,135 @@ class AgendaDetailViewModel @Inject constructor(
                 )
             }
 
+            AgendaDetailAction.OnLeaveEvent -> {
+                viewModelScope.launch {
+                    val localUserId = sessionStorage.get()?.userId ?: return@launch
+                    state = state.copy(
+                        isEditing = false,
+                        isSaving = true,
+                    )
+                    val eventDetails = state.typeSpecificDetails as AgendaItemDetails.Event
+                    val updatedAttendee = eventDetails.attendees
+                        .find { it.userId == localUserId }
+                        ?.copy(isGoing = false)
+                        ?: return@launch
+                    val event = AgendaItem.Event(
+                        id = state.agendaItemId,
+                        title = state.title,
+                        description = state.description,
+                        startDateTime = state.startDateTime,
+                        endDateTime = eventDetails.endDateTime,
+                        notificationDateTime = state.startDateTime
+                            .minus(state.notificationDuration.duration),
+                        host = eventDetails.host,
+                        isUserEventCreator = false,
+                        attendees = eventDetails.attendees.filterNot { it.userId == localUserId } +
+                            updatedAttendee,
+                        deletedAttendees = emptyList(),
+                        photos = eventDetails.photos,
+                        deletedPhotos = emptyList(),
+                        isLocalUserGoing = false,
+                    )
+                    when (val result = agendaRepository.updateEventLocallyEnqueueRemote(event)) {
+                        is Result.Error -> {
+                            eventChannel.send(
+                                AgendaDetailEvent.OnError(result.error.asUiText()),
+                            )
+                        }
+
+                        is Result.Success -> {
+                            // TODO send saved event locally iff offline
+                            state = state.copy(
+                                typeSpecificDetails = eventDetails.copy(
+                                    deletedPhotos = emptyList(),
+                                    deletedAttendees = emptyList(),
+                                    workId = UUID.fromString(result.data),
+                                ),
+                            )
+                        }
+                    }
+                    state = state.copy(
+                        isSaving = false,
+                    )
+                }
+            }
+
+            AgendaDetailAction.OnJoinEvent -> {
+                viewModelScope.launch {
+                    val localUserId = sessionStorage.get()?.userId ?: return@launch
+                    state = state.copy(
+                        isEditing = false,
+                        isSaving = true,
+                    )
+                    val eventDetails = state.typeSpecificDetails as AgendaItemDetails.Event
+                    val updatedAttendee = eventDetails.attendees
+                        .find { it.userId == localUserId }
+                        ?.copy(isGoing = true)
+                        ?: return@launch
+                    val event = AgendaItem.Event(
+                        id = state.agendaItemId,
+                        title = state.title,
+                        description = state.description,
+                        startDateTime = state.startDateTime,
+                        endDateTime = eventDetails.endDateTime,
+                        notificationDateTime = state.startDateTime
+                            .minus(state.notificationDuration.duration),
+                        host = eventDetails.host,
+                        isUserEventCreator = false,
+                        attendees = eventDetails.attendees.filterNot { it.userId == localUserId } +
+                            updatedAttendee,
+                        deletedAttendees = emptyList(),
+                        photos = eventDetails.photos,
+                        deletedPhotos = emptyList(),
+                        isLocalUserGoing = true,
+                    )
+                    when (val result = agendaRepository.updateEventLocallyEnqueueRemote(event)) {
+                        is Result.Error -> {
+                            eventChannel.send(
+                                AgendaDetailEvent.OnError(result.error.asUiText()),
+                            )
+                        }
+
+                        is Result.Success -> {
+                            // TODO send saved event locally iff offline
+                            state = state.copy(
+                                typeSpecificDetails = eventDetails.copy(
+                                    deletedPhotos = emptyList(),
+                                    deletedAttendees = emptyList(),
+                                    workId = UUID.fromString(result.data),
+                                ),
+                            )
+                        }
+                    }
+                    state = state.copy(
+                        isSaving = false,
+                    )
+                }
+            }
+
             AgendaDetailAction.OnConfirmDelete -> {
                 state = state.copy(
                     isShowingDeleteConfirmationDialog = false,
+                    isLoading = true,
                 )
                 viewModelScope.launch {
+                    if (!state.isCreateAgendaItem) {
+                        when (state.agendaItemType) {
+                            AgendaItemType.EVENT -> agendaRepository.deleteEvent(
+                                state.agendaItemId,
+                            )
+
+                            AgendaItemType.TASK -> agendaRepository.deleteTask(
+                                state.agendaItemId,
+                            )
+
+                            AgendaItemType.REMINDER -> agendaRepository.deleteReminder(
+                                state.agendaItemId,
+                            )
+
+                            null -> Unit
+                        }
+                    }
                     eventChannel.send(AgendaDetailEvent.OnDeleted)
                 }
             }

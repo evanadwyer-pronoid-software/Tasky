@@ -36,6 +36,7 @@ fun AgendaItem.Event.toEventUi(): AgendaOverviewItemUi {
             description = description ?: "",
             startDateTime = startDateTime.formatOverview(),
             endDateTime = endDateTime.formatOverview(),
+            hostId = host,
         ),
     )
 }
