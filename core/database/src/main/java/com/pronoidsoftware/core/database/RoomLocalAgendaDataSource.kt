@@ -171,14 +171,17 @@ class RoomLocalAgendaDataSource @Inject constructor(
                 }
             val photoEntitiesToDelete = event.deletedPhotos
                 .map { it.toPhotoEntity(event.id) }
-            val attendeeEntities = event.attendees.map {
+            val attendeeEntitiesToAdd = event.attendees.map {
                 it.toAttendeeEntity(event.id)
             }
+            val attendeeEntitiesToDelete = event.deletedAttendees
+                .map { it.toAttendeeEntity(event.id) }
             agendaDao.upsertEventWithPhotosAndAttendees(
                 event = eventEntity,
                 photosToAdd = photoEntitiesToAdd,
                 photosToDelete = photoEntitiesToDelete,
-                attendees = attendeeEntities,
+                attendeesToAdd = attendeeEntitiesToAdd,
+                attendeesToDelete = attendeeEntitiesToDelete,
             )
             Result.Success(eventEntity.id)
         } catch (e: SQLiteFullException) {

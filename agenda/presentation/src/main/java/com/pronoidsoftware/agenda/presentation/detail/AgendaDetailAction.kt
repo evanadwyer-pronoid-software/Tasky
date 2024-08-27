@@ -72,6 +72,8 @@ sealed interface AgendaDetailAction {
 
     // delete actions
     data object OnDelete : AgendaDetailAction
+    data object OnLeaveEvent : AgendaDetailAction
+    data object OnJoinEvent : AgendaDetailAction
     data object OnConfirmDelete : AgendaDetailAction
     data object OnCancelDelete : AgendaDetailAction
 }

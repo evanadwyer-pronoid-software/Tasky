@@ -15,5 +15,6 @@ data class AgendaOverviewState(
     val isLoading: Boolean = false,
     val isShowingDeleteConfirmationDialog: Boolean = false,
     val agendaTypeToDelete: AgendaItemType? = null,
+    val eventToDeleteHostId: String? = null,
     val agendaItemIdToDelete: String = "",
 )

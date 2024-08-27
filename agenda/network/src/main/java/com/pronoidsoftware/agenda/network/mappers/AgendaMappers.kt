@@ -71,6 +71,7 @@ fun EventDto.toEvent(localUserId: String?): AgendaItem.Event {
         isUserEventCreator = isUserEventCreator,
         isLocalUserGoing = attendees.find { it.userId == localUserId }?.isGoing ?: false,
         deletedPhotos = emptyList(),
+        deletedAttendees = emptyList(),
     )
 }
 

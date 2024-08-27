@@ -69,6 +69,7 @@ sealed interface AgendaItemDetails {
         // visitors
         val selectedVisitorFilter: VisitorFilterType = VisitorFilterType.ALL,
         val attendees: List<Attendee> = emptyList(),
+        val deletedAttendees: List<Attendee> = emptyList(),
         val isShowingAddVisitorDialog: Boolean = false,
         val isAddingVisitor: Boolean = false,
         val visitorToAddEmail: TextFieldState = TextFieldState(),

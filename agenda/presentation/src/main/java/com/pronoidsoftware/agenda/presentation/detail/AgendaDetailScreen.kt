@@ -505,16 +505,57 @@ internal fun AgendaDetailScreen(state: AgendaDetailState, onAction: (AgendaDetai
                     HorizontalDivider(color = dividerColor)
                     Spacer(modifier = Modifier.height(spacing.agendaDetailSpaceMediumSmall))
                 }
-                AgendaDetailActionText(
-                    enabled = true,
-                    text = stringResource(
-                        id = R.string.delete_agenda_item,
-                        getTypeString(type = state.agendaItemType, isUppercase = true),
-                    ),
-                    onClick = {
-                        onAction(AgendaDetailAction.OnDelete)
-                    },
-                )
+                when {
+                    state.agendaItemType != AgendaItemType.EVENT -> {
+                        AgendaDetailActionText(
+                            enabled = true,
+                            text = stringResource(
+                                id = R.string.delete_agenda_item,
+                                getTypeString(type = state.agendaItemType, isUppercase = true),
+                            ),
+                            onClick = {
+                                onAction(AgendaDetailAction.OnDelete)
+                            },
+                        )
+                    }
+
+                    getDetailAsEvent(state)?.isUserEventCreator == true -> {
+                        AgendaDetailActionText(
+                            enabled = true,
+                            text = stringResource(
+                                id = R.string.delete_agenda_item,
+                                getTypeString(type = state.agendaItemType, isUppercase = true),
+                            ),
+                            onClick = {
+                                onAction(AgendaDetailAction.OnDelete)
+                            },
+                        )
+                    }
+
+                    getDetailAsEvent(state)?.isLocalUserGoing == true -> {
+                        AgendaDetailActionText(
+                            enabled = true,
+                            text = stringResource(
+                                id = R.string.leave_event,
+                            ),
+                            onClick = {
+                                onAction(AgendaDetailAction.OnLeaveEvent)
+                            },
+                        )
+                    }
+
+                    else -> {
+                        AgendaDetailActionText(
+                            enabled = true,
+                            text = stringResource(
+                                id = R.string.join_event,
+                            ),
+                            onClick = {
+                                onAction(AgendaDetailAction.OnJoinEvent)
+                            },
+                        )
+                    }
+                }
                 Spacer(modifier = Modifier.height(spacing.agendaDetailSpaceBottom))
             }
         }

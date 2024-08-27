@@ -18,6 +18,7 @@ sealed interface AgendaOverviewAction {
     data class OnDeleteClick(
         val type: AgendaItemType,
         val id: String,
+        val eventHostId: String?,
     ) : AgendaOverviewAction
     data object OnConfirmDelete : AgendaOverviewAction
     data object OnCancelDelete : AgendaOverviewAction

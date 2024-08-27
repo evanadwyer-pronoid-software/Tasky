@@ -48,6 +48,7 @@ sealed class AgendaItem(
         val host: String,
         val isUserEventCreator: Boolean,
         val attendees: List<Attendee>,
+        val deletedAttendees: List<Attendee>,
         val photos: List<Photo>,
         val deletedPhotos: List<Photo.Remote>,
         val isLocalUserGoing: Boolean,

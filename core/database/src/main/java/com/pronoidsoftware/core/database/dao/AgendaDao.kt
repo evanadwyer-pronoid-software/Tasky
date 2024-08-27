@@ -101,12 +101,14 @@ interface AgendaDao {
         event: EventEntity,
         photosToAdd: List<PhotoEntity>,
         photosToDelete: List<PhotoEntity>,
-        attendees: List<AttendeeEntity>,
+        attendeesToAdd: List<AttendeeEntity>,
+        attendeesToDelete: List<AttendeeEntity>,
     ) {
         upsertEvent(event)
         upsertPhotos(photosToAdd)
         deletePhotos(photosToDelete)
-        upsertAttendees(attendees)
+        upsertAttendees(attendeesToAdd)
+        deleteAttendees(attendeesToDelete)
     }
 
     @Transaction
@@ -153,6 +155,9 @@ interface AgendaDao {
 
     @Query("DELETE FROM attendeeentity")
     suspend fun deleteAllAttendees()
+
+    @Delete
+    suspend fun deleteAttendees(attendees: List<AttendeeEntity>)
 
     @Query("DELETE FROM photoentity WHERE `key`=:id")
     suspend fun deletePhoto(id: String)

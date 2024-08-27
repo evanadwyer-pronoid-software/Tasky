@@ -166,7 +166,11 @@ class OfflineFirstAgendaRepository @Inject constructor(
         if (localResult !is Result.Success) {
             return localResult
         }
-        alarmScheduler.schedule(event)
+        if (event.isLocalUserGoing) {
+            alarmScheduler.schedule(event)
+        } else {
+            alarmScheduler.cancel(event.id)
+        }
         val eventWorkId = remoteAgendaDataSource.updateEvent(event)
         return Result.Success(eventWorkId.toString())
     }
@@ -177,6 +181,11 @@ class OfflineFirstAgendaRepository @Inject constructor(
         val remoteResult = applicationScope.async {
             remoteAgendaDataSource.deleteEvent(id)
         }.await()
+    }
+
+    override suspend fun removeAttendee(id: EventId) {
+        localAgendaDataSource.deleteEvent(id)
+        alarmScheduler.cancel(id)
     }
 
     // All

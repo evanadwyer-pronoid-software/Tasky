@@ -305,6 +305,7 @@ private fun AgendaOverviewItemUiPreview(
                             "sed do eiusmod tempor incididunt ut labore",
                         startDateTime = "Mar 5, 10:30",
                         endDateTime = "Mar 5, 11:00",
+                        hostId = "",
                     ),
                     onTickClick = {
                         completed = !completed

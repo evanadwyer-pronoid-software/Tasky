@@ -280,6 +280,7 @@ internal fun AgendaOverviewScreen(
                                             AgendaOverviewAction.OnDeleteClick(
                                                 type = getAgendaItemType(agendaOverviewItem),
                                                 id = id,
+                                                eventHostId = getEventHostId(agendaOverviewItem),
                                             ),
                                         )
                                     },
@@ -309,6 +310,10 @@ private fun getAgendaItemType(agendaOverviewItem: AgendaOverviewItemUi.Item) =
         is AgendaOverviewItemContents.ReminderOverviewUiContents -> AgendaItemType.REMINDER
         is AgendaOverviewItemContents.TaskOverviewUiContents -> AgendaItemType.TASK
     }
+
+private fun getEventHostId(agendaOverviewItem: AgendaOverviewItemUi.Item): String? {
+    return (agendaOverviewItem.item as? AgendaOverviewItemContents.EventOverviewUiContents)?.hostId
+}
 
 @Preview
 @Composable
