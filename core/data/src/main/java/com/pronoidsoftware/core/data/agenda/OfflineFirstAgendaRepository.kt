@@ -17,6 +17,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
+import kotlinx.datetime.LocalDate
 
 class OfflineFirstAgendaRepository @Inject constructor(
     private val localAgendaDataSource: LocalAgendaDataSource,
@@ -191,6 +192,10 @@ class OfflineFirstAgendaRepository @Inject constructor(
     // All
     override fun getAllAgendaItems(): Flow<List<AgendaItem>> {
         return localAgendaDataSource.getAllAgendaItems()
+    }
+
+    override fun getAgendaItemsForDate(targetDate: LocalDate): Flow<List<AgendaItem>> {
+        return localAgendaDataSource.getAgendaItemsForDate(targetDate)
     }
 
     override suspend fun fetchAllAgendaItems(): EmptyResult<DataError> {

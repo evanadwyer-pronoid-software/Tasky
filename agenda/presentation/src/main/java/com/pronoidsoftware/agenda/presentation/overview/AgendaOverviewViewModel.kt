@@ -19,6 +19,7 @@ import com.pronoidsoftware.core.domain.util.today
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -40,20 +41,13 @@ class AgendaOverviewViewModel @Inject constructor(
     var state by mutableStateOf(AgendaOverviewState(selectedDate = today(clock)))
         private set
 
+    private var agendaForTodayJob: Job? = null
+
     private val eventChannel = Channel<AgendaOverviewEvent>()
     val events = eventChannel.receiveAsFlow()
 
     init {
-        agendaRepository.getAllAgendaItems().onEach { agendaItems ->
-            val items = agendaItems.map { agendaItem ->
-                when (agendaItem) {
-                    is AgendaItem.Event -> agendaItem.toEventUi()
-                    is AgendaItem.Reminder -> agendaItem.toReminderUi()
-                    is AgendaItem.Task -> agendaItem.toTaskUi()
-                }
-            }
-            state = state.copy(items = items)
-        }.launchIn(viewModelScope)
+        agendaForTodayJob = getAgendaForTodayFlow()
 
         viewModelScope.launch {
             state = state.copy(
@@ -74,6 +68,7 @@ class AgendaOverviewViewModel @Inject constructor(
                 state = state.copy(
                     selectedDate = action.date,
                 )
+                agendaForTodayJob = getAgendaForTodayFlow()
             }
 
             AgendaOverviewAction.OnToggleProfileDropdownMenu -> {
@@ -172,11 +167,26 @@ class AgendaOverviewViewModel @Inject constructor(
         }
     }
 
+    private fun getAgendaForTodayFlow(): Job {
+        agendaForTodayJob?.cancel()
+        return agendaRepository.getAgendaItemsForDate(state.selectedDate).onEach { agendaItems ->
+            val items = agendaItems.map { agendaItem ->
+                when (agendaItem) {
+                    is AgendaItem.Event -> agendaItem.toEventUi()
+                    is AgendaItem.Reminder -> agendaItem.toReminderUi()
+                    is AgendaItem.Task -> agendaItem.toTaskUi()
+                }
+            }
+            state = state.copy(items = items)
+        }.launchIn(viewModelScope)
+    }
+
     private fun logout() {
         applicationScope.launch {
             state = state.copy(
                 isLoading = true,
             )
+            agendaForTodayJob?.cancel()
             agendaRepository.deleteAllAgendaItems()
             authRepository.logout()
             sessionStorage.set(null)

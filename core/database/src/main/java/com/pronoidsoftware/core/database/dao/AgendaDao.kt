@@ -37,10 +37,10 @@ interface AgendaDao {
 
     @Query(
         "SELECT * FROM reminderentity " +
-            "WHERE strftime('%m-%d-%Y', startDateTime/1000, 'unixepoch') = :targetDateUtc " +
+            "WHERE :beginningTime < startDateTime AND startDateTime < :endingTime " +
             "ORDER BY startDateTime",
     )
-    fun getRemindersForDate(targetDateUtc: String): Flow<List<ReminderEntity>>
+    fun getRemindersForDate(beginningTime: Long, endingTime: Long): Flow<List<ReminderEntity>>
 
     @Query("DELETE FROM reminderentity WHERE id=:id")
     suspend fun deleteReminder(id: String)
@@ -66,10 +66,10 @@ interface AgendaDao {
 
     @Query(
         "SELECT * FROM taskentity " +
-            "WHERE strftime('%m-%d-%Y', startDateTime/1000, 'unixepoch') = :targetDateUtc " +
+            "WHERE :beginningTime < startDateTime AND startDateTime < :endingTime " +
             "ORDER BY startDateTime",
     )
-    fun getTasksForDate(targetDateUtc: String): Flow<List<TaskEntity>>
+    fun getTasksForDate(beginningTime: Long, endingTime: Long): Flow<List<TaskEntity>>
 
     @Query("DELETE FROM taskentity WHERE id=:id")
     suspend fun deleteTask(id: String)
@@ -136,10 +136,13 @@ interface AgendaDao {
     @Transaction
     @Query(
         "SELECT * FROM evententity " +
-            "WHERE strftime('%m-%d-%Y', startDateTime/1000, 'unixepoch') = :targetDateUtc " +
+            "WHERE :beginningTime < startDateTime AND startDateTime < :endingTime " +
             "ORDER BY startDateTime",
     )
-    fun getEventsForDate(targetDateUtc: String): Flow<List<EventWithAttendeesAndPhotos>>
+    fun getEventsForDate(
+        beginningTime: Long,
+        endingTime: Long,
+    ): Flow<List<EventWithAttendeesAndPhotos>>
 
     @Query("DELETE FROM evententity WHERE id=:id")
     suspend fun deleteEvent(id: String)

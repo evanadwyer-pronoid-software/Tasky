@@ -4,6 +4,7 @@ import com.pronoidsoftware.core.domain.util.DataError
 import com.pronoidsoftware.core.domain.util.EmptyResult
 import com.pronoidsoftware.core.domain.util.Result
 import kotlinx.coroutines.flow.Flow
+import kotlinx.datetime.LocalDate
 
 typealias ReminderId = String
 typealias TaskId = String
@@ -38,6 +39,7 @@ interface AgendaRepository {
 
     // All
     fun getAllAgendaItems(): Flow<List<AgendaItem>>
+    fun getAgendaItemsForDate(targetDate: LocalDate): Flow<List<AgendaItem>>
     suspend fun fetchAllAgendaItems(): EmptyResult<DataError>
     suspend fun deleteAllAgendaItems()
 }
