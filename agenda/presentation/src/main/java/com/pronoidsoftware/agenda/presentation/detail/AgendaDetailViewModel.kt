@@ -19,6 +19,7 @@ import com.pronoidsoftware.core.domain.agendaitem.AgendaRepository
 import com.pronoidsoftware.core.domain.agendaitem.Attendee
 import com.pronoidsoftware.core.domain.agendaitem.Photo
 import com.pronoidsoftware.core.domain.util.Result
+import com.pronoidsoftware.core.domain.util.atStartOfMinute
 import com.pronoidsoftware.core.domain.util.minus
 import com.pronoidsoftware.core.domain.util.now
 import com.pronoidsoftware.core.domain.util.plus
@@ -70,7 +71,7 @@ class AgendaDetailViewModel @Inject constructor(
             agendaItemId = savedStateHandle.getId() ?: UUID.randomUUID().toString(),
             isCreateAgendaItem = savedStateHandle.getId() == null,
             selectedDate = today(clock),
-            startDateTime = now(clock).plus(60.minutes),
+            startDateTime = now(clock).plus(60.minutes).atStartOfMinute(),
             isEditing = savedStateHandle.isEditing(),
             agendaItemType = savedStateHandle.getAgendaItemType(),
             typeSpecificDetails = when (savedStateHandle.getAgendaItemType()) {
@@ -210,7 +211,7 @@ class AgendaDetailViewModel @Inject constructor(
             60 -> NotificationDuration.Hours1
             6 * 60 -> NotificationDuration.Hours6
             24 * 60 -> NotificationDuration.Days1
-            else -> NotificationDuration.Minutes30
+            else -> NotificationDuration.Hours1
         }
     }
 
@@ -495,6 +496,7 @@ class AgendaDetailViewModel @Inject constructor(
                     date.dayOfMonth,
                     state.startDateTime.hour,
                     state.startDateTime.minute,
+                    0,
                 )
                 state = state.copy(
                     startDateTime = newStartDateTime,
@@ -521,6 +523,7 @@ class AgendaDetailViewModel @Inject constructor(
                     state.startDateTime.dayOfMonth,
                     time.hour,
                     time.minute,
+                    0,
                 )
                 state = state.copy(
                     startDateTime = newStartDateTime,
@@ -548,6 +551,7 @@ class AgendaDetailViewModel @Inject constructor(
                         date.dayOfMonth,
                         eventDetails.endDateTime.hour,
                         eventDetails.endDateTime.minute,
+                        0,
                     )
                     val newStartDateTime = if (newEndDateTime < state.startDateTime) {
                         newEndDateTime.minus(30.minutes)
@@ -572,6 +576,7 @@ class AgendaDetailViewModel @Inject constructor(
                         eventDetails.endDateTime.dayOfMonth,
                         time.hour,
                         time.minute,
+                        0,
                     )
                     val newStartDateTime = if (newEndDateTime < state.startDateTime) {
                         newEndDateTime.minus(30.minutes)

@@ -24,9 +24,11 @@ class AgendaAlarmScheduler @Inject constructor(
 
     override fun schedule(agendaItem: AgendaItem) {
         if (Build.VERSION.SDK_INT >= 31 && !alarmManager.canScheduleExactAlarms()) {
+            cancel(agendaItem.id)
             return
         }
         if (agendaItem.notificationDateTime < now(clock)) {
+            cancel(agendaItem.id)
             return
         }
 

@@ -6,6 +6,7 @@ import com.pronoidsoftware.agenda.presentation.detail.model.NotificationDuration
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItemType
 import com.pronoidsoftware.core.domain.agendaitem.Attendee
 import com.pronoidsoftware.core.domain.agendaitem.Photo
+import com.pronoidsoftware.core.domain.util.atStartOfMinute
 import com.pronoidsoftware.core.domain.util.now
 import com.pronoidsoftware.core.domain.util.plus
 import com.pronoidsoftware.core.domain.util.today
@@ -33,12 +34,12 @@ data class AgendaDetailState(
     val isEditingDescription: Boolean = false,
 
     // date time
-    val startDateTime: LocalDateTime = now().plus(60.minutes),
+    val startDateTime: LocalDateTime = now().plus(60.minutes).atStartOfMinute(),
     val isEditingStartTime: Boolean = false,
     val isEditingStartDate: Boolean = false,
 
     // notification
-    val notificationDuration: NotificationDuration = NotificationDuration.Minutes30,
+    val notificationDuration: NotificationDuration = NotificationDuration.Hours1,
     val isEditingNotificationDuration: Boolean = false,
     val showNotificationRationale: Boolean = false,
 
@@ -62,7 +63,7 @@ sealed interface AgendaItemDetails {
         val deletedPhotos: List<Photo.Remote> = emptyList(),
 
         // date time
-        val endDateTime: LocalDateTime = now().plus(90.minutes),
+        val endDateTime: LocalDateTime = now().plus(90.minutes).atStartOfMinute(),
         val isEditingEndTime: Boolean = false,
         val isEditingEndDate: Boolean = false,
 
