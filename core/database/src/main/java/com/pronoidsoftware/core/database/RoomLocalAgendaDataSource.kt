@@ -25,6 +25,11 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
+import kotlinx.datetime.plus
 
 class RoomLocalAgendaDataSource @Inject constructor(
     private val agendaDao: AgendaDao,
@@ -46,8 +51,15 @@ class RoomLocalAgendaDataSource @Inject constructor(
         return agendaDao.getAllReminderIds()
     }
 
-    override fun getRemindersForDate(targetDateUtc: String): Flow<List<AgendaItem.Reminder>> {
-        return agendaDao.getRemindersForDate(targetDateUtc)
+    override fun getRemindersForDate(targetDate: LocalDate): Flow<List<AgendaItem.Reminder>> {
+        val beginningTime = targetDate
+            .atStartOfDayIn(TimeZone.currentSystemDefault())
+            .toEpochMilliseconds()
+        val endingTime = targetDate
+            .plus(1, DateTimeUnit.DAY)
+            .atStartOfDayIn(TimeZone.currentSystemDefault())
+            .toEpochMilliseconds()
+        return agendaDao.getRemindersForDate(beginningTime, endingTime)
             .map { reminderEntities ->
                 reminderEntities.map { it.toReminder() }
             }
@@ -101,8 +113,15 @@ class RoomLocalAgendaDataSource @Inject constructor(
         return agendaDao.getAllTaskIds()
     }
 
-    override fun getTasksForDate(targetDateUtc: String): Flow<List<AgendaItem.Task>> {
-        return agendaDao.getTasksForDate(targetDateUtc)
+    override fun getTasksForDate(targetDate: LocalDate): Flow<List<AgendaItem.Task>> {
+        val beginningTime = targetDate
+            .atStartOfDayIn(TimeZone.currentSystemDefault())
+            .toEpochMilliseconds()
+        val endingTime = targetDate
+            .plus(1, DateTimeUnit.DAY)
+            .atStartOfDayIn(TimeZone.currentSystemDefault())
+            .toEpochMilliseconds()
+        return agendaDao.getTasksForDate(beginningTime, endingTime)
             .map { taskEntities ->
                 taskEntities.map { it.toTask() }
             }
@@ -154,8 +173,15 @@ class RoomLocalAgendaDataSource @Inject constructor(
         return agendaDao.getAllEventIds()
     }
 
-    override fun getEventsForDate(targetDateUtc: String): Flow<List<AgendaItem.Event>> {
-        return agendaDao.getEventsForDate(targetDateUtc)
+    override fun getEventsForDate(targetDate: LocalDate): Flow<List<AgendaItem.Event>> {
+        val beginningTime = targetDate
+            .atStartOfDayIn(TimeZone.currentSystemDefault())
+            .toEpochMilliseconds()
+        val endingTime = targetDate
+            .plus(1, DateTimeUnit.DAY)
+            .atStartOfDayIn(TimeZone.currentSystemDefault())
+            .toEpochMilliseconds()
+        return agendaDao.getEventsForDate(beginningTime, endingTime)
             .map { eventEntities ->
                 eventEntities.map { it.toEvent() }
             }
@@ -285,11 +311,11 @@ class RoomLocalAgendaDataSource @Inject constructor(
         return reminderIds + taskIds + eventIds
     }
 
-    override fun getAgendaItemsForDate(targetDateUtc: String): Flow<List<AgendaItem>> {
+    override fun getAgendaItemsForDate(targetDate: LocalDate): Flow<List<AgendaItem>> {
         return combine(
-            getRemindersForDate(targetDateUtc),
-            getTasksForDate(targetDateUtc),
-            getEventsForDate(targetDateUtc),
+            getRemindersForDate(targetDate),
+            getTasksForDate(targetDate),
+            getEventsForDate(targetDate),
         ) { reminders, tasks, events ->
             (reminders + tasks + events).sortedBy { it.startDateTime }
         }
