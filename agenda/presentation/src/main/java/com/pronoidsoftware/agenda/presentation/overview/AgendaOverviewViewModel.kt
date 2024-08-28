@@ -9,12 +9,14 @@ import com.pronoidsoftware.agenda.domain.AttendeeRepository
 import com.pronoidsoftware.agenda.presentation.overview.mappers.toEventUi
 import com.pronoidsoftware.agenda.presentation.overview.mappers.toReminderUi
 import com.pronoidsoftware.agenda.presentation.overview.mappers.toTaskUi
+import com.pronoidsoftware.agenda.presentation.overview.model.AgendaOverviewItemUi
 import com.pronoidsoftware.auth.domain.AuthRepository
 import com.pronoidsoftware.core.domain.SessionStorage
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItem
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItemType
 import com.pronoidsoftware.core.domain.agendaitem.AgendaRepository
 import com.pronoidsoftware.core.domain.util.initializeAndCapitalize
+import com.pronoidsoftware.core.domain.util.now
 import com.pronoidsoftware.core.domain.util.today
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -30,7 +32,7 @@ import timber.log.Timber
 
 @HiltViewModel
 class AgendaOverviewViewModel @Inject constructor(
-    clock: Clock,
+    private val clock: Clock,
     private val sessionStorage: SessionStorage,
     private val agendaRepository: AgendaRepository,
     private val attendeeRepository: AttendeeRepository,
@@ -170,11 +172,29 @@ class AgendaOverviewViewModel @Inject constructor(
     private fun getAgendaForTodayFlow(): Job {
         agendaForTodayJob?.cancel()
         return agendaRepository.getAgendaItemsForDate(state.selectedDate).onEach { agendaItems ->
-            val items = agendaItems.map { agendaItem ->
+            val timedItems = if (state.selectedDate == today(clock)) {
+                val temp = mutableListOf<AgendaItem?>()
+                var addedTimeMarker = false
+                agendaItems.forEach {
+                    if (it.startDateTime > now(clock) && !addedTimeMarker) {
+                        temp.add(null)
+                        addedTimeMarker = true
+                    }
+                    temp.add(it)
+                }
+                if (!addedTimeMarker && temp.isNotEmpty()) {
+                    temp.add(null)
+                }
+                temp
+            } else {
+                agendaItems
+            }
+            val items = timedItems.map { agendaItem ->
                 when (agendaItem) {
                     is AgendaItem.Event -> agendaItem.toEventUi()
                     is AgendaItem.Reminder -> agendaItem.toReminderUi()
                     is AgendaItem.Task -> agendaItem.toTaskUi()
+                    null -> AgendaOverviewItemUi.TimeMarker
                 }
             }
             state = state.copy(items = items)
