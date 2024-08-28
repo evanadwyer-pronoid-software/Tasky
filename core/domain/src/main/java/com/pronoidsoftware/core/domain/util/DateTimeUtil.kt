@@ -69,6 +69,17 @@ fun LocalDateTime.plus(duration: Duration): LocalDateTime {
         .toLocalDateTime(TimeZone.currentSystemDefault())
 }
 
+fun LocalDateTime.atStartOfMinute(): LocalDateTime {
+    return LocalDateTime(
+        this.year,
+        this.month,
+        this.dayOfMonth,
+        this.hour,
+        this.minute,
+        0,
+    )
+}
+
 fun LocalDateTime.minus(duration: Duration): LocalDateTime {
     return this
         .toInstant(TimeZone.currentSystemDefault())
