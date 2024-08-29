@@ -220,7 +220,7 @@ class OfflineFirstAgendaRepository @Inject constructor(
     }
 
     override suspend fun deleteAllAgendaItems() {
-        val agendaItemIds = localAgendaDataSource.getAllAgendaItemIds()
+        val agendaItemIds = localAgendaDataSource.getAllAgendaItemsSnapshot().map { it.id }
         alarmScheduler.cancelAll(agendaItemIds)
         localAgendaDataSource.deleteAllAgendaItems()
     }

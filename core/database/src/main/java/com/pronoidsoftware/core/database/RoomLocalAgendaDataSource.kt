@@ -47,8 +47,8 @@ class RoomLocalAgendaDataSource @Inject constructor(
             }
     }
 
-    override suspend fun getAllReminderIds(): List<ReminderId> {
-        return agendaDao.getAllReminderIds()
+    override suspend fun getAllRemindersSnapshot(): List<AgendaItem.Reminder> {
+        return agendaDao.getAllRemindersSnapshot().map { it.toReminder() }
     }
 
     override fun getRemindersForDate(targetDate: LocalDate): Flow<List<AgendaItem.Reminder>> {
@@ -109,8 +109,8 @@ class RoomLocalAgendaDataSource @Inject constructor(
             }
     }
 
-    override suspend fun getAllTaskIds(): List<TaskId> {
-        return agendaDao.getAllTaskIds()
+    override suspend fun getAllTasksSnapshot(): List<AgendaItem.Task> {
+        return agendaDao.getAllTasksSnapshot().map { it.toTask() }
     }
 
     override fun getTasksForDate(targetDate: LocalDate): Flow<List<AgendaItem.Task>> {
@@ -169,8 +169,8 @@ class RoomLocalAgendaDataSource @Inject constructor(
             }
     }
 
-    override suspend fun getAllEventIds(): List<EventId> {
-        return agendaDao.getAllEventIds()
+    override suspend fun getAllEventsSnapshot(): List<AgendaItem.Event> {
+        return agendaDao.getAllEventsSnapshot().map { it.toEvent() }
     }
 
     override fun getEventsForDate(targetDate: LocalDate): Flow<List<AgendaItem.Event>> {
@@ -304,11 +304,11 @@ class RoomLocalAgendaDataSource @Inject constructor(
         }
     }
 
-    override suspend fun getAllAgendaItemIds(): List<String> {
-        val reminderIds = getAllReminderIds()
-        val taskIds = getAllTaskIds()
-        val eventIds = getAllEventIds()
-        return reminderIds + taskIds + eventIds
+    override suspend fun getAllAgendaItemsSnapshot(): List<AgendaItem> {
+        val reminders = getAllRemindersSnapshot()
+        val tasks = getAllTasksSnapshot()
+        val events = getAllEventsSnapshot()
+        return reminders + tasks + events
     }
 
     override fun getAgendaItemsForDate(targetDate: LocalDate): Flow<List<AgendaItem>> {
