@@ -47,6 +47,7 @@ private fun AgendaOverviewScreenPreview_Figma() {
                                     .formatOverview(),
                                 endDateTime = LocalDateTime(2023, 3, 5, 11, 0)
                                     .formatOverview(),
+                                hostId = "",
                             ),
                         ),
                         AgendaOverviewItemUi.Item(

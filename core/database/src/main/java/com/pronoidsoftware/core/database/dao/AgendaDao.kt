@@ -32,8 +32,8 @@ interface AgendaDao {
     @Query("SELECT * FROM reminderentity ORDER BY startDateTime")
     fun getAllReminders(): Flow<List<ReminderEntity>>
 
-    @Query("SELECT id FROM reminderentity")
-    suspend fun getAllReminderIds(): List<String>
+    @Query("SELECT * FROM reminderentity")
+    suspend fun getAllRemindersSnapshot(): List<ReminderEntity>
 
     @Query(
         "SELECT * FROM reminderentity " +
@@ -61,8 +61,8 @@ interface AgendaDao {
     @Query("SELECT * FROM taskentity ORDER BY startDateTime")
     fun getAllTasks(): Flow<List<TaskEntity>>
 
-    @Query("SELECT id FROM taskentity")
-    suspend fun getAllTaskIds(): List<String>
+    @Query("SELECT * FROM taskentity")
+    suspend fun getAllTasksSnapshot(): List<TaskEntity>
 
     @Query(
         "SELECT * FROM taskentity " +
@@ -130,8 +130,8 @@ interface AgendaDao {
     @Query("SELECT * FROM evententity ORDER BY startDateTime")
     fun getAllEvents(): Flow<List<EventWithAttendeesAndPhotos>>
 
-    @Query("SELECT id FROM evententity")
-    suspend fun getAllEventIds(): List<String>
+    @Query("SELECT * FROM evententity")
+    suspend fun getAllEventsSnapshot(): List<EventWithAttendeesAndPhotos>
 
     @Transaction
     @Query(
