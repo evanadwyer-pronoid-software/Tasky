@@ -1,4 +1,4 @@
-package com.pronoidsoftware.agenda.network.work
+package com.pronoidsoftware.core.data.work
 
 import com.pronoidsoftware.core.domain.util.DataError
 
