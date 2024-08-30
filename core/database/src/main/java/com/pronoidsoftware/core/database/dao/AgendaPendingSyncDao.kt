@@ -3,10 +3,13 @@ package com.pronoidsoftware.core.database.dao
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
+import com.pronoidsoftware.core.database.entity.sync.DeletedEventSyncEntity
 import com.pronoidsoftware.core.database.entity.sync.DeletedReminderSyncEntity
 import com.pronoidsoftware.core.database.entity.sync.DeletedTaskSyncEntity
+import com.pronoidsoftware.core.database.entity.sync.EventPendingSyncEntity
 import com.pronoidsoftware.core.database.entity.sync.ReminderPendingSyncEntity
 import com.pronoidsoftware.core.database.entity.sync.TaskPendingSyncEntity
+import com.pronoidsoftware.core.domain.agendaitem.EventId
 import com.pronoidsoftware.core.domain.agendaitem.ReminderId
 import com.pronoidsoftware.core.domain.agendaitem.TaskId
 
@@ -60,4 +63,27 @@ interface AgendaPendingSyncDao {
 
     @Query("DELETE FROM deletedtasksyncentity WHERE taskId=:taskId")
     suspend fun deleteDeletedTaskSyncEntity(taskId: TaskId)
+
+    // Created Events
+    @Query("SELECT * FROM eventpendingsyncentity WHERE userId=:userId")
+    suspend fun getAllEventPendingSyncEntities(userId: String): List<EventPendingSyncEntity>
+
+    @Query("SELECT * FROM eventpendingsyncentity WHERE eventId=:eventId")
+    suspend fun getEventPendingSyncEntity(eventId: EventId): EventPendingSyncEntity?
+
+    @Upsert
+    suspend fun upsertEventPendingSyncEntity(eventPendingSyncEntity: EventPendingSyncEntity)
+
+    @Query("DELETE FROM eventpendingsyncentity WHERE eventId=:eventId")
+    suspend fun deleteEventPendingSyncEntity(eventId: EventId)
+
+    // Deleted Events
+    @Query("SELECT * FROM deletedeventsyncentity WHERE userId=:userId")
+    suspend fun getAllDeletedEventSyncEntities(userId: String): List<DeletedEventSyncEntity>
+
+    @Upsert
+    suspend fun upsertDeletedEventSyncEntity(entity: DeletedEventSyncEntity)
+
+    @Query("DELETE FROM deletedeventsyncentity WHERE eventId=:eventId")
+    suspend fun deleteDeletedEventSyncEntity(eventId: EventId)
 }

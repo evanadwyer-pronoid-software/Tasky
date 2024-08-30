@@ -59,6 +59,7 @@ class AgendaOverviewViewModel @Inject constructor(
             )
             agendaRepository.syncPendingReminders()
             agendaRepository.syncPendingTasks()
+            agendaRepository.syncPendingEvents()
             agendaRepository.fetchAllAgendaItems()
             state = state.copy(
                 isLoading = false,

@@ -21,10 +21,11 @@ interface RemoteAgendaDataSource {
     suspend fun deleteTask(id: String): EmptyResult<DataError.Network>
 
     // Events
-    fun createEvent(event: AgendaItem.Event): UUID
+    fun createEventAsync(event: AgendaItem.Event): UUID
+    suspend fun createEventSync(event: AgendaItem.Event): EmptyResult<DataError.Network>
     suspend fun getEvent(id: String): Result<AgendaItem.Event, DataError.Network>
     suspend fun getAllEvents(): Result<List<AgendaItem.Event>, DataError.Network>
-    fun updateEvent(event: AgendaItem.Event): UUID
+    fun updateEventAsync(event: AgendaItem.Event): UUID
     suspend fun deleteEvent(id: String): EmptyResult<DataError.Network>
 
     // All

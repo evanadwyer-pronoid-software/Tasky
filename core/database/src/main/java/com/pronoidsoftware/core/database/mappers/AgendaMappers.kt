@@ -72,6 +72,24 @@ fun EventWithAttendeesAndPhotos.toEvent(): AgendaItem.Event {
     )
 }
 
+fun EventEntity.toEvent(): AgendaItem.Event {
+    return AgendaItem.Event(
+        id = id,
+        title = title,
+        description = description,
+        startDateTime = startDateTime.toLocalDateTime(),
+        endDateTime = endDateTime.toLocalDateTime(),
+        notificationDateTime = notificationDateTime.toLocalDateTime(),
+        attendees = emptyList(),
+        photos = emptyList(),
+        isLocalUserGoing = isLocalUserGoing,
+        host = host,
+        deletedPhotos = emptyList(),
+        deletedAttendees = emptyList(),
+        isUserEventCreator = isUserEventCreator,
+    )
+}
+
 fun AttendeeEntity.toAttendee(): Attendee {
     return Attendee(
         userId = userId,
