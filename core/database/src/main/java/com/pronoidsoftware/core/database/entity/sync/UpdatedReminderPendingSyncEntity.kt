@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 import com.pronoidsoftware.core.database.entity.ReminderEntity
 
 @Entity
-data class ReminderPendingSyncEntity(
+data class UpdatedReminderPendingSyncEntity(
     @Embedded val reminder: ReminderEntity,
     @PrimaryKey(autoGenerate = false)
     val reminderId: String = reminder.id,

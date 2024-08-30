@@ -26,6 +26,7 @@ interface RemoteAgendaDataSource {
     suspend fun getEvent(id: String): Result<AgendaItem.Event, DataError.Network>
     suspend fun getAllEvents(): Result<List<AgendaItem.Event>, DataError.Network>
     fun updateEventAsync(event: AgendaItem.Event): UUID
+    suspend fun updateEventSync(event: AgendaItem.Event): EmptyResult<DataError.Network>
     suspend fun deleteEvent(id: String): EmptyResult<DataError.Network>
 
     // All

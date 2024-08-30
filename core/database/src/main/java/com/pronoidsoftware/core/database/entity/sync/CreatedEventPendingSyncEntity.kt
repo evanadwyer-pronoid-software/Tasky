@@ -7,7 +7,7 @@ import com.pronoidsoftware.core.database.entity.EventEntity
 import com.pronoidsoftware.core.domain.agendaitem.EventId
 
 @Entity
-data class EventPendingSyncEntity(
+data class CreatedEventPendingSyncEntity(
     @Embedded val event: EventEntity,
     @PrimaryKey(autoGenerate = false)
     val eventId: EventId = event.id,

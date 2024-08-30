@@ -7,7 +7,7 @@ import com.pronoidsoftware.core.database.entity.TaskEntity
 import com.pronoidsoftware.core.domain.agendaitem.TaskId
 
 @Entity
-data class TaskPendingSyncEntity(
+data class CreatedTaskPendingSyncEntity(
     @Embedded val task: TaskEntity,
     @PrimaryKey(autoGenerate = false)
     val taskId: TaskId = task.id,
