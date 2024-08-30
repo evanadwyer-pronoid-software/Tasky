@@ -29,6 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,6 +39,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.pronoidsoftware.agenda.presentation.R
@@ -55,6 +57,7 @@ import com.pronoidsoftware.agenda.presentation.detail.components.event.photo.com
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.components.AddVisitorDialog
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.components.EventDetailVisitorList
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.model.toVisitorUi
+import com.pronoidsoftware.core.domain.ConnectivityObserver
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItemType
 import com.pronoidsoftware.core.domain.agendaitem.Photo
 import com.pronoidsoftware.core.domain.work.WorkKeys.KEY_NUMBER_URIS_BEYOND_COMPRESSION
@@ -71,6 +74,8 @@ import com.pronoidsoftware.core.presentation.ui.formatFullDate
 import com.pronoidsoftware.core.presentation.ui.getTypeString
 import com.pronoidsoftware.core.presentation.ui.hasNotificationPermission
 import com.pronoidsoftware.core.presentation.ui.shouldShowNotificationPermissionRationale
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
@@ -116,12 +121,17 @@ fun AgendaDetailScreenRoot(
 
     AgendaDetailScreen(
         state = viewModel.state,
+        connectionStatusFlow = viewModel.connectionStatus,
         onAction = viewModel::onAction,
     )
 }
 
 @Composable
-internal fun AgendaDetailScreen(state: AgendaDetailState, onAction: (AgendaDetailAction) -> Unit) {
+internal fun AgendaDetailScreen(
+    state: AgendaDetailState,
+    connectionStatusFlow: StateFlow<ConnectivityObserver.Status>,
+    onAction: (AgendaDetailAction) -> Unit,
+) {
     val spacing = LocalSpacing.current
     val clock = LocalClock.current
     val dividerColor = TaskyWhite2
@@ -151,6 +161,7 @@ internal fun AgendaDetailScreen(state: AgendaDetailState, onAction: (AgendaDetai
             ),
         )
     }
+    val connectionStatus by connectionStatusFlow.collectAsStateWithLifecycle()
 
     LaunchedEffect(true) {
         val activity = context as ComponentActivity
@@ -242,7 +253,8 @@ internal fun AgendaDetailScreen(state: AgendaDetailState, onAction: (AgendaDetai
             EventDetailPhotoDetail(
                 photo = photo,
                 editEnabled = state.isEditing &&
-                    getDetailAsEvent(state)?.isUserEventCreator ?: true,
+                    connectionStatus == ConnectivityObserver.Status.AVAILABLE &&
+                    getDetailAsEvent(state)?.isUserEventCreator ?: false,
                 onCloseClick = {
                     onAction(AgendaDetailAction.OnClosePhotoClick)
                 },
@@ -379,7 +391,8 @@ internal fun AgendaDetailScreen(state: AgendaDetailState, onAction: (AgendaDetai
                         photos = eventDetails.photos,
                         arePhotosFull = eventDetails.arePhotosFull,
                         editEnabled = state.isEditing &&
-                            getDetailAsEvent(state)?.isUserEventCreator ?: true,
+                            connectionStatus == ConnectivityObserver.Status.AVAILABLE &&
+                            getDetailAsEvent(state)?.isUserEventCreator ?: false,
                         onAddClick = {
                             photoPickerLauncher.launch(
                                 PickVisualMediaRequest(
@@ -495,7 +508,8 @@ internal fun AgendaDetailScreen(state: AgendaDetailState, onAction: (AgendaDetai
                                 it.toVisitorUi(false)
                             },
                         editEnabled = state.isEditing &&
-                            getDetailAsEvent(state)?.isUserEventCreator ?: true,
+                            connectionStatus == ConnectivityObserver.Status.AVAILABLE &&
+                            getDetailAsEvent(state)?.isUserEventCreator ?: false,
                     )
                 }
                 Spacer(modifier = Modifier.weight(1f))
@@ -613,6 +627,7 @@ private fun ReminderDetailScreenPreview() {
                     startDateTime = LocalDateTime(2022, 7, 21, 8, 0),
                     isEditing = false,
                 ),
+                connectionStatusFlow = MutableStateFlow(ConnectivityObserver.Status.AVAILABLE),
                 onAction = {},
             )
         }
@@ -634,6 +649,7 @@ private fun ReminderDetailScreenPreview_EditTitle() {
                     isEditing = true,
                     isEditingTitle = true,
                 ),
+                connectionStatusFlow = MutableStateFlow(ConnectivityObserver.Status.AVAILABLE),
                 onAction = {},
             )
         }
@@ -656,6 +672,7 @@ private fun ReminderDetailScreenPreview_EditDescription() {
                     isEditing = true,
                     isEditingDescription = true,
                 ),
+                connectionStatusFlow = MutableStateFlow(ConnectivityObserver.Status.AVAILABLE),
                 onAction = {},
             )
         }
@@ -678,6 +695,7 @@ private fun ReminderDetailScreenPreview_DeleteDialog() {
                     isEditing = true,
                     isShowingDeleteConfirmationDialog = true,
                 ),
+                connectionStatusFlow = MutableStateFlow(ConnectivityObserver.Status.AVAILABLE),
                 onAction = {},
             )
         }
@@ -700,6 +718,7 @@ private fun ReminderDetailScreenPreview_CloseDialog() {
                     isEditing = true,
                     isShowingCloseConfirmationDialog = true,
                 ),
+                connectionStatusFlow = MutableStateFlow(ConnectivityObserver.Status.AVAILABLE),
                 onAction = {},
             )
         }

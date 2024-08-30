@@ -12,6 +12,7 @@ import com.pronoidsoftware.agenda.domain.AttendeeRepository
 import com.pronoidsoftware.agenda.presentation.R
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.model.VisitorFilterType
 import com.pronoidsoftware.agenda.presentation.detail.model.NotificationDuration
+import com.pronoidsoftware.core.domain.ConnectivityObserver
 import com.pronoidsoftware.core.domain.SessionStorage
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItem
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItemType
@@ -33,9 +34,11 @@ import javax.inject.Inject
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.DurationUnit
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
@@ -48,6 +51,7 @@ class AgendaDetailViewModel @Inject constructor(
     clock: Clock,
     userDataValidator: UserDataValidator,
     savedStateHandle: SavedStateHandle,
+    connectivityObserver: ConnectivityObserver,
     private val sessionStorage: SessionStorage,
     private val agendaRepository: AgendaRepository,
     private val attendeeRepository: AttendeeRepository,
@@ -65,6 +69,13 @@ class AgendaDetailViewModel @Inject constructor(
     private fun SavedStateHandle.getId(): String? {
         return get<String>("id")
     }
+
+    private val _connectionStatus = connectivityObserver.observe().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Lazily,
+        initialValue = ConnectivityObserver.Status.UNAVAILABLE,
+    )
+    val connectionStatus = _connectionStatus
 
     var state by mutableStateOf(
         AgendaDetailState(
