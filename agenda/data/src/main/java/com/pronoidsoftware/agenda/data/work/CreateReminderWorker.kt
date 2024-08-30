@@ -27,10 +27,10 @@ class CreateReminderWorker @AssistedInject constructor(
 
         val pendingCreateReminderId = params.inputData.getString(REMINDER_ID)
             ?: return Result.failure()
-        val pendingCreatedRunEntity = agendaPendingSyncDao
+        val pendingCreatedReminderEntity = agendaPendingSyncDao
             .getCreatedReminderPendingSyncEntity(pendingCreateReminderId)
             ?: return Result.failure()
-        val reminder = pendingCreatedRunEntity.reminder.toReminder()
+        val reminder = pendingCreatedReminderEntity.reminder.toReminder()
         return when (val result = remoteAgendaDateSource.createReminder(reminder)) {
             is com.pronoidsoftware.core.domain.util.Result.Error -> {
                 when (result.error.toWorkerResult()) {

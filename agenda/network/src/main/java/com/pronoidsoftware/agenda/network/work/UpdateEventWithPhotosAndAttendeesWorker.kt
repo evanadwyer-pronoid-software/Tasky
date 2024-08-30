@@ -8,15 +8,15 @@ import androidx.work.workDataOf
 import com.pronoidsoftware.agenda.network.dto.EventDto
 import com.pronoidsoftware.agenda.network.mappers.toEvent
 import com.pronoidsoftware.core.data.networking.AgendaRoutes
-import com.pronoidsoftware.core.data.networking.postMultipart
+import com.pronoidsoftware.core.data.networking.putMultipart
 import com.pronoidsoftware.core.data.work.DataErrorWorkerResult
 import com.pronoidsoftware.core.data.work.toWorkerResult
 import com.pronoidsoftware.core.domain.DispatcherProvider
 import com.pronoidsoftware.core.domain.SessionStorage
 import com.pronoidsoftware.core.domain.agendaitem.LocalAgendaDataSource
-import com.pronoidsoftware.core.domain.work.WorkKeys.CREATE_EVENT_REQUEST
 import com.pronoidsoftware.core.domain.work.WorkKeys.KEY_COMPRESSED_URIS_RESULT_PATHS
 import com.pronoidsoftware.core.domain.work.WorkKeys.KEY_NUMBER_URIS_BEYOND_COMPRESSION
+import com.pronoidsoftware.core.domain.work.WorkKeys.UPDATE_EVENT_REQUEST
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import io.ktor.client.HttpClient
@@ -28,7 +28,7 @@ import java.io.File
 import kotlinx.coroutines.withContext
 
 @HiltWorker
-class CreateEventWorker @AssistedInject constructor(
+class UpdateEventWithPhotosAndAttendeesWorker @AssistedInject constructor(
     @Assisted private val appContext: Context,
     @Assisted private val params: WorkerParameters,
     private val dispatchers: DispatcherProvider,
@@ -47,13 +47,13 @@ class CreateEventWorker @AssistedInject constructor(
         val compressedPhotoUris =
             params.inputData.getStringArray(KEY_COMPRESSED_URIS_RESULT_PATHS)
         val eventRequest =
-            params.inputData.getString(CREATE_EVENT_REQUEST) ?: return Result.failure()
+            params.inputData.getString(UPDATE_EVENT_REQUEST) ?: return Result.failure()
         val remoteResult = withContext(dispatchers.io) {
-            httpClient.postMultipart<EventDto>(
+            httpClient.putMultipart<EventDto>(
                 route = AgendaRoutes.EVENT,
                 body = MultiPartFormDataContent(
                     formData {
-                        append(CREATE_EVENT_REQUEST, eventRequest)
+                        append(UPDATE_EVENT_REQUEST, eventRequest)
                         compressedPhotoUris?.forEachIndexed { index, compressedPhotoUri ->
                             val compressedPhotoFile = File(compressedPhotoUri)
                             val photoBytes = compressedPhotoFile.readBytes()

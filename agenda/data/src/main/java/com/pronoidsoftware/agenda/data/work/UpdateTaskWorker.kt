@@ -27,10 +27,10 @@ class UpdateTaskWorker @AssistedInject constructor(
 
         val pendingUpdateTaskId = params.inputData.getString(TASK_ID)
             ?: return Result.failure()
-        val pendingUpdateRunEntity = agendaPendingSyncDao
+        val pendingUpdateTaskEntity = agendaPendingSyncDao
             .getUpdatedTaskPendingSyncEntity(pendingUpdateTaskId)
             ?: return Result.failure()
-        val task = pendingUpdateRunEntity.task.toTask()
+        val task = pendingUpdateTaskEntity.task.toTask()
         return when (val result = remoteAgendaDateSource.updateTask(task)) {
             is com.pronoidsoftware.core.domain.util.Result.Error -> {
                 when (result.error.toWorkerResult()) {
