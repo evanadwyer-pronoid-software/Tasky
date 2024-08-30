@@ -2,10 +2,12 @@ package com.pronoidsoftware.core.data.agenda
 
 import com.pronoidsoftware.core.database.dao.AgendaPendingSyncDao
 import com.pronoidsoftware.core.database.entity.sync.CreatedReminderPendingSyncEntity
+import com.pronoidsoftware.core.database.entity.sync.CreatedTaskPendingSyncEntity
 import com.pronoidsoftware.core.database.mappers.toEvent
 import com.pronoidsoftware.core.database.mappers.toReminder
 import com.pronoidsoftware.core.database.mappers.toReminderEntity
 import com.pronoidsoftware.core.database.mappers.toTask
+import com.pronoidsoftware.core.database.mappers.toTaskEntity
 import com.pronoidsoftware.core.domain.DispatcherProvider
 import com.pronoidsoftware.core.domain.SessionStorage
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItem
@@ -125,15 +127,14 @@ class OfflineFirstAgendaRepository @Inject constructor(
         localAgendaDataSource.deleteReminder(id)
         alarmScheduler.cancel(id)
 
+        agendaPendingSyncDao.deleteUpdatedReminderPendingSyncEntity(id)
         val isCreatePendingSync =
             agendaPendingSyncDao.getCreatedReminderPendingSyncEntity(id) != null
         if (isCreatePendingSync) {
             agendaPendingSyncDao.deleteCreatedReminderPendingSyncEntity(id)
-            agendaPendingSyncDao.deleteUpdatedReminderPendingSyncEntity(id)
             return
         }
 
-        agendaPendingSyncDao.deleteUpdatedReminderPendingSyncEntity(id)
         val remoteResult = applicationScope.async {
             remoteAgendaDataSource.deleteReminder(id)
         }.await()
@@ -226,7 +227,22 @@ class OfflineFirstAgendaRepository @Inject constructor(
             return localResult.asEmptyResult()
         }
         alarmScheduler.schedule(task)
-        return remoteAgendaDataSource.createTask(task)
+        return when (remoteAgendaDataSource.createTask(task)) {
+            is Result.Error -> {
+                applicationScope.launch {
+                    syncAgendaScheduler.scheduleSync(
+                        type = SyncAgendaScheduler.SyncType.CreateTask(
+                            task = task,
+                        ),
+                    )
+                }.join()
+                Result.Success(Unit)
+            }
+
+            is Result.Success -> {
+                Result.Success(Unit)
+            }
+        }
     }
 
     override suspend fun getTask(id: TaskId): AgendaItem.Task? {
@@ -249,18 +265,46 @@ class OfflineFirstAgendaRepository @Inject constructor(
     }
 
     override suspend fun updateTask(task: AgendaItem.Task): EmptyResult<DataError> {
+        val userId = sessionStorage.get()?.userId ?: return Result.Error(DataError.Local.LOGGED_OUT)
         val localResult = localAgendaDataSource.upsertTask(task)
         if (localResult !is Result.Success) {
             return localResult.asEmptyResult()
         }
         alarmScheduler.schedule(task)
-        return remoteAgendaDataSource.updateTask(task)
+        return when (remoteAgendaDataSource.updateTask(task)) {
+            is Result.Error -> {
+                val isCreatePendingSync =
+                    agendaPendingSyncDao.getCreatedTaskPendingSyncEntity(task.id) != null
+                if (isCreatePendingSync) {
+                    agendaPendingSyncDao.upsertCreatedTaskPendingSyncEntity(
+                        CreatedTaskPendingSyncEntity(
+                            task = task.toTaskEntity(),
+                            userId = userId,
+                        ),
+                    )
+                } else {
+                    applicationScope.launch {
+                        syncAgendaScheduler.scheduleSync(
+                            type = SyncAgendaScheduler.SyncType.UpdateTask(
+                                task = task,
+                            ),
+                        )
+                    }.join()
+                }
+                Result.Success(Unit)
+            }
+
+            is Result.Success -> {
+                Result.Success(Unit)
+            }
+        }
     }
 
     override suspend fun deleteTask(id: TaskId) {
         localAgendaDataSource.deleteTask(id)
         alarmScheduler.cancel(id)
 
+        agendaPendingSyncDao.deleteUpdatedTaskPendingSyncEntity(id)
         val isCreatePendingSync = agendaPendingSyncDao.getCreatedTaskPendingSyncEntity(id) != null
         if (isCreatePendingSync) {
             agendaPendingSyncDao.deleteCreatedTaskPendingSyncEntity(id)
@@ -270,6 +314,14 @@ class OfflineFirstAgendaRepository @Inject constructor(
         val remoteResult = applicationScope.async {
             remoteAgendaDataSource.deleteTask(id)
         }.await()
+
+        if (remoteResult is Result.Error) {
+            applicationScope.launch {
+                syncAgendaScheduler.scheduleSync(
+                    type = SyncAgendaScheduler.SyncType.DeleteTask(id),
+                )
+            }.join()
+        }
     }
 
     override suspend fun syncPendingTasks() {

@@ -11,15 +11,21 @@ import androidx.work.await
 import androidx.work.workDataOf
 import com.pronoidsoftware.core.database.dao.AgendaPendingSyncDao
 import com.pronoidsoftware.core.database.entity.sync.CreatedReminderPendingSyncEntity
+import com.pronoidsoftware.core.database.entity.sync.CreatedTaskPendingSyncEntity
 import com.pronoidsoftware.core.database.entity.sync.DeletedReminderSyncEntity
+import com.pronoidsoftware.core.database.entity.sync.DeletedTaskSyncEntity
 import com.pronoidsoftware.core.database.entity.sync.UpdatedReminderPendingSyncEntity
+import com.pronoidsoftware.core.database.entity.sync.UpdatedTaskPendingSyncEntity
 import com.pronoidsoftware.core.database.mappers.toReminderEntity
+import com.pronoidsoftware.core.database.mappers.toTaskEntity
 import com.pronoidsoftware.core.domain.DispatcherProvider
 import com.pronoidsoftware.core.domain.SessionStorage
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItem
 import com.pronoidsoftware.core.domain.agendaitem.ReminderId
+import com.pronoidsoftware.core.domain.agendaitem.TaskId
 import com.pronoidsoftware.core.domain.work.SyncAgendaScheduler
 import com.pronoidsoftware.core.domain.work.WorkKeys.REMINDER_ID
+import com.pronoidsoftware.core.domain.work.WorkKeys.TASK_ID
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -55,6 +61,22 @@ class SyncAgendaWorkerScheduler @Inject constructor(
 
             is SyncAgendaScheduler.SyncType.DeleteReminder -> {
                 scheduleDeleteReminderWorker(type.reminderId)
+            }
+
+            is SyncAgendaScheduler.SyncType.CreateTask -> {
+                scheduleCreateTaskWorker(type.task)
+            }
+
+            is SyncAgendaScheduler.SyncType.FetchTasks -> {
+                scheduleFetchTasksWorker(type.interval)
+            }
+
+            is SyncAgendaScheduler.SyncType.UpdateTask -> {
+                scheduleUpdateTaskWorker(type.task)
+            }
+
+            is SyncAgendaScheduler.SyncType.DeleteTask -> {
+                scheduleDeleteTaskWorker(type.taskId)
             }
         }
     }
@@ -189,6 +211,136 @@ class SyncAgendaWorkerScheduler @Inject constructor(
         }.join()
     }
 
+    private suspend fun scheduleCreateTaskWorker(task: AgendaItem.Task) {
+        val userId = sessionStorage.get()?.userId ?: return
+        val pendingCreatedTask = CreatedTaskPendingSyncEntity(
+            task = task.toTaskEntity(),
+            userId = userId,
+        )
+        agendaPendingSyncDao.upsertCreatedTaskPendingSyncEntity(pendingCreatedTask)
+
+        val workRequest = OneTimeWorkRequestBuilder<CreateTaskWorker>()
+            .addTag(CREATE_TASK_WORK)
+            .setConstraints(
+                Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                    .build(),
+            )
+            .setBackoffCriteria(
+                backoffPolicy = BackoffPolicy.EXPONENTIAL,
+                backoffDelay = 10L,
+                timeUnit = TimeUnit.SECONDS,
+            )
+            .setInputData(
+                workDataOf(
+                    TASK_ID to pendingCreatedTask.taskId,
+                ),
+            )
+            .build()
+
+        applicationScope.launch {
+            workManager.enqueue(workRequest).await()
+        }.join()
+    }
+
+    private suspend fun scheduleFetchTasksWorker(interval: Duration) {
+        val isSyncScheduled = withContext(dispatchers.io) {
+            workManager
+                .getWorkInfosByTag(FETCH_TASK_WORK)
+                .get()
+                .isNotEmpty()
+        }
+        if (isSyncScheduled) {
+            return
+        }
+
+        val workRequest = PeriodicWorkRequestBuilder<FetchTasksWorker>(
+            repeatInterval = interval.toJavaDuration(),
+        )
+            .setConstraints(
+                Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                    .build(),
+            )
+            .setBackoffCriteria(
+                backoffPolicy = BackoffPolicy.EXPONENTIAL,
+                backoffDelay = 10L,
+                timeUnit = TimeUnit.SECONDS,
+            )
+            .setInitialDelay(
+                duration = 1,
+                timeUnit = TimeUnit.MINUTES,
+            )
+            .addTag(FETCH_TASK_WORK)
+            .build()
+
+        workManager.enqueue(workRequest).await()
+    }
+
+    private suspend fun scheduleUpdateTaskWorker(task: AgendaItem.Task) {
+        val userId = sessionStorage.get()?.userId ?: return
+        val pendingUpdatedTask = UpdatedTaskPendingSyncEntity(
+            task = task.toTaskEntity(),
+            userId = userId,
+        )
+        agendaPendingSyncDao.upsertUpdatedTaskPendingSyncEntity(pendingUpdatedTask)
+
+        val workRequest = OneTimeWorkRequestBuilder<UpdateTaskWorker>()
+            .addTag(UPDATE_TASK_WORK)
+            .setConstraints(
+                Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                    .build(),
+            )
+            .setBackoffCriteria(
+                backoffPolicy = BackoffPolicy.EXPONENTIAL,
+                backoffDelay = 10L,
+                timeUnit = TimeUnit.SECONDS,
+            )
+            .setInputData(
+                workDataOf(
+                    TASK_ID to pendingUpdatedTask.taskId,
+                ),
+            )
+            .build()
+
+        applicationScope.launch {
+            workManager.enqueue(workRequest).await()
+        }.join()
+    }
+
+    private suspend fun scheduleDeleteTaskWorker(taskId: TaskId) {
+        val userId = sessionStorage.get()?.userId ?: return
+        val entity = DeletedTaskSyncEntity(
+            taskId = taskId,
+            userId = userId,
+        )
+        agendaPendingSyncDao.upsertDeletedTaskSyncEntity(entity)
+
+        val workRequest = OneTimeWorkRequestBuilder<DeleteTaskWorker>()
+            .addTag(DELETE_TASK_WORK)
+            .setConstraints(
+                Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                    .build(),
+            )
+            .setBackoffCriteria(
+                backoffPolicy = BackoffPolicy.EXPONENTIAL,
+                backoffDelay = 10L,
+                timeUnit = TimeUnit.SECONDS,
+            )
+            .setInputData(
+                workDataOf(
+                    TASK_ID to entity.taskId,
+                ),
+            )
+            .build()
+
+        applicationScope.launch {
+            workManager.enqueue(workRequest).await()
+        }.join()
+    }
+
     override suspend fun cancelAllSyncs() {
         WorkManager.getInstance(context)
             .cancelAllWork()
@@ -200,5 +352,9 @@ class SyncAgendaWorkerScheduler @Inject constructor(
         const val FETCH_REMINDER_WORK = "FETCH_REMINDER_WORK"
         const val UPDATE_REMINDER_WORK = "UPDATE_REMINDER_WORK"
         const val DELETE_REMINDER_WORK = "DELETE_REMINDER_WORK"
+        const val CREATE_TASK_WORK = "CREATE_TASK_WORK"
+        const val FETCH_TASK_WORK = "FETCH_TASK_WORK"
+        const val UPDATE_TASK_WORK = "UPDATE_TASK_WORK"
+        const val DELETE_TASK_WORK = "DELETE_TASK_WORK"
     }
 }
