@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.room.Room
 import com.pronoidsoftware.core.database.AgendaDatabase
 import com.pronoidsoftware.core.database.dao.AgendaDao
+import com.pronoidsoftware.core.database.dao.AgendaPendingSyncDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,5 +29,11 @@ object DatabaseModule {
     @Singleton
     fun provideAgendaDao(agendaDatabase: AgendaDatabase): AgendaDao {
         return agendaDatabase.agendaDao
+    }
+
+    @Provides
+    @Singleton
+    fun provideAgendaPendingSyncDao(agendaDatabase: AgendaDatabase): AgendaPendingSyncDao {
+        return agendaDatabase.agendaPendingSyncDao
     }
 }

@@ -1,5 +1,9 @@
 package com.pronoidsoftware.core.data.agenda
 
+import com.pronoidsoftware.core.database.dao.AgendaPendingSyncDao
+import com.pronoidsoftware.core.database.mappers.toReminder
+import com.pronoidsoftware.core.domain.DispatcherProvider
+import com.pronoidsoftware.core.domain.SessionStorage
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItem
 import com.pronoidsoftware.core.domain.agendaitem.AgendaRepository
 import com.pronoidsoftware.core.domain.agendaitem.AlarmScheduler
@@ -17,11 +21,16 @@ import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.LocalDate
 
 class OfflineFirstAgendaRepository @Inject constructor(
     private val localAgendaDataSource: LocalAgendaDataSource,
     private val remoteAgendaDataSource: RemoteAgendaDataSource,
+    private val agendaPendingSyncDao: AgendaPendingSyncDao,
+    private val dispatchers: DispatcherProvider,
+    private val sessionStorage: SessionStorage,
     private val applicationScope: CoroutineScope,
     private val alarmScheduler: AlarmScheduler,
 ) : AgendaRepository {
@@ -67,9 +76,65 @@ class OfflineFirstAgendaRepository @Inject constructor(
     override suspend fun deleteReminder(id: ReminderId) {
         localAgendaDataSource.deleteReminder(id)
         alarmScheduler.cancel(id)
+
+        val isPendingSync = agendaPendingSyncDao.getReminderPendingSyncEntity(id) != null
+        if (isPendingSync) {
+            agendaPendingSyncDao.deleteReminderPendingSyncEntity(id)
+            return
+        }
         val remoteResult = applicationScope.async {
             remoteAgendaDataSource.deleteReminder(id)
         }.await()
+    }
+
+    override suspend fun syncPendingReminders() {
+        withContext(dispatchers.io) {
+            val userId = sessionStorage.get()?.userId ?: return@withContext
+            val createdReminders = async {
+                agendaPendingSyncDao.getAllReminderPendingSyncEntities(userId)
+            }
+
+            val deletedReminders = async {
+                agendaPendingSyncDao.getAllDeletedReminderSyncEntities(userId)
+            }
+
+            val createJobs = createdReminders
+                .await()
+                .map {
+                    launch {
+                        val reminder = it.reminder.toReminder()
+                        when (remoteAgendaDataSource.createReminder(reminder)) {
+                            is Result.Error -> Unit
+                            is Result.Success -> {
+                                applicationScope.launch {
+                                    agendaPendingSyncDao.deleteReminderPendingSyncEntity(
+                                        it.reminderId,
+                                    )
+                                }.join()
+                            }
+                        }
+                    }
+                }
+            val deleteJobs = deletedReminders
+                .await()
+                .map {
+                    launch {
+                        when (remoteAgendaDataSource.deleteReminder(it.reminderId)) {
+                            is Result.Error -> Unit
+                            is Result.Success -> {
+                                applicationScope.launch {
+                                    agendaPendingSyncDao.deleteDeletedReminderSyncEntity(
+                                        it.reminderId,
+                                    )
+                                }.join()
+                            }
+                        }
+                    }
+                }
+
+            createJobs.forEach { it.join() }
+            deleteJobs.forEach { it.join() }
+        }
     }
 
     // Tasks

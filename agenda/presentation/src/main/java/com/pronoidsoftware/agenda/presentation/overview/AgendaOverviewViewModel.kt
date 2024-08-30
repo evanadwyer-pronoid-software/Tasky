@@ -57,6 +57,7 @@ class AgendaOverviewViewModel @Inject constructor(
                     ?: error("User initials not available. Has the user logged out?"),
                 isLoading = true,
             )
+            agendaRepository.syncPendingReminders()
             agendaRepository.fetchAllAgendaItems()
             state = state.copy(
                 isLoading = false,
