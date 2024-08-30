@@ -7,9 +7,12 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkManager
 import com.pronoidsoftware.core.domain.SessionStorage
+import com.pronoidsoftware.core.domain.agendaitem.AgendaRepository
+import com.pronoidsoftware.core.domain.work.SyncAgendaScheduler
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -21,6 +24,12 @@ class BootCompletedReceiver : BroadcastReceiver() {
 
     @Inject
     lateinit var applicationScope: CoroutineScope
+
+    @Inject
+    lateinit var agendaRepository: AgendaRepository
+
+    @Inject
+    lateinit var syncAgendaScheduler: SyncAgendaScheduler
 
     @Inject
     @ApplicationContext
@@ -36,6 +45,13 @@ class BootCompletedReceiver : BroadcastReceiver() {
                                 .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                                 .build()
                         WorkManager.getInstance(context).enqueue(scheduleLocalAlarmsWorkRequest)
+
+                        agendaRepository.syncPendingReminders()
+                        agendaRepository.syncPendingTasks()
+                        agendaRepository.syncPendingEvents()
+                        syncAgendaScheduler.scheduleSync(
+                            type = SyncAgendaScheduler.SyncType.FetchReminders(30.minutes),
+                        )
                     }
                 }
             }
