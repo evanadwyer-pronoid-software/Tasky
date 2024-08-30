@@ -5,6 +5,7 @@ import com.pronoidsoftware.core.domain.util.DataError
 fun DataError.toWorkerResult(): DataErrorWorkerResult {
     return when (this) {
         DataError.Local.DISK_FULL -> DataErrorWorkerResult.FAILURE
+        DataError.Local.LOGGED_OUT -> DataErrorWorkerResult.FAILURE
         DataError.Network.REQUEST_TIMEOUT -> DataErrorWorkerResult.RETRY
         DataError.Network.UNAUTHORIZED -> DataErrorWorkerResult.RETRY
         DataError.Network.CONFLICT -> DataErrorWorkerResult.RETRY

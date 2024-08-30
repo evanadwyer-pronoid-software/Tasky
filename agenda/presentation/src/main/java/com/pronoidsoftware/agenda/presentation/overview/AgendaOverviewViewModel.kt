@@ -18,8 +18,10 @@ import com.pronoidsoftware.core.domain.agendaitem.AgendaRepository
 import com.pronoidsoftware.core.domain.util.initializeAndCapitalize
 import com.pronoidsoftware.core.domain.util.now
 import com.pronoidsoftware.core.domain.util.today
+import com.pronoidsoftware.core.domain.work.SyncAgendaScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -38,9 +40,15 @@ class AgendaOverviewViewModel @Inject constructor(
     private val attendeeRepository: AttendeeRepository,
     private val applicationScope: CoroutineScope,
     private val authRepository: AuthRepository,
+    private val syncAgendaScheduler: SyncAgendaScheduler,
 ) : ViewModel() {
 
-    var state by mutableStateOf(AgendaOverviewState(selectedDate = today(clock)))
+    var state by mutableStateOf(
+        AgendaOverviewState(
+            selectedDate = today(clock),
+            isLoading = true,
+        ),
+    )
         private set
 
     private var agendaForTodayJob: Job? = null
@@ -49,6 +57,12 @@ class AgendaOverviewViewModel @Inject constructor(
     val events = eventChannel.receiveAsFlow()
 
     init {
+        viewModelScope.launch {
+            syncAgendaScheduler.scheduleSync(
+                type = SyncAgendaScheduler.SyncType.FetchReminders(30.minutes),
+            )
+        }
+
         agendaForTodayJob = getAgendaForTodayFlow()
 
         viewModelScope.launch {
@@ -133,12 +147,15 @@ class AgendaOverviewViewModel @Inject constructor(
                                 )
                             }
                         }
+
                         AgendaItemType.TASK -> agendaRepository.deleteTask(
                             state.agendaItemIdToDelete,
                         )
+
                         AgendaItemType.REMINDER -> agendaRepository.deleteReminder(
                             state.agendaItemIdToDelete,
                         )
+
                         null -> Unit
                     }
                     state = state.copy(
@@ -206,10 +223,8 @@ class AgendaOverviewViewModel @Inject constructor(
 
     private fun logout() {
         applicationScope.launch {
-            state = state.copy(
-                isLoading = true,
-            )
             agendaForTodayJob?.cancel()
+            syncAgendaScheduler.cancelAllSyncs()
             agendaRepository.deleteAllAgendaItems()
             authRepository.logout()
             sessionStorage.set(null)
