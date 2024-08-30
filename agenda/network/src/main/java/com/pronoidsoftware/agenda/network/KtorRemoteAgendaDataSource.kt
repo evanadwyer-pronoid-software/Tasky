@@ -19,8 +19,8 @@ import com.pronoidsoftware.agenda.network.mappers.toTask
 import com.pronoidsoftware.agenda.network.mappers.toUpdateEventRequest
 import com.pronoidsoftware.agenda.network.mappers.toUpsertReminderRequest
 import com.pronoidsoftware.agenda.network.mappers.toUpsertTaskRequest
-import com.pronoidsoftware.agenda.network.work.CreateEventWorker
-import com.pronoidsoftware.agenda.network.work.UpdateEventWorker
+import com.pronoidsoftware.agenda.network.work.CreateEventWithPhotosAndAttendeesWorker
+import com.pronoidsoftware.agenda.network.work.UpdateEventWithPhotosAndAttendeesWorker
 import com.pronoidsoftware.core.data.agenda.CompressPhotosWorker
 import com.pronoidsoftware.core.data.networking.AgendaRoutes
 import com.pronoidsoftware.core.data.networking.delete
@@ -160,27 +160,28 @@ class KtorRemoteAgendaDataSource @Inject constructor(
                 ),
             )
             .build()
-        val createEventWorkRequest = OneTimeWorkRequestBuilder<CreateEventWorker>()
-            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-            .setConstraints(
-                Constraints.Builder()
-                    .setRequiredNetworkType(
-                        NetworkType.CONNECTED,
-                    )
-                    .build(),
-            )
-            .setBackoffCriteria(
-                backoffPolicy = BackoffPolicy.EXPONENTIAL,
-                backoffDelay = 10L,
-                timeUnit = TimeUnit.SECONDS,
-            )
-            .setInputData(
-                workDataOf(
-                    CREATE_EVENT_REQUEST
-                        to Json.encodeToString(event.toCreateEventRequest()),
-                ),
-            )
-            .build()
+        val createEventWorkRequest =
+            OneTimeWorkRequestBuilder<CreateEventWithPhotosAndAttendeesWorker>()
+                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+                .setConstraints(
+                    Constraints.Builder()
+                        .setRequiredNetworkType(
+                            NetworkType.CONNECTED,
+                        )
+                        .build(),
+                )
+                .setBackoffCriteria(
+                    backoffPolicy = BackoffPolicy.EXPONENTIAL,
+                    backoffDelay = 10L,
+                    timeUnit = TimeUnit.SECONDS,
+                )
+                .setInputData(
+                    workDataOf(
+                        CREATE_EVENT_REQUEST
+                            to Json.encodeToString(event.toCreateEventRequest()),
+                    ),
+                )
+                .build()
         WorkManager.getInstance(context)
             .beginWith(compressPhotosWorkRequest)
             .then(createEventWorkRequest)
@@ -231,27 +232,28 @@ class KtorRemoteAgendaDataSource @Inject constructor(
                 ),
             )
             .build()
-        val updateEventWorkRequest = OneTimeWorkRequestBuilder<UpdateEventWorker>()
-            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-            .setConstraints(
-                Constraints.Builder()
-                    .setRequiredNetworkType(
-                        NetworkType.CONNECTED,
-                    )
-                    .build(),
-            )
-            .setBackoffCriteria(
-                backoffPolicy = BackoffPolicy.EXPONENTIAL,
-                backoffDelay = 10L,
-                timeUnit = TimeUnit.SECONDS,
-            )
-            .setInputData(
-                workDataOf(
-                    UPDATE_EVENT_REQUEST
-                        to Json.encodeToString(event.toUpdateEventRequest()),
-                ),
-            )
-            .build()
+        val updateEventWorkRequest =
+            OneTimeWorkRequestBuilder<UpdateEventWithPhotosAndAttendeesWorker>()
+                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+                .setConstraints(
+                    Constraints.Builder()
+                        .setRequiredNetworkType(
+                            NetworkType.CONNECTED,
+                        )
+                        .build(),
+                )
+                .setBackoffCriteria(
+                    backoffPolicy = BackoffPolicy.EXPONENTIAL,
+                    backoffDelay = 10L,
+                    timeUnit = TimeUnit.SECONDS,
+                )
+                .setInputData(
+                    workDataOf(
+                        UPDATE_EVENT_REQUEST
+                            to Json.encodeToString(event.toUpdateEventRequest()),
+                    ),
+                )
+                .build()
         WorkManager.getInstance(context)
             .beginWith(compressPhotosWorkRequest)
             .then(updateEventWorkRequest)

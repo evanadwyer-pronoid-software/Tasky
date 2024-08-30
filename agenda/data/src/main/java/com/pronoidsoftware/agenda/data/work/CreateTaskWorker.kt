@@ -27,10 +27,10 @@ class CreateTaskWorker @AssistedInject constructor(
 
         val pendingCreateTaskId = params.inputData.getString(TASK_ID)
             ?: return Result.failure()
-        val pendingCreatedRunEntity = agendaPendingSyncDao
+        val pendingCreatedTaskEntity = agendaPendingSyncDao
             .getCreatedTaskPendingSyncEntity(pendingCreateTaskId)
             ?: return Result.failure()
-        val task = pendingCreatedRunEntity.task.toTask()
+        val task = pendingCreatedTaskEntity.task.toTask()
         return when (val result = remoteAgendaDateSource.createTask(task)) {
             is com.pronoidsoftware.core.domain.util.Result.Error -> {
                 when (result.error.toWorkerResult()) {
