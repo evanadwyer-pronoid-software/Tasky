@@ -9,8 +9,10 @@ import com.pronoidsoftware.core.database.entity.EventEntity
 import com.pronoidsoftware.core.database.entity.PhotoEntity
 import com.pronoidsoftware.core.database.entity.ReminderEntity
 import com.pronoidsoftware.core.database.entity.TaskEntity
+import com.pronoidsoftware.core.database.entity.sync.DeletedEventSyncEntity
 import com.pronoidsoftware.core.database.entity.sync.DeletedReminderSyncEntity
 import com.pronoidsoftware.core.database.entity.sync.DeletedTaskSyncEntity
+import com.pronoidsoftware.core.database.entity.sync.EventPendingSyncEntity
 import com.pronoidsoftware.core.database.entity.sync.ReminderPendingSyncEntity
 import com.pronoidsoftware.core.database.entity.sync.TaskPendingSyncEntity
 
@@ -23,6 +25,8 @@ import com.pronoidsoftware.core.database.entity.sync.TaskPendingSyncEntity
         TaskPendingSyncEntity::class,
         DeletedTaskSyncEntity::class,
         EventEntity::class,
+        EventPendingSyncEntity::class,
+        DeletedEventSyncEntity::class,
         AttendeeEntity::class,
         PhotoEntity::class,
     ],
