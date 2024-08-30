@@ -1,4 +1,4 @@
-package com.pronoidsoftware.core.database.entity
+package com.pronoidsoftware.core.database.entity.sync
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

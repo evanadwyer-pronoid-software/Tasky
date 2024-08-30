@@ -2,6 +2,7 @@ package com.pronoidsoftware.core.data.agenda
 
 import com.pronoidsoftware.core.database.dao.AgendaPendingSyncDao
 import com.pronoidsoftware.core.database.mappers.toReminder
+import com.pronoidsoftware.core.database.mappers.toTask
 import com.pronoidsoftware.core.domain.DispatcherProvider
 import com.pronoidsoftware.core.domain.SessionStorage
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItem
@@ -178,9 +179,66 @@ class OfflineFirstAgendaRepository @Inject constructor(
     override suspend fun deleteTask(id: TaskId) {
         localAgendaDataSource.deleteTask(id)
         alarmScheduler.cancel(id)
+
+        val isPendingSync = agendaPendingSyncDao.getTaskPendingSyncEntity(id) != null
+        if (isPendingSync) {
+            agendaPendingSyncDao.deleteTaskPendingSyncEntity(id)
+            return
+        }
+
         val remoteResult = applicationScope.async {
             remoteAgendaDataSource.deleteTask(id)
         }.await()
+    }
+
+    override suspend fun syncPendingTasks() {
+        withContext(dispatchers.io) {
+            val userId = sessionStorage.get()?.userId ?: return@withContext
+            val createdTasks = async {
+                agendaPendingSyncDao.getAllTaskPendingSyncEntities(userId)
+            }
+
+            val deletedTasks = async {
+                agendaPendingSyncDao.getAllDeletedTaskSyncEntities(userId)
+            }
+
+            val createJobs = createdTasks
+                .await()
+                .map {
+                    launch {
+                        val task = it.task.toTask()
+                        when (remoteAgendaDataSource.createTask(task)) {
+                            is Result.Error -> Unit
+                            is Result.Success -> {
+                                applicationScope.launch {
+                                    agendaPendingSyncDao.deleteTaskPendingSyncEntity(
+                                        it.taskId,
+                                    )
+                                }.join()
+                            }
+                        }
+                    }
+                }
+            val deleteJobs = deletedTasks
+                .await()
+                .map {
+                    launch {
+                        when (remoteAgendaDataSource.deleteTask(it.taskId)) {
+                            is Result.Error -> Unit
+                            is Result.Success -> {
+                                applicationScope.launch {
+                                    agendaPendingSyncDao.deleteDeletedTaskSyncEntity(
+                                        it.taskId,
+                                    )
+                                }.join()
+                            }
+                        }
+                    }
+                }
+
+            createJobs.forEach { it.join() }
+            deleteJobs.forEach { it.join() }
+        }
     }
 
     // Events
