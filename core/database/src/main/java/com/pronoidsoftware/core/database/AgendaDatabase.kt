@@ -5,12 +5,14 @@ import androidx.room.RoomDatabase
 import com.pronoidsoftware.core.database.dao.AgendaDao
 import com.pronoidsoftware.core.database.dao.AgendaPendingSyncDao
 import com.pronoidsoftware.core.database.entity.AttendeeEntity
-import com.pronoidsoftware.core.database.entity.DeletedReminderSyncEntity
 import com.pronoidsoftware.core.database.entity.EventEntity
 import com.pronoidsoftware.core.database.entity.PhotoEntity
 import com.pronoidsoftware.core.database.entity.ReminderEntity
-import com.pronoidsoftware.core.database.entity.ReminderPendingSyncEntity
 import com.pronoidsoftware.core.database.entity.TaskEntity
+import com.pronoidsoftware.core.database.entity.sync.DeletedReminderSyncEntity
+import com.pronoidsoftware.core.database.entity.sync.DeletedTaskSyncEntity
+import com.pronoidsoftware.core.database.entity.sync.ReminderPendingSyncEntity
+import com.pronoidsoftware.core.database.entity.sync.TaskPendingSyncEntity
 
 @Database(
     entities = [
@@ -18,6 +20,8 @@ import com.pronoidsoftware.core.database.entity.TaskEntity
         ReminderPendingSyncEntity::class,
         DeletedReminderSyncEntity::class,
         TaskEntity::class,
+        TaskPendingSyncEntity::class,
+        DeletedTaskSyncEntity::class,
         EventEntity::class,
         AttendeeEntity::class,
         PhotoEntity::class,

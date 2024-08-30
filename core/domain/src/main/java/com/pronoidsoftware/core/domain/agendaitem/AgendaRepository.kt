@@ -28,6 +28,7 @@ interface AgendaRepository {
     suspend fun fetchAllTasks(): EmptyResult<DataError>
     suspend fun updateTask(task: AgendaItem.Task): EmptyResult<DataError>
     suspend fun deleteTask(id: TaskId)
+    suspend fun syncPendingTasks()
 
     // Events
     suspend fun createEventLocallyEnqueueRemote(event: AgendaItem.Event): Result<String, DataError>
