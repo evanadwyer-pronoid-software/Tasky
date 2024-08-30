@@ -8,4 +8,5 @@ object WorkKeys {
     const val CREATE_EVENT_REQUEST = "create_event_request"
     const val UPDATE_EVENT_REQUEST = "update_event_request"
     const val REMINDER_ID = "REMINDER_ID"
+    const val TASK_ID = "TASK_ID"
 }
