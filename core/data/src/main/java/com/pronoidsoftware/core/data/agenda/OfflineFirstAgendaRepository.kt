@@ -79,9 +79,10 @@ class OfflineFirstAgendaRepository @Inject constructor(
         localAgendaDataSource.deleteReminder(id)
         alarmScheduler.cancel(id)
 
-        val isPendingSync = agendaPendingSyncDao.getReminderPendingSyncEntity(id) != null
-        if (isPendingSync) {
-            agendaPendingSyncDao.deleteReminderPendingSyncEntity(id)
+        val isCreatePendingSync =
+            agendaPendingSyncDao.getCreatedReminderPendingSyncEntity(id) != null
+        if (isCreatePendingSync) {
+            agendaPendingSyncDao.deleteCreatedReminderPendingSyncEntity(id)
             return
         }
         val remoteResult = applicationScope.async {
@@ -93,7 +94,11 @@ class OfflineFirstAgendaRepository @Inject constructor(
         withContext(dispatchers.io) {
             val userId = sessionStorage.get()?.userId ?: return@withContext
             val createdReminders = async {
-                agendaPendingSyncDao.getAllReminderPendingSyncEntities(userId)
+                agendaPendingSyncDao.getAllCreatedReminderPendingSyncEntities(userId)
+            }
+
+            val updatedReminders = async {
+                agendaPendingSyncDao.getAllUpdatedReminderPendingSyncEntities(userId)
             }
 
             val deletedReminders = async {
@@ -109,7 +114,24 @@ class OfflineFirstAgendaRepository @Inject constructor(
                             is Result.Error -> Unit
                             is Result.Success -> {
                                 applicationScope.launch {
-                                    agendaPendingSyncDao.deleteReminderPendingSyncEntity(
+                                    agendaPendingSyncDao.deleteCreatedReminderPendingSyncEntity(
+                                        it.reminderId,
+                                    )
+                                }.join()
+                            }
+                        }
+                    }
+                }
+            val updateJobs = updatedReminders
+                .await()
+                .map {
+                    launch {
+                        val reminder = it.reminder.toReminder()
+                        when (remoteAgendaDataSource.updateReminder(reminder)) {
+                            is Result.Error -> Unit
+                            is Result.Success -> {
+                                applicationScope.launch {
+                                    agendaPendingSyncDao.deleteUpdatedReminderPendingSyncEntity(
                                         it.reminderId,
                                     )
                                 }.join()
@@ -135,6 +157,7 @@ class OfflineFirstAgendaRepository @Inject constructor(
                 }
 
             createJobs.forEach { it.join() }
+            updateJobs.forEach { it.join() }
             deleteJobs.forEach { it.join() }
         }
     }
@@ -181,9 +204,9 @@ class OfflineFirstAgendaRepository @Inject constructor(
         localAgendaDataSource.deleteTask(id)
         alarmScheduler.cancel(id)
 
-        val isPendingSync = agendaPendingSyncDao.getTaskPendingSyncEntity(id) != null
-        if (isPendingSync) {
-            agendaPendingSyncDao.deleteTaskPendingSyncEntity(id)
+        val isCreatePendingSync = agendaPendingSyncDao.getCreatedTaskPendingSyncEntity(id) != null
+        if (isCreatePendingSync) {
+            agendaPendingSyncDao.deleteCreatedTaskPendingSyncEntity(id)
             return
         }
 
@@ -196,7 +219,11 @@ class OfflineFirstAgendaRepository @Inject constructor(
         withContext(dispatchers.io) {
             val userId = sessionStorage.get()?.userId ?: return@withContext
             val createdTasks = async {
-                agendaPendingSyncDao.getAllTaskPendingSyncEntities(userId)
+                agendaPendingSyncDao.getAllCreatedTaskPendingSyncEntities(userId)
+            }
+
+            val updatedTasks = async {
+                agendaPendingSyncDao.getAllUpdatedTaskPendingSyncEntities(userId)
             }
 
             val deletedTasks = async {
@@ -212,7 +239,24 @@ class OfflineFirstAgendaRepository @Inject constructor(
                             is Result.Error -> Unit
                             is Result.Success -> {
                                 applicationScope.launch {
-                                    agendaPendingSyncDao.deleteTaskPendingSyncEntity(
+                                    agendaPendingSyncDao.deleteCreatedTaskPendingSyncEntity(
+                                        it.taskId,
+                                    )
+                                }.join()
+                            }
+                        }
+                    }
+                }
+            val updateJobs = updatedTasks
+                .await()
+                .map {
+                    launch {
+                        val task = it.task.toTask()
+                        when (remoteAgendaDataSource.updateTask(task)) {
+                            is Result.Error -> Unit
+                            is Result.Success -> {
+                                applicationScope.launch {
+                                    agendaPendingSyncDao.deleteUpdatedTaskPendingSyncEntity(
                                         it.taskId,
                                     )
                                 }.join()
@@ -238,6 +282,7 @@ class OfflineFirstAgendaRepository @Inject constructor(
                 }
 
             createJobs.forEach { it.join() }
+            updateJobs.forEach { it.join() }
             deleteJobs.forEach { it.join() }
         }
     }
@@ -304,9 +349,9 @@ class OfflineFirstAgendaRepository @Inject constructor(
         localAgendaDataSource.deleteEvent(id)
         alarmScheduler.cancel(id)
 
-        val isPendingSync = agendaPendingSyncDao.getEventPendingSyncEntity(id) != null
-        if (isPendingSync) {
-            agendaPendingSyncDao.deleteEventPendingSyncEntity(id)
+        val isCreatePendingSync = agendaPendingSyncDao.getCreatedEventPendingSyncEntity(id) != null
+        if (isCreatePendingSync) {
+            agendaPendingSyncDao.deleteCreatedEventPendingSyncEntity(id)
             return
         }
 
@@ -324,7 +369,11 @@ class OfflineFirstAgendaRepository @Inject constructor(
         withContext(dispatchers.io) {
             val userId = sessionStorage.get()?.userId ?: return@withContext
             val createdEvents = async {
-                agendaPendingSyncDao.getAllEventPendingSyncEntities(userId)
+                agendaPendingSyncDao.getAllCreatedEventPendingSyncEntities(userId)
+            }
+
+            val updatedEvents = async {
+                agendaPendingSyncDao.getAllUpdatedEventPendingSyncEntitiesWithAttendeeIds(userId)
             }
 
             val deletedEvents = async {
@@ -340,9 +389,30 @@ class OfflineFirstAgendaRepository @Inject constructor(
                             is Result.Error -> Unit
                             is Result.Success -> {
                                 applicationScope.launch {
-                                    agendaPendingSyncDao.deleteEventPendingSyncEntity(
+                                    agendaPendingSyncDao.deleteCreatedEventPendingSyncEntity(
                                         it.eventId,
                                     )
+                                }.join()
+                            }
+                        }
+                    }
+                }
+            val updateJobs = updatedEvents
+                .await()
+                .map {
+                    launch {
+                        val event = it.toEvent()
+                        when (remoteAgendaDataSource.updateEventSync(event)) {
+                            is Result.Error -> Unit
+                            is Result.Success -> {
+                                applicationScope.launch {
+                                    agendaPendingSyncDao.deleteUpdatedEventPendingSyncEntity(
+                                        it.updatedEventPendingSyncEntity.eventId,
+                                    )
+                                    agendaPendingSyncDao
+                                        .deleteUpdatedEventPendingSyncAttendeeEntity(
+                                            it.updatedEventPendingSyncEntity.eventId,
+                                        )
                                 }.join()
                             }
                         }
@@ -366,6 +436,7 @@ class OfflineFirstAgendaRepository @Inject constructor(
                 }
 
             createJobs.forEach { it.join() }
+            updateJobs.forEach { it.join() }
             deleteJobs.forEach { it.join() }
         }
     }

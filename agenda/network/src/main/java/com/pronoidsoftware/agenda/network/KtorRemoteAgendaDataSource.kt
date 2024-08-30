@@ -28,6 +28,7 @@ import com.pronoidsoftware.core.data.networking.get
 import com.pronoidsoftware.core.data.networking.post
 import com.pronoidsoftware.core.data.networking.postMultipart
 import com.pronoidsoftware.core.data.networking.put
+import com.pronoidsoftware.core.data.networking.putMultipart
 import com.pronoidsoftware.core.domain.SessionStorage
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItem
 import com.pronoidsoftware.core.domain.agendaitem.Photo
@@ -256,6 +257,17 @@ class KtorRemoteAgendaDataSource @Inject constructor(
             .then(updateEventWorkRequest)
             .enqueue()
         return updateEventWorkRequest.id
+    }
+
+    override suspend fun updateEventSync(event: AgendaItem.Event): EmptyResult<DataError.Network> {
+        return httpClient.putMultipart(
+            route = AgendaRoutes.EVENT,
+            body = MultiPartFormDataContent(
+                formData {
+                    append(CREATE_EVENT_REQUEST, Json.encodeToString(event.toUpdateEventRequest()))
+                },
+            ),
+        )
     }
 
     override suspend fun deleteEvent(id: String): EmptyResult<DataError.Network> {

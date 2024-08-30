@@ -6,9 +6,12 @@ import com.pronoidsoftware.core.database.entity.EventWithAttendeesAndPhotos
 import com.pronoidsoftware.core.database.entity.PhotoEntity
 import com.pronoidsoftware.core.database.entity.ReminderEntity
 import com.pronoidsoftware.core.database.entity.TaskEntity
+import com.pronoidsoftware.core.database.entity.sync.UpdatedEventPendingSyncAttendeeEntity
+import com.pronoidsoftware.core.database.entity.sync.UpdatedEventPendingSyncEntityWithAttendeeIds
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItem
 import com.pronoidsoftware.core.domain.agendaitem.Attendee
 import com.pronoidsoftware.core.domain.agendaitem.Photo
+import com.pronoidsoftware.core.domain.util.now
 import com.pronoidsoftware.core.domain.util.toLocalDateTime
 import com.pronoidsoftware.core.domain.util.toMillis
 
@@ -87,6 +90,36 @@ fun EventEntity.toEvent(): AgendaItem.Event {
         deletedPhotos = emptyList(),
         deletedAttendees = emptyList(),
         isUserEventCreator = isUserEventCreator,
+    )
+}
+
+fun UpdatedEventPendingSyncEntityWithAttendeeIds.toEvent(): AgendaItem.Event {
+    return AgendaItem.Event(
+        id = updatedEventPendingSyncEntity.eventId,
+        title = updatedEventPendingSyncEntity.event.title,
+        description = updatedEventPendingSyncEntity.event.description,
+        startDateTime = updatedEventPendingSyncEntity.event.startDateTime.toLocalDateTime(),
+        endDateTime = updatedEventPendingSyncEntity.event.endDateTime.toLocalDateTime(),
+        notificationDateTime = updatedEventPendingSyncEntity.event
+            .notificationDateTime.toLocalDateTime(),
+        attendees = attendees.map { it.toAttendee() },
+        photos = emptyList(),
+        isLocalUserGoing = updatedEventPendingSyncEntity.event.isLocalUserGoing,
+        host = updatedEventPendingSyncEntity.event.host,
+        deletedPhotos = emptyList(),
+        deletedAttendees = emptyList(),
+        isUserEventCreator = updatedEventPendingSyncEntity.event.isUserEventCreator,
+    )
+}
+
+// Only need this to hold onto attendee IDs when updating event remotely
+fun UpdatedEventPendingSyncAttendeeEntity.toAttendee(): Attendee {
+    return Attendee(
+        userId = attendeeId,
+        email = "",
+        fullName = "",
+        isGoing = true,
+        remindAt = now(),
     )
 }
 
