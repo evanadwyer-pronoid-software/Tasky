@@ -2,6 +2,7 @@ package com.pronoidsoftware.core.domain.work
 
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItem
 import com.pronoidsoftware.core.domain.agendaitem.ReminderId
+import com.pronoidsoftware.core.domain.agendaitem.TaskId
 import kotlin.time.Duration
 
 interface SyncAgendaScheduler {
@@ -14,5 +15,9 @@ interface SyncAgendaScheduler {
         data class FetchReminders(val interval: Duration) : SyncType
         data class UpdateReminder(val reminder: AgendaItem.Reminder) : SyncType
         data class DeleteReminder(val reminderId: ReminderId) : SyncType
+        data class CreateTask(val task: AgendaItem.Task) : SyncType
+        data class FetchTasks(val interval: Duration) : SyncType
+        data class UpdateTask(val task: AgendaItem.Task) : SyncType
+        data class DeleteTask(val taskId: TaskId) : SyncType
     }
 }

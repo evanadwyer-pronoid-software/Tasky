@@ -61,6 +61,9 @@ class AgendaOverviewViewModel @Inject constructor(
             syncAgendaScheduler.scheduleSync(
                 type = SyncAgendaScheduler.SyncType.FetchReminders(30.minutes),
             )
+            syncAgendaScheduler.scheduleSync(
+                type = SyncAgendaScheduler.SyncType.FetchTasks(30.minutes),
+            )
         }
 
         agendaForTodayJob = getAgendaForTodayFlow()
