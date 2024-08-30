@@ -19,6 +19,7 @@ interface AgendaRepository {
     suspend fun fetchAllReminders(): EmptyResult<DataError>
     suspend fun updateReminder(reminder: AgendaItem.Reminder): EmptyResult<DataError>
     suspend fun deleteReminder(id: ReminderId)
+    suspend fun syncPendingReminders()
 
     // Tasks
     suspend fun createTask(task: AgendaItem.Task): EmptyResult<DataError>
