@@ -55,9 +55,11 @@ fun LocalDate.formatFullDate(clock: Clock = Clock.System): String {
 fun LocalTime.formatHours(): String {
     return this.format(
         LocalTime.Format {
-            hour()
+            amPmHour(Padding.NONE)
             char(':')
             minute()
+            char(' ')
+            amPmMarker("AM", "PM")
         },
     )
 }
@@ -69,9 +71,11 @@ fun LocalDateTime.formatOverview(): String {
             char(' ')
             dayOfMonth(padding = Padding.NONE)
             chars(", ")
-            hour(padding = Padding.NONE)
+            amPmHour(padding = Padding.NONE)
             char(':')
             minute()
+            char(' ')
+            amPmMarker("AM", "PM")
         },
     )
 }
