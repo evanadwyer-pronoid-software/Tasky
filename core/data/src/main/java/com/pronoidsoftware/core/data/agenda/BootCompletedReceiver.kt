@@ -50,10 +50,7 @@ class BootCompletedReceiver : BroadcastReceiver() {
                         agendaRepository.syncPendingTasks()
                         agendaRepository.syncPendingEvents()
                         syncAgendaScheduler.scheduleSync(
-                            type = SyncAgendaScheduler.SyncType.FetchReminders(30.minutes),
-                        )
-                        syncAgendaScheduler.scheduleSync(
-                            type = SyncAgendaScheduler.SyncType.FetchTasks(30.minutes),
+                            type = SyncAgendaScheduler.SyncType.FetchAllAgendaItems(30.minutes),
                         )
                     }
                 }

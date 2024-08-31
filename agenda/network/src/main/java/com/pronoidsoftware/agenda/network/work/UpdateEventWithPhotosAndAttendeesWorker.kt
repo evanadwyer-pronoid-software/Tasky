@@ -7,13 +7,18 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.pronoidsoftware.agenda.network.dto.EventDto
 import com.pronoidsoftware.agenda.network.mappers.toEvent
+import com.pronoidsoftware.agenda.network.request.UpdateEventRequest
 import com.pronoidsoftware.core.data.networking.AgendaRoutes
 import com.pronoidsoftware.core.data.networking.putMultipart
 import com.pronoidsoftware.core.data.work.DataErrorWorkerResult
 import com.pronoidsoftware.core.data.work.toWorkerResult
+import com.pronoidsoftware.core.database.dao.AgendaPendingSyncDao
+import com.pronoidsoftware.core.database.entity.sync.CreatedEventPendingSyncEntity
+import com.pronoidsoftware.core.database.mappers.toEventEntity
 import com.pronoidsoftware.core.domain.DispatcherProvider
 import com.pronoidsoftware.core.domain.SessionStorage
 import com.pronoidsoftware.core.domain.agendaitem.LocalAgendaDataSource
+import com.pronoidsoftware.core.domain.work.SyncAgendaScheduler
 import com.pronoidsoftware.core.domain.work.WorkKeys.KEY_COMPRESSED_URIS_RESULT_PATHS
 import com.pronoidsoftware.core.domain.work.WorkKeys.KEY_NUMBER_URIS_BEYOND_COMPRESSION
 import com.pronoidsoftware.core.domain.work.WorkKeys.UPDATE_EVENT_REQUEST
@@ -25,7 +30,10 @@ import io.ktor.client.request.forms.formData
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import java.io.File
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
 
 @HiltWorker
 class UpdateEventWithPhotosAndAttendeesWorker @AssistedInject constructor(
@@ -35,10 +43,34 @@ class UpdateEventWithPhotosAndAttendeesWorker @AssistedInject constructor(
     private val httpClient: HttpClient,
     private val localAgendaDataSource: LocalAgendaDataSource,
     private val sessionStorage: SessionStorage,
+    private val applicationScope: CoroutineScope,
+    private val syncAgendaScheduler: SyncAgendaScheduler,
+    private val agendaPendingSyncDao: AgendaPendingSyncDao,
 ) : CoroutineWorker(appContext, params) {
     override suspend fun doWork(): Result {
         if (runAttemptCount >= 5) {
-            // TODO: schedule sync
+            applicationScope.launch {
+                sessionStorage.get()?.userId?.let { localUserId ->
+                    params.inputData.getString(UPDATE_EVENT_REQUEST)?.let { updateEventRequest ->
+                        val event = Json.decodeFromString<UpdateEventRequest>(updateEventRequest)
+                            .toEvent()
+                        val isCreatePendingSync =
+                            agendaPendingSyncDao.getCreatedEventPendingSyncEntity(event.id) != null
+                        if (isCreatePendingSync) {
+                            agendaPendingSyncDao.upsertCreatedEventPendingSyncEntity(
+                                CreatedEventPendingSyncEntity(
+                                    event = event.toEventEntity(),
+                                    userId = localUserId,
+                                ),
+                            )
+                        } else {
+                            syncAgendaScheduler.scheduleSync(
+                                type = SyncAgendaScheduler.SyncType.UpdateEvent(event = event),
+                            )
+                        }
+                    }
+                }
+            }.join()
             return Result.failure()
         }
 
@@ -79,7 +111,36 @@ class UpdateEventWithPhotosAndAttendeesWorker @AssistedInject constructor(
             is com.pronoidsoftware.core.domain.util.Result.Error -> {
                 when (remoteResult.error.toWorkerResult()) {
                     DataErrorWorkerResult.FAILURE -> {
-                        // TODO: schedule sync
+                        applicationScope.launch {
+                            sessionStorage.get()?.userId?.let { localUserId ->
+                                params.inputData.getString(UPDATE_EVENT_REQUEST)
+                                    ?.let { updateEventRequest ->
+                                        val event = Json.decodeFromString<UpdateEventRequest>(
+                                            updateEventRequest,
+                                        )
+                                            .toEvent()
+                                        val isCreatePendingSync =
+                                            agendaPendingSyncDao.getCreatedEventPendingSyncEntity(
+                                                event.id,
+                                            ) != null
+                                        if (isCreatePendingSync) {
+                                            agendaPendingSyncDao
+                                                .upsertCreatedEventPendingSyncEntity(
+                                                    CreatedEventPendingSyncEntity(
+                                                        event = event.toEventEntity(),
+                                                        userId = localUserId,
+                                                    ),
+                                                )
+                                        } else {
+                                            syncAgendaScheduler.scheduleSync(
+                                                type = SyncAgendaScheduler.SyncType.UpdateEvent(
+                                                    event = event,
+                                                ),
+                                            )
+                                        }
+                                    }
+                            }
+                        }.join()
                         Result.failure()
                     }
 

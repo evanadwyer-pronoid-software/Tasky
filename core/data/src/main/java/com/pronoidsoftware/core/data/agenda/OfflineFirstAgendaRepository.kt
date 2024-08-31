@@ -1,5 +1,7 @@
 package com.pronoidsoftware.core.data.agenda
 
+import android.content.Context
+import androidx.work.WorkManager
 import com.pronoidsoftware.core.database.dao.AgendaPendingSyncDao
 import com.pronoidsoftware.core.database.entity.sync.CreatedReminderPendingSyncEntity
 import com.pronoidsoftware.core.database.entity.sync.CreatedTaskPendingSyncEntity
@@ -24,6 +26,8 @@ import com.pronoidsoftware.core.domain.util.Result
 import com.pronoidsoftware.core.domain.util.asEmptyResult
 import com.pronoidsoftware.core.domain.util.onSuccess
 import com.pronoidsoftware.core.domain.work.SyncAgendaScheduler
+import dagger.hilt.android.qualifiers.ApplicationContext
+import java.util.UUID
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
@@ -33,6 +37,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.datetime.LocalDate
 
 class OfflineFirstAgendaRepository @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val localAgendaDataSource: LocalAgendaDataSource,
     private val remoteAgendaDataSource: RemoteAgendaDataSource,
     private val agendaPendingSyncDao: AgendaPendingSyncDao,
@@ -454,19 +459,44 @@ class OfflineFirstAgendaRepository @Inject constructor(
         return Result.Success(eventWorkId.toString())
     }
 
-    override suspend fun deleteEvent(id: EventId) {
-        localAgendaDataSource.deleteEvent(id)
-        alarmScheduler.cancel(id)
+    override suspend fun deleteEvent(eventId: EventId, workId: UUID?) {
+        localAgendaDataSource.deleteEvent(eventId)
+        alarmScheduler.cancel(eventId)
+        val workManager = WorkManager.getInstance(context)
 
-        val isCreatePendingSync = agendaPendingSyncDao.getCreatedEventPendingSyncEntity(id) != null
-        if (isCreatePendingSync) {
-            agendaPendingSyncDao.deleteCreatedEventPendingSyncEntity(id)
+        agendaPendingSyncDao.deleteUpdatedEventPendingSyncEntity(eventId)
+        agendaPendingSyncDao.deleteUpdatedEventPendingSyncAttendeeEntities(eventId)
+        val isCreatePendingSync =
+            agendaPendingSyncDao.getCreatedEventPendingSyncEntity(eventId) != null
+        val isSyncScheduled = withContext(dispatchers.io) {
+            if (workId == null) {
+                false
+            } else {
+                workManager
+                    .getWorkInfoById(workId)
+                    .get() != null
+            }
+        }
+        // TODO: cancel event creation remotely
+        if (isCreatePendingSync || isSyncScheduled) {
+            agendaPendingSyncDao.deleteCreatedEventPendingSyncEntity(eventId)
+            workId?.let {
+                workManager.cancelWorkById(it)
+            }
             return
         }
 
         val remoteResult = applicationScope.async {
-            remoteAgendaDataSource.deleteEvent(id)
+            remoteAgendaDataSource.deleteEvent(eventId)
         }.await()
+
+        if (remoteResult is Result.Error) {
+            applicationScope.launch {
+                syncAgendaScheduler.scheduleSync(
+                    type = SyncAgendaScheduler.SyncType.DeleteEvent(eventId),
+                )
+            }.join()
+        }
     }
 
     override suspend fun removeAttendee(id: EventId) {
@@ -519,7 +549,7 @@ class OfflineFirstAgendaRepository @Inject constructor(
                                         it.updatedEventPendingSyncEntity.eventId,
                                     )
                                     agendaPendingSyncDao
-                                        .deleteUpdatedEventPendingSyncAttendeeEntity(
+                                        .deleteUpdatedEventPendingSyncAttendeeEntities(
                                             it.updatedEventPendingSyncEntity.eventId,
                                         )
                                 }.join()

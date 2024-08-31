@@ -12,6 +12,7 @@ dependencies {
     implementation(projects.core.domain)
     implementation(projects.core.data)
     implementation(projects.agenda.domain)
+    implementation(projects.core.database)
 
     implementation(libs.kotlinx.datetime)
 }

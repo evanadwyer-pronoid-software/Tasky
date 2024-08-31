@@ -41,7 +41,7 @@ class UpdatePendingEventWorker @AssistedInject constructor(
 
             is com.pronoidsoftware.core.domain.util.Result.Success -> {
                 agendaPendingSyncDao.deleteUpdatedEventPendingSyncEntity(pendingUpdateEventId)
-                agendaPendingSyncDao.deleteUpdatedEventPendingSyncAttendeeEntity(
+                agendaPendingSyncDao.deleteUpdatedEventPendingSyncAttendeeEntities(
                     pendingUpdateEventId,
                 )
                 Result.success()

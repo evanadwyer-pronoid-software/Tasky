@@ -154,8 +154,13 @@ interface AgendaPendingSyncDao {
         updatedEventPendingSyncAttendeeEntity: UpdatedEventPendingSyncAttendeeEntity,
     )
 
+    @Upsert
+    suspend fun upsertUpdatedEventPendingSyncAttendeeEntities(
+        updatedEventPendingSyncAttendeeEntities: List<UpdatedEventPendingSyncAttendeeEntity>,
+    )
+
     @Query("DELETE FROM updatedeventpendingsyncattendeeentity WHERE eventId=:eventId")
-    suspend fun deleteUpdatedEventPendingSyncAttendeeEntity(eventId: EventId)
+    suspend fun deleteUpdatedEventPendingSyncAttendeeEntities(eventId: EventId)
 
     // Deleted Events
     @Query("SELECT * FROM deletedeventsyncentity WHERE userId=:userId")
