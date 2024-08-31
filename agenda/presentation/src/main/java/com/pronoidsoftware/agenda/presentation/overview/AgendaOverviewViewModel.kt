@@ -184,6 +184,21 @@ class AgendaOverviewViewModel @Inject constructor(
                 logout()
             }
 
+            AgendaOverviewAction.OnRefresh -> {
+                viewModelScope.launch {
+                    state = state.copy(
+                        isLoading = true,
+                    )
+                    agendaRepository.syncPendingReminders()
+                    agendaRepository.syncPendingTasks()
+                    agendaRepository.syncPendingEvents()
+                    agendaRepository.fetchAllAgendaItems()
+                    state = state.copy(
+                        isLoading = false,
+                    )
+                }
+            }
+
             else -> {
                 Timber.wtf("Unknown AgendaOverviewAction in VM")
             }

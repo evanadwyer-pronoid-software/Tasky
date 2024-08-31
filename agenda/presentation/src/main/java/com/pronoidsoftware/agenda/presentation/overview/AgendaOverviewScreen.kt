@@ -18,6 +18,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -172,131 +174,143 @@ internal fun AgendaOverviewScreen(
         },
         floatingActionButtonPosition = FabPosition.End,
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(
-                    top = innerPadding.calculateTopPadding(),
-                    bottom = innerPadding.calculateBottomPadding(),
-                )
-                .fillMaxSize()
-                .clip(
-                    RoundedCornerShape(
-                        topStart = spacing.scaffoldContainerRadius,
-                        topEnd = spacing.scaffoldContainerRadius,
-                    ),
-                )
-                .background(
-                    MaterialTheme.colorScheme.background,
-                    shape = RoundedCornerShape(
-                        topStart = spacing.scaffoldContainerRadius,
-                        topEnd = spacing.scaffoldContainerRadius,
-                    ),
-                )
-                .padding(top = spacing.scaffoldPaddingTop),
+        PullToRefreshBox(
+            state = rememberPullToRefreshState(),
+            isRefreshing = state.isLoading,
+            onRefresh = {
+                onAction(AgendaOverviewAction.OnRefresh)
+            },
         ) {
-            if (state.isShowingDeleteConfirmationDialog) {
-                TaskyDialog(
-                    title = stringResource(id = R.string.delete_dialog_title),
-                    description = stringResource(id = R.string.confirm_deletion),
-                    onCancel = { onAction(AgendaOverviewAction.OnCancelDelete) },
-                    onConfirm = { onAction(AgendaOverviewAction.OnConfirmDelete) },
-                )
-            }
-
-            AgendaOverviewDateWidget(
-                selectedDate = state.selectedDate,
-                onSelectDate = {
-                    onAction(AgendaOverviewAction.OnSelectDate(it))
-                },
-            )
-            Spacer(modifier = Modifier.height(34.dp))
-            if (state.isLoading) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.TopCenter,
-                ) {
-                    CircularProgressIndicator()
+            Column(
+                modifier = Modifier
+                    .padding(
+                        top = innerPadding.calculateTopPadding(),
+                        bottom = innerPadding.calculateBottomPadding(),
+                    )
+                    .fillMaxSize()
+                    .clip(
+                        RoundedCornerShape(
+                            topStart = spacing.scaffoldContainerRadius,
+                            topEnd = spacing.scaffoldContainerRadius,
+                        ),
+                    )
+                    .background(
+                        MaterialTheme.colorScheme.background,
+                        shape = RoundedCornerShape(
+                            topStart = spacing.scaffoldContainerRadius,
+                            topEnd = spacing.scaffoldContainerRadius,
+                        ),
+                    )
+                    .padding(top = spacing.scaffoldPaddingTop),
+            ) {
+                if (state.isShowingDeleteConfirmationDialog) {
+                    TaskyDialog(
+                        title = stringResource(id = R.string.delete_dialog_title),
+                        description = stringResource(id = R.string.confirm_deletion),
+                        onCancel = { onAction(AgendaOverviewAction.OnCancelDelete) },
+                        onConfirm = { onAction(AgendaOverviewAction.OnConfirmDelete) },
+                    )
                 }
-            } else {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = spacing.spaceMedium),
-                ) {
-                    item {
-                        Text(
-                            text = state.selectedDate.formatRelativeDate(clock).asString(),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onSurface,
-                        )
-                        Spacer(modifier = Modifier.height(15.5.dp))
-                    }
 
-                    if (state.items.isEmpty()) {
+                AgendaOverviewDateWidget(
+                    selectedDate = state.selectedDate,
+                    onSelectDate = {
+                        onAction(AgendaOverviewAction.OnSelectDate(it))
+                    },
+                )
+                Spacer(modifier = Modifier.height(34.dp))
+                if (state.isLoading) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.TopCenter,
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = spacing.spaceMedium),
+                    ) {
                         item {
                             Text(
-                                text = stringResource(id = R.string.empty_agenda),
-                                style = TextStyle(
-                                    fontFamily = Inter,
-                                    fontWeight = FontWeight.W400,
-                                    fontSize = 16.sp,
-                                    lineHeight = 15.sp,
-                                    color = TaskyDarkGray,
-                                ),
+                                text = state.selectedDate.formatRelativeDate(clock).asString(),
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onSurface,
                             )
+                            Spacer(modifier = Modifier.height(15.5.dp))
                         }
-                    }
-                    items(
-                        items = state.items,
-                        key = { it.id },
-                    ) { agendaOverviewItem ->
-                        when (agendaOverviewItem) {
-                            is AgendaOverviewItemUi.Item -> {
-                                AgendaOverviewItem(
-                                    agendaOverviewItemContents = agendaOverviewItem.item,
-                                    onTickClick = {
-                                        onAction(
-                                            AgendaOverviewAction.OnTickClick(agendaOverviewItem.id),
-                                        )
-                                    },
-                                    onOpenClick = { id ->
-                                        onAction(
-                                            AgendaOverviewAction.OnOpenClick(
-                                                type = getAgendaItemType(agendaOverviewItem),
-                                                id = id,
-                                            ),
-                                        )
-                                    },
-                                    onEditClick = { id ->
-                                        onAction(
-                                            AgendaOverviewAction.OnEditClick(
-                                                type = getAgendaItemType(agendaOverviewItem),
-                                                id = id,
-                                            ),
-                                        )
-                                    },
-                                    onDeleteClick = { id ->
-                                        onAction(
-                                            AgendaOverviewAction.OnDeleteClick(
-                                                type = getAgendaItemType(agendaOverviewItem),
-                                                id = id,
-                                                eventHostId = getEventHostId(agendaOverviewItem),
-                                            ),
-                                        )
-                                    },
-                                    modifier = Modifier.padding(
-                                        vertical = 7.5.dp,
+
+                        if (state.items.isEmpty()) {
+                            item {
+                                Text(
+                                    text = stringResource(id = R.string.empty_agenda),
+                                    style = TextStyle(
+                                        fontFamily = Inter,
+                                        fontWeight = FontWeight.W400,
+                                        fontSize = 16.sp,
+                                        lineHeight = 15.sp,
+                                        color = TaskyDarkGray,
                                     ),
                                 )
                             }
+                        }
+                        items(
+                            items = state.items,
+                            key = { it.id },
+                        ) { agendaOverviewItem ->
+                            when (agendaOverviewItem) {
+                                is AgendaOverviewItemUi.Item -> {
+                                    AgendaOverviewItem(
+                                        agendaOverviewItemContents = agendaOverviewItem.item,
+                                        onTickClick = {
+                                            onAction(
+                                                AgendaOverviewAction.OnTickClick(
+                                                    agendaOverviewItem.id,
+                                                ),
+                                            )
+                                        },
+                                        onOpenClick = { id ->
+                                            onAction(
+                                                AgendaOverviewAction.OnOpenClick(
+                                                    type = getAgendaItemType(agendaOverviewItem),
+                                                    id = id,
+                                                ),
+                                            )
+                                        },
+                                        onEditClick = { id ->
+                                            onAction(
+                                                AgendaOverviewAction.OnEditClick(
+                                                    type = getAgendaItemType(agendaOverviewItem),
+                                                    id = id,
+                                                ),
+                                            )
+                                        },
+                                        onDeleteClick = { id ->
+                                            onAction(
+                                                AgendaOverviewAction.OnDeleteClick(
+                                                    type = getAgendaItemType(agendaOverviewItem),
+                                                    id = id,
+                                                    eventHostId = getEventHostId(
+                                                        agendaOverviewItem,
+                                                    ),
+                                                ),
+                                            )
+                                        },
+                                        modifier = Modifier.padding(
+                                            vertical = 7.5.dp,
+                                        ),
+                                    )
+                                }
 
-                            is AgendaOverviewItemUi.TimeMarker -> {
-                                TimeMarker()
+                                is AgendaOverviewItemUi.TimeMarker -> {
+                                    TimeMarker()
+                                }
                             }
                         }
-                    }
-                    item {
-                        Spacer(modifier = Modifier.height(80.dp))
+                        item {
+                            Spacer(modifier = Modifier.height(80.dp))
+                        }
                     }
                 }
             }
