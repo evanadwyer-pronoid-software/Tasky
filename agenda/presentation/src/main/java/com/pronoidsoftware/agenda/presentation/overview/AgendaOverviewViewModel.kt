@@ -59,10 +59,7 @@ class AgendaOverviewViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             syncAgendaScheduler.scheduleSync(
-                type = SyncAgendaScheduler.SyncType.FetchReminders(30.minutes),
-            )
-            syncAgendaScheduler.scheduleSync(
-                type = SyncAgendaScheduler.SyncType.FetchTasks(30.minutes),
+                type = SyncAgendaScheduler.SyncType.FetchAllAgendaItems(30.minutes),
             )
         }
 
@@ -140,6 +137,7 @@ class AgendaOverviewViewModel @Inject constructor(
                             if (state.eventToDeleteHostId == localUserId) {
                                 agendaRepository.deleteEvent(
                                     state.agendaItemIdToDelete,
+                                    null,
                                 )
                             } else {
                                 agendaRepository.removeAttendee(

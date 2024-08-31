@@ -266,7 +266,7 @@ class KtorRemoteAgendaDataSource @Inject constructor(
             route = AgendaRoutes.EVENT,
             body = MultiPartFormDataContent(
                 formData {
-                    append(CREATE_EVENT_REQUEST, Json.encodeToString(event.toUpdateEventRequest()))
+                    append(UPDATE_EVENT_REQUEST, Json.encodeToString(event.toUpdateEventRequest()))
                 },
             ),
         )

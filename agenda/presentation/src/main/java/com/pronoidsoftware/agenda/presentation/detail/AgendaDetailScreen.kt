@@ -328,7 +328,8 @@ internal fun AgendaDetailScreen(
                     },
                     isEditing = state.isEditing,
                     onEditClick = { onAction(AgendaDetailAction.OnEnableEdit) },
-                    canEnableEdit = eventWorkResult?.state?.isFinished ?: true,
+                    canEnableEdit = eventWorkResult?.state?.isFinished ?: true ||
+                        (connectionStatus != ConnectivityObserver.Status.AVAILABLE),
                     onSaveClick = { onAction(AgendaDetailAction.OnSave) },
                 )
             },

@@ -311,7 +311,6 @@ class AgendaDetailViewModel @Inject constructor(
                                 }
 
                                 is Result.Success -> {
-                                    // TODO send saved event locally iff offline
                                     state = state.copy(
                                         typeSpecificDetails = eventDetails.copy(
                                             deletedPhotos = emptyList(),
@@ -319,6 +318,7 @@ class AgendaDetailViewModel @Inject constructor(
                                             workId = UUID.fromString(result.data),
                                         ),
                                     )
+                                    eventChannel.send(AgendaDetailEvent.OnSaved)
                                 }
                             }
                         }
@@ -829,7 +829,6 @@ class AgendaDetailViewModel @Inject constructor(
                         }
 
                         is Result.Success -> {
-                            // TODO send saved event locally iff offline
                             state = state.copy(
                                 typeSpecificDetails = eventDetails.copy(
                                     deletedPhotos = emptyList(),
@@ -837,6 +836,7 @@ class AgendaDetailViewModel @Inject constructor(
                                     workId = UUID.fromString(result.data),
                                 ),
                             )
+                            eventChannel.send(AgendaDetailEvent.OnSaved)
                         }
                     }
                     state = state.copy(
@@ -882,7 +882,6 @@ class AgendaDetailViewModel @Inject constructor(
                         }
 
                         is Result.Success -> {
-                            // TODO send saved event locally iff offline
                             state = state.copy(
                                 typeSpecificDetails = eventDetails.copy(
                                     deletedPhotos = emptyList(),
@@ -890,6 +889,7 @@ class AgendaDetailViewModel @Inject constructor(
                                     workId = UUID.fromString(result.data),
                                 ),
                             )
+                            eventChannel.send(AgendaDetailEvent.OnSaved)
                         }
                     }
                     state = state.copy(
@@ -908,6 +908,7 @@ class AgendaDetailViewModel @Inject constructor(
                         when (state.agendaItemType) {
                             AgendaItemType.EVENT -> agendaRepository.deleteEvent(
                                 state.agendaItemId,
+                                getDetailsAsEvent()?.workId,
                             )
 
                             AgendaItemType.TASK -> agendaRepository.deleteTask(
