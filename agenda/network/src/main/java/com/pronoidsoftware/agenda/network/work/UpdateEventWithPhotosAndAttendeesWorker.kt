@@ -10,7 +10,6 @@ import com.pronoidsoftware.agenda.network.mappers.toEvent
 import com.pronoidsoftware.agenda.network.request.UpdateEventRequest
 import com.pronoidsoftware.core.data.networking.AgendaRoutes
 import com.pronoidsoftware.core.data.networking.putMultipart
-import com.pronoidsoftware.core.data.work.DataErrorWorkerResult
 import com.pronoidsoftware.core.data.work.toWorkerResult
 import com.pronoidsoftware.core.database.dao.AgendaPendingSyncDao
 import com.pronoidsoftware.core.database.entity.sync.CreatedEventPendingSyncEntity
@@ -109,45 +108,7 @@ class UpdateEventWithPhotosAndAttendeesWorker @AssistedInject constructor(
 
         return when (remoteResult) {
             is com.pronoidsoftware.core.domain.util.Result.Error -> {
-                when (remoteResult.error.toWorkerResult()) {
-                    DataErrorWorkerResult.FAILURE -> {
-                        applicationScope.launch {
-                            sessionStorage.get()?.userId?.let { localUserId ->
-                                params.inputData.getString(UPDATE_EVENT_REQUEST)
-                                    ?.let { updateEventRequest ->
-                                        val event = Json.decodeFromString<UpdateEventRequest>(
-                                            updateEventRequest,
-                                        )
-                                            .toEvent()
-                                        val isCreatePendingSync =
-                                            agendaPendingSyncDao.getCreatedEventPendingSyncEntity(
-                                                event.id,
-                                            ) != null
-                                        if (isCreatePendingSync) {
-                                            agendaPendingSyncDao
-                                                .upsertCreatedEventPendingSyncEntity(
-                                                    CreatedEventPendingSyncEntity(
-                                                        event = event.toEventEntity(),
-                                                        userId = localUserId,
-                                                    ),
-                                                )
-                                        } else {
-                                            syncAgendaScheduler.scheduleSync(
-                                                type = SyncAgendaScheduler.SyncType.UpdateEvent(
-                                                    event = event,
-                                                ),
-                                            )
-                                        }
-                                    }
-                            }
-                        }.join()
-                        Result.failure()
-                    }
-
-                    DataErrorWorkerResult.RETRY -> {
-                        Result.retry()
-                    }
-                }
+                remoteResult.error.toWorkerResult()
             }
 
             is com.pronoidsoftware.core.domain.util.Result.Success -> {

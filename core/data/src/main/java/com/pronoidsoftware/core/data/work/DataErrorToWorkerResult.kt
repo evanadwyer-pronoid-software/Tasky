@@ -1,24 +1,20 @@
 package com.pronoidsoftware.core.data.work
 
+import androidx.work.ListenableWorker
 import com.pronoidsoftware.core.domain.util.DataError
 
-fun DataError.toWorkerResult(): DataErrorWorkerResult {
+fun DataError.toWorkerResult(): ListenableWorker.Result {
     return when (this) {
-        DataError.Local.DISK_FULL -> DataErrorWorkerResult.FAILURE
-        DataError.Local.LOGGED_OUT -> DataErrorWorkerResult.FAILURE
-        DataError.Network.REQUEST_TIMEOUT -> DataErrorWorkerResult.RETRY
-        DataError.Network.UNAUTHORIZED -> DataErrorWorkerResult.RETRY
-        DataError.Network.CONFLICT -> DataErrorWorkerResult.RETRY
-        DataError.Network.TOO_MANY_REQUESTS -> DataErrorWorkerResult.RETRY
-        DataError.Network.NO_INTERNET -> DataErrorWorkerResult.RETRY
-        DataError.Network.PAYLOAD_TOO_LARGE -> DataErrorWorkerResult.FAILURE
-        DataError.Network.SERVER_ERROR -> DataErrorWorkerResult.RETRY
-        DataError.Network.SERIALIZATION -> DataErrorWorkerResult.FAILURE
-        DataError.Network.UNKNOWN -> DataErrorWorkerResult.FAILURE
+        DataError.Local.DISK_FULL -> ListenableWorker.Result.failure()
+        DataError.Local.LOGGED_OUT -> ListenableWorker.Result.failure()
+        DataError.Network.REQUEST_TIMEOUT -> ListenableWorker.Result.retry()
+        DataError.Network.UNAUTHORIZED -> ListenableWorker.Result.retry()
+        DataError.Network.CONFLICT -> ListenableWorker.Result.retry()
+        DataError.Network.TOO_MANY_REQUESTS -> ListenableWorker.Result.retry()
+        DataError.Network.NO_INTERNET -> ListenableWorker.Result.retry()
+        DataError.Network.PAYLOAD_TOO_LARGE -> ListenableWorker.Result.failure()
+        DataError.Network.SERVER_ERROR -> ListenableWorker.Result.retry()
+        DataError.Network.SERIALIZATION -> ListenableWorker.Result.failure()
+        DataError.Network.UNKNOWN -> ListenableWorker.Result.failure()
     }
-}
-
-enum class DataErrorWorkerResult {
-    FAILURE,
-    RETRY,
 }

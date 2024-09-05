@@ -10,7 +10,6 @@ import com.pronoidsoftware.agenda.network.mappers.toEvent
 import com.pronoidsoftware.agenda.network.request.CreateEventRequest
 import com.pronoidsoftware.core.data.networking.AgendaRoutes
 import com.pronoidsoftware.core.data.networking.postMultipart
-import com.pronoidsoftware.core.data.work.DataErrorWorkerResult
 import com.pronoidsoftware.core.data.work.toWorkerResult
 import com.pronoidsoftware.core.domain.DispatcherProvider
 import com.pronoidsoftware.core.domain.SessionStorage
@@ -94,31 +93,7 @@ class CreateEventWithPhotosAndAttendeesWorker @AssistedInject constructor(
 
         return when (remoteResult) {
             is com.pronoidsoftware.core.domain.util.Result.Error -> {
-                when (remoteResult.error.toWorkerResult()) {
-                    DataErrorWorkerResult.FAILURE -> {
-                        applicationScope.launch {
-                            sessionStorage.get()?.userId?.let { localUserId ->
-                                params.inputData.getString(CREATE_EVENT_REQUEST)
-                                    ?.let { createEventRequest ->
-                                        val event = Json.decodeFromString<CreateEventRequest>(
-                                            createEventRequest,
-                                        )
-                                            .toEvent(localUserId)
-                                        syncAgendaScheduler.scheduleSync(
-                                            type = SyncAgendaScheduler.SyncType.CreateEvent(
-                                                event = event,
-                                            ),
-                                        )
-                                    }
-                            }
-                        }.join()
-                        Result.failure()
-                    }
-
-                    DataErrorWorkerResult.RETRY -> {
-                        Result.retry()
-                    }
-                }
+                remoteResult.error.toWorkerResult()
             }
 
             is com.pronoidsoftware.core.domain.util.Result.Success -> {
