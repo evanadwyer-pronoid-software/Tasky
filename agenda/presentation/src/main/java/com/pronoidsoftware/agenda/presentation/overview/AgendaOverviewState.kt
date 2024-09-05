@@ -13,6 +13,7 @@ data class AgendaOverviewState(
     val fabDropdownMenuExpanded: Boolean = false,
     val datePickerExpanded: Boolean = false,
     val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
     val isShowingDeleteConfirmationDialog: Boolean = false,
     val agendaTypeToDelete: AgendaItemType? = null,
     val eventToDeleteHostId: String? = null,
