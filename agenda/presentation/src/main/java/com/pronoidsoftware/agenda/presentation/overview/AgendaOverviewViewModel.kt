@@ -187,14 +187,14 @@ class AgendaOverviewViewModel @Inject constructor(
             AgendaOverviewAction.OnRefresh -> {
                 viewModelScope.launch {
                     state = state.copy(
-                        isLoading = true,
+                        isRefreshing = true,
                     )
                     agendaRepository.syncPendingReminders()
                     agendaRepository.syncPendingTasks()
                     agendaRepository.syncPendingEvents()
                     agendaRepository.fetchAllAgendaItems()
                     state = state.copy(
-                        isLoading = false,
+                        isRefreshing = false,
                     )
                 }
             }

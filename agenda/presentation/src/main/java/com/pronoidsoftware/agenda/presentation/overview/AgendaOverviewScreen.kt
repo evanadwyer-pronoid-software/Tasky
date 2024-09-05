@@ -19,6 +19,7 @@ import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -46,6 +47,7 @@ import com.pronoidsoftware.core.presentation.designsystem.LocalClock
 import com.pronoidsoftware.core.presentation.designsystem.LocalSpacing
 import com.pronoidsoftware.core.presentation.designsystem.PlusIcon
 import com.pronoidsoftware.core.presentation.designsystem.TaskyDarkGray
+import com.pronoidsoftware.core.presentation.designsystem.TaskyGreen
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
 import com.pronoidsoftware.core.presentation.designsystem.components.TaskyDialog
 import com.pronoidsoftware.core.presentation.designsystem.components.TaskyDropdownMenu
@@ -174,17 +176,29 @@ internal fun AgendaOverviewScreen(
         },
         floatingActionButtonPosition = FabPosition.End,
     ) { innerPadding ->
+        val pullToRefreshState = rememberPullToRefreshState()
         PullToRefreshBox(
-            state = rememberPullToRefreshState(),
-            isRefreshing = state.isLoading,
+            state = pullToRefreshState,
+            isRefreshing = state.isRefreshing,
             onRefresh = {
                 onAction(AgendaOverviewAction.OnRefresh)
             },
+            indicator = {
+                PullToRefreshDefaults.Indicator(
+                    state = pullToRefreshState,
+                    isRefreshing = state.isRefreshing,
+                    color = TaskyGreen,
+                    modifier = Modifier.align(Alignment.TopCenter),
+                )
+            },
+            modifier = Modifier
+                .padding(
+                    top = innerPadding.calculateTopPadding(),
+                ),
         ) {
             Column(
                 modifier = Modifier
                     .padding(
-                        top = innerPadding.calculateTopPadding(),
                         bottom = innerPadding.calculateBottomPadding(),
                     )
                     .fillMaxSize()
