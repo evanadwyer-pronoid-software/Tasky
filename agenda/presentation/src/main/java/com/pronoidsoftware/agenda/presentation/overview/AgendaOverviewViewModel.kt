@@ -137,7 +137,6 @@ class AgendaOverviewViewModel @Inject constructor(
                             if (state.eventToDeleteHostId == localUserId) {
                                 agendaRepository.deleteEvent(
                                     state.agendaItemIdToDelete,
-                                    null,
                                 )
                             } else {
                                 agendaRepository.removeAttendee(

@@ -3,7 +3,6 @@ package com.pronoidsoftware.core.domain.agendaitem
 import com.pronoidsoftware.core.domain.util.DataError
 import com.pronoidsoftware.core.domain.util.EmptyResult
 import com.pronoidsoftware.core.domain.util.Result
-import java.util.UUID
 
 interface RemoteAgendaDataSource {
     // Reminders
@@ -21,12 +20,10 @@ interface RemoteAgendaDataSource {
     suspend fun deleteTask(id: String): EmptyResult<DataError.Network>
 
     // Events
-    fun createEventAsync(event: AgendaItem.Event): UUID
-    suspend fun createEventSync(event: AgendaItem.Event): EmptyResult<DataError.Network>
+    fun createEventAsync(event: AgendaItem.Event)
     suspend fun getEvent(id: String): Result<AgendaItem.Event, DataError.Network>
     suspend fun getAllEvents(): Result<List<AgendaItem.Event>, DataError.Network>
-    fun updateEventAsync(event: AgendaItem.Event): UUID
-    suspend fun updateEventSync(event: AgendaItem.Event): EmptyResult<DataError.Network>
+    fun updateEventAsync(event: AgendaItem.Event)
     suspend fun deleteEvent(id: String): EmptyResult<DataError.Network>
 
     // All

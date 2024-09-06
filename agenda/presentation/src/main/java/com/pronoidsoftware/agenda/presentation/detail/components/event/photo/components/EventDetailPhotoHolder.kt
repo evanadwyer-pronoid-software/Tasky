@@ -1,5 +1,6 @@
 package com.pronoidsoftware.agenda.presentation.detail.components.event.photo.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -19,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
+import coil.compose.rememberAsyncImagePainter
 import com.pronoidsoftware.agenda.presentation.R
 import com.pronoidsoftware.core.domain.agendaitem.Photo
 import com.pronoidsoftware.core.presentation.designsystem.PlusIcon
@@ -84,6 +86,15 @@ internal fun PhotoThumbnail(photo: Photo, onClick: () -> Unit, modifier: Modifie
             },
             loading = {
                 CircularProgressIndicator()
+            },
+            error = {
+                Image(
+                    painter = rememberAsyncImagePainter(
+                        model =
+                        com.pronoidsoftware.core.presentation.designsystem.R.drawable.tasky_logo,
+                    ),
+                    contentDescription = null,
+                )
             },
             contentDescription = null,
             modifier = Modifier

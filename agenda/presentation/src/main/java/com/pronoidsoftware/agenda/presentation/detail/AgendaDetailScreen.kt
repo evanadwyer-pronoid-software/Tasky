@@ -177,12 +177,16 @@ internal fun AgendaDetailScreen(
         }
     }
 
-    val eventWorkResult = getDetailAsEvent(state)?.workId?.let { eventWorkId ->
-        WorkManager.getInstance(context)
-            .getWorkInfoByIdLiveData(eventWorkId)
-            .observeAsState()
-            .value
-    }
+    val eventWorkResult = WorkManager.getInstance(context)
+        .getWorkInfosForUniqueWorkLiveData(state.agendaItemId)
+        .observeAsState()
+        .value
+        ?.find {
+            "com.pronoidsoftware.agenda.network.work.CreateEventWithPhotosAndAttendeesWorker" in
+                it.tags ||
+                "com.pronoidsoftware.agenda.network.work.UpdateEventWithPhotosAndAttendeesWorker" in
+                it.tags
+        }
 
     LaunchedEffect(eventWorkResult?.state) {
         if (eventWorkResult?.state == WorkInfo.State.SUCCEEDED) {
