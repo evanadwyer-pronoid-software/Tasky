@@ -315,7 +315,6 @@ class AgendaDetailViewModel @Inject constructor(
                                         typeSpecificDetails = eventDetails.copy(
                                             deletedPhotos = emptyList(),
                                             deletedAttendees = emptyList(),
-                                            workId = UUID.fromString(result.data),
                                         ),
                                     )
                                     eventChannel.send(AgendaDetailEvent.OnSaved)
@@ -833,7 +832,6 @@ class AgendaDetailViewModel @Inject constructor(
                                 typeSpecificDetails = eventDetails.copy(
                                     deletedPhotos = emptyList(),
                                     deletedAttendees = emptyList(),
-                                    workId = UUID.fromString(result.data),
                                 ),
                             )
                             eventChannel.send(AgendaDetailEvent.OnSaved)
@@ -886,7 +884,6 @@ class AgendaDetailViewModel @Inject constructor(
                                 typeSpecificDetails = eventDetails.copy(
                                     deletedPhotos = emptyList(),
                                     deletedAttendees = emptyList(),
-                                    workId = UUID.fromString(result.data),
                                 ),
                             )
                             eventChannel.send(AgendaDetailEvent.OnSaved)
@@ -908,7 +905,6 @@ class AgendaDetailViewModel @Inject constructor(
                         when (state.agendaItemType) {
                             AgendaItemType.EVENT -> agendaRepository.deleteEvent(
                                 state.agendaItemId,
-                                getDetailsAsEvent()?.workId,
                             )
 
                             AgendaItemType.TASK -> agendaRepository.deleteTask(

@@ -3,15 +3,11 @@ package com.pronoidsoftware.core.database.dao
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
-import com.pronoidsoftware.core.database.entity.sync.CreatedEventPendingSyncEntity
 import com.pronoidsoftware.core.database.entity.sync.CreatedReminderPendingSyncEntity
 import com.pronoidsoftware.core.database.entity.sync.CreatedTaskPendingSyncEntity
 import com.pronoidsoftware.core.database.entity.sync.DeletedEventSyncEntity
 import com.pronoidsoftware.core.database.entity.sync.DeletedReminderSyncEntity
 import com.pronoidsoftware.core.database.entity.sync.DeletedTaskSyncEntity
-import com.pronoidsoftware.core.database.entity.sync.UpdatedEventPendingSyncAttendeeEntity
-import com.pronoidsoftware.core.database.entity.sync.UpdatedEventPendingSyncEntity
-import com.pronoidsoftware.core.database.entity.sync.UpdatedEventPendingSyncEntityWithAttendeeIds
 import com.pronoidsoftware.core.database.entity.sync.UpdatedReminderPendingSyncEntity
 import com.pronoidsoftware.core.database.entity.sync.UpdatedTaskPendingSyncEntity
 import com.pronoidsoftware.core.domain.agendaitem.EventId
@@ -112,55 +108,6 @@ interface AgendaPendingSyncDao {
 
     @Query("DELETE FROM deletedtasksyncentity WHERE taskId=:taskId")
     suspend fun deleteDeletedTaskSyncEntity(taskId: TaskId)
-
-    // Created Events
-    @Query("SELECT * FROM createdeventpendingsyncentity WHERE userId=:userId")
-    suspend fun getAllCreatedEventPendingSyncEntities(
-        userId: String,
-    ): List<CreatedEventPendingSyncEntity>
-
-    @Query("SELECT * FROM createdeventpendingsyncentity WHERE eventId=:eventId")
-    suspend fun getCreatedEventPendingSyncEntity(eventId: EventId): CreatedEventPendingSyncEntity?
-
-    @Upsert
-    suspend fun upsertCreatedEventPendingSyncEntity(
-        createdEventPendingSyncEntity: CreatedEventPendingSyncEntity,
-    )
-
-    @Query("DELETE FROM createdeventpendingsyncentity WHERE eventId=:eventId")
-    suspend fun deleteCreatedEventPendingSyncEntity(eventId: EventId)
-
-    // Updated Events
-    @Query("SELECT * FROM updatedeventpendingsyncentity WHERE userId=:userId")
-    suspend fun getAllUpdatedEventPendingSyncEntitiesWithAttendeeIds(
-        userId: String,
-    ): List<UpdatedEventPendingSyncEntityWithAttendeeIds>
-
-    @Query("SELECT * FROM updatedeventpendingsyncentity WHERE eventId=:eventId")
-    suspend fun getUpdatedEventPendingSyncEntityWithAttendeeIds(
-        eventId: EventId,
-    ): UpdatedEventPendingSyncEntityWithAttendeeIds?
-
-    @Upsert
-    suspend fun upsertUpdatedEventPendingSyncEntity(
-        updatedEventPendingSyncEntity: UpdatedEventPendingSyncEntity,
-    )
-
-    @Query("DELETE FROM updatedeventpendingsyncentity WHERE eventId=:eventId")
-    suspend fun deleteUpdatedEventPendingSyncEntity(eventId: EventId)
-
-    @Upsert
-    suspend fun upsertUpdatedEventPendingSyncAttendeeEntity(
-        updatedEventPendingSyncAttendeeEntity: UpdatedEventPendingSyncAttendeeEntity,
-    )
-
-    @Upsert
-    suspend fun upsertUpdatedEventPendingSyncAttendeeEntities(
-        updatedEventPendingSyncAttendeeEntities: List<UpdatedEventPendingSyncAttendeeEntity>,
-    )
-
-    @Query("DELETE FROM updatedeventpendingsyncattendeeentity WHERE eventId=:eventId")
-    suspend fun deleteUpdatedEventPendingSyncAttendeeEntities(eventId: EventId)
 
     // Deleted Events
     @Query("SELECT * FROM deletedeventsyncentity WHERE userId=:userId")

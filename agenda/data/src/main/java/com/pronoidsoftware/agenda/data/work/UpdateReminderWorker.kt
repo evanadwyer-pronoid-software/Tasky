@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.pronoidsoftware.core.data.work.DataErrorWorkerResult
 import com.pronoidsoftware.core.data.work.toWorkerResult
 import com.pronoidsoftware.core.database.dao.AgendaPendingSyncDao
 import com.pronoidsoftware.core.database.mappers.toReminder
@@ -33,10 +32,7 @@ class UpdateReminderWorker @AssistedInject constructor(
         val reminder = pendingUpdateReminderEntity.reminder.toReminder()
         return when (val result = remoteAgendaDateSource.updateReminder(reminder)) {
             is com.pronoidsoftware.core.domain.util.Result.Error -> {
-                when (result.error.toWorkerResult()) {
-                    DataErrorWorkerResult.FAILURE -> Result.failure()
-                    DataErrorWorkerResult.RETRY -> Result.retry()
-                }
+                result.error.toWorkerResult()
             }
 
             is com.pronoidsoftware.core.domain.util.Result.Success -> {

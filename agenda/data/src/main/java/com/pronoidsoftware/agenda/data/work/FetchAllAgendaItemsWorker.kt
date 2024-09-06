@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.pronoidsoftware.core.data.work.DataErrorWorkerResult
 import com.pronoidsoftware.core.data.work.toWorkerResult
 import com.pronoidsoftware.core.domain.agendaitem.AgendaRepository
 import dagger.assisted.Assisted
@@ -23,10 +22,7 @@ class FetchAllAgendaItemsWorker @AssistedInject constructor(
 
         return when (val result = agendaRepository.fetchAllAgendaItems()) {
             is com.pronoidsoftware.core.domain.util.Result.Error -> {
-                when (result.error.toWorkerResult()) {
-                    DataErrorWorkerResult.FAILURE -> Result.failure()
-                    DataErrorWorkerResult.RETRY -> Result.retry()
-                }
+                result.error.toWorkerResult()
             }
 
             is com.pronoidsoftware.core.domain.util.Result.Success -> {

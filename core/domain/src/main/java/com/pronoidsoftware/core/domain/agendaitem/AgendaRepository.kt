@@ -2,8 +2,6 @@ package com.pronoidsoftware.core.domain.agendaitem
 
 import com.pronoidsoftware.core.domain.util.DataError
 import com.pronoidsoftware.core.domain.util.EmptyResult
-import com.pronoidsoftware.core.domain.util.Result
-import java.util.UUID
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.LocalDate
 
@@ -32,12 +30,12 @@ interface AgendaRepository {
     suspend fun syncPendingTasks()
 
     // Events
-    suspend fun createEventLocallyEnqueueRemote(event: AgendaItem.Event): Result<String, DataError>
+    suspend fun createEventLocallyEnqueueRemote(event: AgendaItem.Event): EmptyResult<DataError>
     suspend fun getEvent(id: EventId): AgendaItem.Event?
     fun getEvents(): Flow<List<AgendaItem.Event>>
     suspend fun fetchAllEvents(): EmptyResult<DataError>
-    suspend fun updateEventLocallyEnqueueRemote(event: AgendaItem.Event): Result<String, DataError>
-    suspend fun deleteEvent(eventId: EventId, workId: UUID?)
+    suspend fun updateEventLocallyEnqueueRemote(event: AgendaItem.Event): EmptyResult<DataError>
+    suspend fun deleteEvent(eventId: EventId)
     suspend fun removeAttendee(id: EventId)
     suspend fun syncPendingEvents()
 

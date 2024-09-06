@@ -10,17 +10,13 @@ import androidx.work.WorkManager
 import androidx.work.await
 import androidx.work.workDataOf
 import com.pronoidsoftware.core.database.dao.AgendaPendingSyncDao
-import com.pronoidsoftware.core.database.entity.sync.CreatedEventPendingSyncEntity
 import com.pronoidsoftware.core.database.entity.sync.CreatedReminderPendingSyncEntity
 import com.pronoidsoftware.core.database.entity.sync.CreatedTaskPendingSyncEntity
 import com.pronoidsoftware.core.database.entity.sync.DeletedEventSyncEntity
 import com.pronoidsoftware.core.database.entity.sync.DeletedReminderSyncEntity
 import com.pronoidsoftware.core.database.entity.sync.DeletedTaskSyncEntity
-import com.pronoidsoftware.core.database.entity.sync.UpdatedEventPendingSyncAttendeeEntity
-import com.pronoidsoftware.core.database.entity.sync.UpdatedEventPendingSyncEntity
 import com.pronoidsoftware.core.database.entity.sync.UpdatedReminderPendingSyncEntity
 import com.pronoidsoftware.core.database.entity.sync.UpdatedTaskPendingSyncEntity
-import com.pronoidsoftware.core.database.mappers.toEventEntity
 import com.pronoidsoftware.core.database.mappers.toReminderEntity
 import com.pronoidsoftware.core.database.mappers.toTaskEntity
 import com.pronoidsoftware.core.domain.DispatcherProvider
@@ -86,16 +82,8 @@ class SyncAgendaWorkerScheduler @Inject constructor(
                 scheduleDeleteTaskWorker(type.taskId)
             }
 
-            is SyncAgendaScheduler.SyncType.CreateEvent -> {
-                scheduleCreateEventWorker(type.event)
-            }
-
             is SyncAgendaScheduler.SyncType.FetchEvents -> {
                 scheduleFetchEventsWorker(type.interval)
-            }
-
-            is SyncAgendaScheduler.SyncType.UpdateEvent -> {
-                scheduleUpdateEventWorker(type.event)
             }
 
             is SyncAgendaScheduler.SyncType.DeleteEvent -> {
@@ -368,38 +356,6 @@ class SyncAgendaWorkerScheduler @Inject constructor(
         }.join()
     }
 
-    private suspend fun scheduleCreateEventWorker(event: AgendaItem.Event) {
-        val userId = sessionStorage.get()?.userId ?: return
-        val pendingCreatedEvent = CreatedEventPendingSyncEntity(
-            event = event.toEventEntity(),
-            userId = userId,
-        )
-        agendaPendingSyncDao.upsertCreatedEventPendingSyncEntity(pendingCreatedEvent)
-
-        val workRequest = OneTimeWorkRequestBuilder<CreatePendingEventWorker>()
-            .addTag(CREATE_EVENT_WORK)
-            .setConstraints(
-                Constraints.Builder()
-                    .setRequiredNetworkType(NetworkType.CONNECTED)
-                    .build(),
-            )
-            .setBackoffCriteria(
-                backoffPolicy = BackoffPolicy.EXPONENTIAL,
-                backoffDelay = 10L,
-                timeUnit = TimeUnit.SECONDS,
-            )
-            .setInputData(
-                workDataOf(
-                    EVENT_ID to pendingCreatedEvent.eventId,
-                ),
-            )
-            .build()
-
-        applicationScope.launch {
-            workManager.enqueue(workRequest).await()
-        }.join()
-    }
-
     private suspend fun scheduleFetchEventsWorker(interval: Duration) {
         val isSyncScheduled = withContext(dispatchers.io) {
             workManager
@@ -432,47 +388,6 @@ class SyncAgendaWorkerScheduler @Inject constructor(
             .build()
 
         workManager.enqueue(workRequest).await()
-    }
-
-    private suspend fun scheduleUpdateEventWorker(event: AgendaItem.Event) {
-        val userId = sessionStorage.get()?.userId ?: return
-        val pendingUpdatedEvent = UpdatedEventPendingSyncEntity(
-            event = event.toEventEntity(),
-            userId = userId,
-        )
-        val pendingUpdatedEventAttendees = event.attendees.map {
-            UpdatedEventPendingSyncAttendeeEntity(
-                eventId = event.id,
-                attendeeId = it.userId,
-            )
-        }
-        agendaPendingSyncDao.upsertUpdatedEventPendingSyncEntity(pendingUpdatedEvent)
-        agendaPendingSyncDao.upsertUpdatedEventPendingSyncAttendeeEntities(
-            pendingUpdatedEventAttendees,
-        )
-
-        val workRequest = OneTimeWorkRequestBuilder<UpdatePendingEventWorker>()
-            .addTag(UPDATE_EVENT_WORK)
-            .setConstraints(
-                Constraints.Builder()
-                    .setRequiredNetworkType(NetworkType.CONNECTED)
-                    .build(),
-            )
-            .setBackoffCriteria(
-                backoffPolicy = BackoffPolicy.EXPONENTIAL,
-                backoffDelay = 10L,
-                timeUnit = TimeUnit.SECONDS,
-            )
-            .setInputData(
-                workDataOf(
-                    EVENT_ID to pendingUpdatedEvent.eventId,
-                ),
-            )
-            .build()
-
-        applicationScope.launch {
-            workManager.enqueue(workRequest).await()
-        }.join()
     }
 
     private suspend fun scheduleDeleteEventWorker(eventId: EventId) {
@@ -556,9 +471,7 @@ class SyncAgendaWorkerScheduler @Inject constructor(
         const val FETCH_TASK_WORK = "FETCH_TASK_WORK"
         const val UPDATE_TASK_WORK = "UPDATE_TASK_WORK"
         const val DELETE_TASK_WORK = "DELETE_TASK_WORK"
-        const val CREATE_EVENT_WORK = "CREATE_EVENT_WORK"
         const val FETCH_EVENT_WORK = "FETCH_EVENT_WORK"
-        const val UPDATE_EVENT_WORK = "UPDATE_EVENT_WORK"
         const val DELETE_EVENT_WORK = "DELETE_EVENT_WORK"
         const val FETCH_ALL_AGENDA_ITEMS_WORK = "FETCH_ALL_AGENDA_ITEMS_WORK"
     }

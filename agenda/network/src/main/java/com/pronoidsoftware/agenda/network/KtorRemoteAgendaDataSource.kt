@@ -3,6 +3,7 @@ package com.pronoidsoftware.agenda.network
 import android.content.Context
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.OutOfQuotaPolicy
@@ -26,9 +27,7 @@ import com.pronoidsoftware.core.data.networking.AgendaRoutes
 import com.pronoidsoftware.core.data.networking.delete
 import com.pronoidsoftware.core.data.networking.get
 import com.pronoidsoftware.core.data.networking.post
-import com.pronoidsoftware.core.data.networking.postMultipart
 import com.pronoidsoftware.core.data.networking.put
-import com.pronoidsoftware.core.data.networking.putMultipart
 import com.pronoidsoftware.core.domain.SessionStorage
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItem
 import com.pronoidsoftware.core.domain.agendaitem.Photo
@@ -43,9 +42,6 @@ import com.pronoidsoftware.core.domain.work.WorkKeys.KEY_URIS_TO_COMPRESS
 import com.pronoidsoftware.core.domain.work.WorkKeys.UPDATE_EVENT_REQUEST
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.ktor.client.HttpClient
-import io.ktor.client.request.forms.MultiPartFormDataContent
-import io.ktor.client.request.forms.formData
-import java.util.UUID
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlinx.serialization.encodeToString
@@ -146,7 +142,7 @@ class KtorRemoteAgendaDataSource @Inject constructor(
     }
 
     // Events
-    override fun createEventAsync(event: AgendaItem.Event): UUID {
+    override fun createEventAsync(event: AgendaItem.Event) {
         val compressPhotosWorkRequest = OneTimeWorkRequestBuilder<CompressPhotosWorker>()
             .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
             .setInputData(
@@ -183,21 +179,13 @@ class KtorRemoteAgendaDataSource @Inject constructor(
                 )
                 .build()
         WorkManager.getInstance(context)
-            .beginWith(compressPhotosWorkRequest)
+            .beginUniqueWork(
+                "create-${event.id}",
+                ExistingWorkPolicy.REPLACE,
+                compressPhotosWorkRequest,
+            )
             .then(createEventWorkRequest)
             .enqueue()
-        return createEventWorkRequest.id
-    }
-
-    override suspend fun createEventSync(event: AgendaItem.Event): EmptyResult<DataError.Network> {
-        return httpClient.postMultipart(
-            route = AgendaRoutes.EVENT,
-            body = MultiPartFormDataContent(
-                formData {
-                    append(CREATE_EVENT_REQUEST, Json.encodeToString(event.toCreateEventRequest()))
-                },
-            ),
-        )
     }
 
     override suspend fun getEvent(id: String): Result<AgendaItem.Event, DataError.Network> {
@@ -218,7 +206,7 @@ class KtorRemoteAgendaDataSource @Inject constructor(
             }
     }
 
-    override fun updateEventAsync(event: AgendaItem.Event): UUID {
+    override fun updateEventAsync(event: AgendaItem.Event) {
         val compressPhotosWorkRequest = OneTimeWorkRequestBuilder<CompressPhotosWorker>()
             .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
             .setInputData(
@@ -255,21 +243,13 @@ class KtorRemoteAgendaDataSource @Inject constructor(
                 )
                 .build()
         WorkManager.getInstance(context)
-            .beginWith(compressPhotosWorkRequest)
+            .beginUniqueWork(
+                "update-${event.id}",
+                ExistingWorkPolicy.REPLACE,
+                compressPhotosWorkRequest,
+            )
             .then(updateEventWorkRequest)
             .enqueue()
-        return updateEventWorkRequest.id
-    }
-
-    override suspend fun updateEventSync(event: AgendaItem.Event): EmptyResult<DataError.Network> {
-        return httpClient.putMultipart(
-            route = AgendaRoutes.EVENT,
-            body = MultiPartFormDataContent(
-                formData {
-                    append(UPDATE_EVENT_REQUEST, Json.encodeToString(event.toUpdateEventRequest()))
-                },
-            ),
-        )
     }
 
     override suspend fun deleteEvent(id: String): EmptyResult<DataError.Network> {

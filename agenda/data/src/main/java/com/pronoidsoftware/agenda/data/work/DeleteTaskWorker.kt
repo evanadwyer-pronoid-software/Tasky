@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.pronoidsoftware.core.data.work.DataErrorWorkerResult
 import com.pronoidsoftware.core.data.work.toWorkerResult
 import com.pronoidsoftware.core.database.dao.AgendaPendingSyncDao
 import com.pronoidsoftware.core.domain.agendaitem.RemoteAgendaDataSource
@@ -27,10 +26,7 @@ class DeleteTaskWorker @AssistedInject constructor(
         val taskId = params.inputData.getString(TASK_ID) ?: return Result.failure()
         return when (val result = remoteAgendaDataSource.deleteTask(taskId)) {
             is com.pronoidsoftware.core.domain.util.Result.Error -> {
-                when (result.error.toWorkerResult()) {
-                    DataErrorWorkerResult.FAILURE -> Result.failure()
-                    DataErrorWorkerResult.RETRY -> Result.retry()
-                }
+                result.error.toWorkerResult()
             }
 
             is com.pronoidsoftware.core.domain.util.Result.Success -> {
