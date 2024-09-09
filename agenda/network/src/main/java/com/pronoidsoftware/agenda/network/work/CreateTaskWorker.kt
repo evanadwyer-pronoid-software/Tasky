@@ -1,19 +1,18 @@
-package com.pronoidsoftware.agenda.data.work
+package com.pronoidsoftware.agenda.network.work
 
 import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.pronoidsoftware.core.data.work.toWorkerResult
 import com.pronoidsoftware.core.database.dao.AgendaPendingSyncDao
-import com.pronoidsoftware.core.database.mappers.toReminder
+import com.pronoidsoftware.core.database.mappers.toTask
 import com.pronoidsoftware.core.domain.agendaitem.RemoteAgendaDataSource
-import com.pronoidsoftware.core.domain.work.WorkKeys.REMINDER_ID
+import com.pronoidsoftware.core.domain.work.WorkKeys.TASK_ID
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
 @HiltWorker
-class UpdateReminderWorker @AssistedInject constructor(
+class CreateTaskWorker @AssistedInject constructor(
     @Assisted private val appContext: Context,
     @Assisted private val params: WorkerParameters,
     private val agendaPendingSyncDao: AgendaPendingSyncDao,
@@ -24,19 +23,19 @@ class UpdateReminderWorker @AssistedInject constructor(
             return Result.failure()
         }
 
-        val pendingUpdateReminderId = params.inputData.getString(REMINDER_ID)
+        val pendingCreateTaskId = params.inputData.getString(TASK_ID)
             ?: return Result.failure()
-        val pendingUpdateReminderEntity = agendaPendingSyncDao
-            .getUpdatedReminderPendingSyncEntity(pendingUpdateReminderId)
+        val pendingCreatedTaskEntity = agendaPendingSyncDao
+            .getCreatedTaskPendingSyncEntity(pendingCreateTaskId)
             ?: return Result.failure()
-        val reminder = pendingUpdateReminderEntity.reminder.toReminder()
-        return when (val result = remoteAgendaDateSource.updateReminder(reminder)) {
+        val task = pendingCreatedTaskEntity.task.toTask()
+        return when (val result = remoteAgendaDateSource.createTask(task)) {
             is com.pronoidsoftware.core.domain.util.Result.Error -> {
                 result.error.toWorkerResult()
             }
 
             is com.pronoidsoftware.core.domain.util.Result.Success -> {
-                agendaPendingSyncDao.deleteUpdatedReminderPendingSyncEntity(pendingUpdateReminderId)
+                agendaPendingSyncDao.deleteCreatedTaskPendingSyncEntity(pendingCreateTaskId)
                 Result.success()
             }
         }

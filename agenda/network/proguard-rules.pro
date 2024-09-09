@@ -19,3 +19,15 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-dontwarn com.pronoidsoftware.core.data.networking.HttpClientExtensionKt
+-dontwarn com.pronoidsoftware.core.data.work.DataErrorToWorkerResultKt
+-dontwarn com.pronoidsoftware.core.database.dao.AgendaPendingSyncDao
+-dontwarn com.pronoidsoftware.core.database.entity.ReminderEntity
+-dontwarn com.pronoidsoftware.core.database.entity.TaskEntity
+-dontwarn com.pronoidsoftware.core.database.entity.sync.CreatedReminderPendingSyncEntity
+-dontwarn com.pronoidsoftware.core.database.entity.sync.CreatedTaskPendingSyncEntity
+-dontwarn com.pronoidsoftware.core.database.entity.sync.UpdatedReminderPendingSyncEntity
+-dontwarn com.pronoidsoftware.core.database.entity.sync.UpdatedTaskPendingSyncEntity
+-dontwarn com.pronoidsoftware.core.database.mappers.AgendaMappersKt
+-dontwarn java.lang.invoke.StringConcatFactory

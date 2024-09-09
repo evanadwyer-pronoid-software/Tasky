@@ -7,12 +7,14 @@ import com.pronoidsoftware.agenda.presentation.detail.AgendaDetailScreen
 import com.pronoidsoftware.agenda.presentation.detail.AgendaDetailState
 import com.pronoidsoftware.agenda.presentation.detail.AgendaItemDetails
 import com.pronoidsoftware.agenda.presentation.detail.components.event.visitor.model.VisitorFilterType
+import com.pronoidsoftware.core.domain.ConnectivityObserver
 import com.pronoidsoftware.core.domain.agendaitem.AgendaItemType
 import com.pronoidsoftware.core.domain.agendaitem.Attendee
 import com.pronoidsoftware.core.domain.agendaitem.Photo
 import com.pronoidsoftware.core.presentation.designsystem.LocalClock
 import com.pronoidsoftware.core.presentation.designsystem.TaskyTheme
 import com.pronoidsoftware.testutil.jvmtest.core.data.time.TestClock
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
@@ -79,6 +81,7 @@ private fun ReminderDetailScreenPreview_Read() {
                     isEditing = false,
                 ),
                 onAction = {},
+                connectionStatusFlow = MutableStateFlow(ConnectivityObserver.Status.AVAILABLE),
             )
         }
     }
@@ -98,6 +101,7 @@ private fun ReminderDetailScreenPreview_Read_EmptyDescription() {
                     isEditing = false,
                 ),
                 onAction = {},
+                connectionStatusFlow = MutableStateFlow(ConnectivityObserver.Status.AVAILABLE),
             )
         }
     }
@@ -118,6 +122,7 @@ private fun ReminderDetailScreenPreview_Edit() {
                     isEditing = true,
                 ),
                 onAction = {},
+                connectionStatusFlow = MutableStateFlow(ConnectivityObserver.Status.AVAILABLE),
             )
         }
     }
@@ -137,6 +142,7 @@ private fun ReminderDetailScreenPreview_Edit_EmptyDescription() {
                     isEditing = true,
                 ),
                 onAction = {},
+                connectionStatusFlow = MutableStateFlow(ConnectivityObserver.Status.AVAILABLE),
             )
         }
     }
@@ -157,6 +163,7 @@ private fun TaskDetailScreenPreview_Read() {
                     isEditing = false,
                 ),
                 onAction = {},
+                connectionStatusFlow = MutableStateFlow(ConnectivityObserver.Status.AVAILABLE),
             )
         }
     }
@@ -180,6 +187,7 @@ private fun TaskDetailScreenPreview_Read_Completed() {
                     ),
                 ),
                 onAction = {},
+                connectionStatusFlow = MutableStateFlow(ConnectivityObserver.Status.AVAILABLE),
             )
         }
     }
@@ -199,6 +207,7 @@ private fun TaskDetailScreenPreview_Read_EmptyDescription() {
                     isEditing = false,
                 ),
                 onAction = {},
+                connectionStatusFlow = MutableStateFlow(ConnectivityObserver.Status.AVAILABLE),
             )
         }
     }
@@ -219,6 +228,7 @@ private fun TaskDetailScreenPreview_Edit() {
                     isEditing = true,
                 ),
                 onAction = {},
+                connectionStatusFlow = MutableStateFlow(ConnectivityObserver.Status.AVAILABLE),
             )
         }
     }
@@ -238,6 +248,7 @@ private fun TaskDetailScreenPreview_Edit_EmptyDescription() {
                     isEditing = true,
                 ),
                 onAction = {},
+                connectionStatusFlow = MutableStateFlow(ConnectivityObserver.Status.AVAILABLE),
             )
         }
     }
@@ -258,6 +269,7 @@ private fun EventDetailScreenPreview_Read_Empty() {
                     ),
                 ),
                 onAction = {},
+                connectionStatusFlow = MutableStateFlow(ConnectivityObserver.Status.AVAILABLE),
             )
         }
     }
@@ -284,6 +296,7 @@ private fun EventDetailScreenPreview_Read() {
                     ),
                 ),
                 onAction = {},
+                connectionStatusFlow = MutableStateFlow(ConnectivityObserver.Status.AVAILABLE),
             )
         }
     }
@@ -311,6 +324,7 @@ private fun EventDetailScreenPreview_Read_GoingVisitors() {
                     ),
                 ),
                 onAction = {},
+                connectionStatusFlow = MutableStateFlow(ConnectivityObserver.Status.AVAILABLE),
             )
         }
     }
@@ -338,6 +352,7 @@ private fun EventDetailScreenPreview_Read_NotGoingVisitors() {
                     ),
                 ),
                 onAction = {},
+                connectionStatusFlow = MutableStateFlow(ConnectivityObserver.Status.AVAILABLE),
             )
         }
     }
@@ -362,6 +377,7 @@ private fun EventDetailScreenPreview_Read_EmptyDescription() {
                     ),
                 ),
                 onAction = {},
+                connectionStatusFlow = MutableStateFlow(ConnectivityObserver.Status.AVAILABLE),
             )
         }
     }
@@ -388,6 +404,7 @@ private fun EventDetailScreenPreview_Edit() {
                     ),
                 ),
                 onAction = {},
+                connectionStatusFlow = MutableStateFlow(ConnectivityObserver.Status.AVAILABLE),
             )
         }
     }
@@ -415,6 +432,7 @@ private fun EventDetailScreenPreview_Edit_AddVisitor() {
                     ),
                 ),
                 onAction = {},
+                connectionStatusFlow = MutableStateFlow(ConnectivityObserver.Status.AVAILABLE),
             )
         }
     }
@@ -439,6 +457,7 @@ private fun EventDetailScreenPreview_Edit_EmptyDescription() {
                     ),
                 ),
                 onAction = {},
+                connectionStatusFlow = MutableStateFlow(ConnectivityObserver.Status.AVAILABLE),
             )
         }
     }

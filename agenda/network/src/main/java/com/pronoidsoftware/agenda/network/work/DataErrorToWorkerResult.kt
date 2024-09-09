@@ -1,4 +1,4 @@
-package com.pronoidsoftware.core.data.work
+package com.pronoidsoftware.agenda.network.work
 
 import androidx.work.ListenableWorker
 import com.pronoidsoftware.core.domain.util.DataError

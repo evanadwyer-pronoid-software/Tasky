@@ -1,10 +1,9 @@
-package com.pronoidsoftware.agenda.data.work
+package com.pronoidsoftware.agenda.network.work
 
 import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.pronoidsoftware.core.data.work.toWorkerResult
 import com.pronoidsoftware.core.database.dao.AgendaPendingSyncDao
 import com.pronoidsoftware.core.database.mappers.toTask
 import com.pronoidsoftware.core.domain.agendaitem.RemoteAgendaDataSource

@@ -1,10 +1,9 @@
-package com.pronoidsoftware.agenda.data.work
+package com.pronoidsoftware.agenda.network.work
 
 import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.pronoidsoftware.core.data.work.toWorkerResult
 import com.pronoidsoftware.core.domain.agendaitem.AgendaRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject

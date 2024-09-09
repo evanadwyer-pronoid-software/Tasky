@@ -1,42 +1,35 @@
-package com.pronoidsoftware.agenda.data.work
+package com.pronoidsoftware.agenda.network.work
 
 import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.pronoidsoftware.core.data.work.toWorkerResult
 import com.pronoidsoftware.core.database.dao.AgendaPendingSyncDao
-import com.pronoidsoftware.core.database.mappers.toReminder
 import com.pronoidsoftware.core.domain.agendaitem.RemoteAgendaDataSource
 import com.pronoidsoftware.core.domain.work.WorkKeys.REMINDER_ID
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
 @HiltWorker
-class CreateReminderWorker @AssistedInject constructor(
+class DeleteReminderWorker @AssistedInject constructor(
     @Assisted private val appContext: Context,
     @Assisted private val params: WorkerParameters,
     private val agendaPendingSyncDao: AgendaPendingSyncDao,
-    private val remoteAgendaDateSource: RemoteAgendaDataSource,
+    private val remoteAgendaDataSource: RemoteAgendaDataSource,
 ) : CoroutineWorker(appContext, params) {
     override suspend fun doWork(): Result {
         if (runAttemptCount >= 5) {
             return Result.failure()
         }
 
-        val pendingCreateReminderId = params.inputData.getString(REMINDER_ID)
-            ?: return Result.failure()
-        val pendingCreatedReminderEntity = agendaPendingSyncDao
-            .getCreatedReminderPendingSyncEntity(pendingCreateReminderId)
-            ?: return Result.failure()
-        val reminder = pendingCreatedReminderEntity.reminder.toReminder()
-        return when (val result = remoteAgendaDateSource.createReminder(reminder)) {
+        val reminderId = params.inputData.getString(REMINDER_ID) ?: return Result.failure()
+        return when (val result = remoteAgendaDataSource.deleteReminder(reminderId)) {
             is com.pronoidsoftware.core.domain.util.Result.Error -> {
                 result.error.toWorkerResult()
             }
 
             is com.pronoidsoftware.core.domain.util.Result.Success -> {
-                agendaPendingSyncDao.deleteCreatedReminderPendingSyncEntity(pendingCreateReminderId)
+                agendaPendingSyncDao.deleteDeletedReminderSyncEntity(reminderId)
                 Result.success()
             }
         }
