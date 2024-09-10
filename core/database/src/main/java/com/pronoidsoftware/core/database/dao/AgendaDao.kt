@@ -130,6 +130,7 @@ interface AgendaDao {
     @Query("SELECT * FROM evententity ORDER BY startDateTime")
     fun getAllEvents(): Flow<List<EventWithAttendeesAndPhotos>>
 
+    @Transaction
     @Query("SELECT * FROM evententity")
     suspend fun getAllEventsSnapshot(): List<EventWithAttendeesAndPhotos>
 

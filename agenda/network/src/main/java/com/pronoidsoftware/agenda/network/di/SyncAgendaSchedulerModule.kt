@@ -1,6 +1,6 @@
-package com.pronoidsoftware.agenda.data.di
+package com.pronoidsoftware.agenda.network.di
 
-import com.pronoidsoftware.agenda.data.work.SyncAgendaWorkerScheduler
+import com.pronoidsoftware.agenda.network.work.SyncAgendaWorkerScheduler
 import com.pronoidsoftware.core.domain.work.SyncAgendaScheduler
 import dagger.Binds
 import dagger.Module

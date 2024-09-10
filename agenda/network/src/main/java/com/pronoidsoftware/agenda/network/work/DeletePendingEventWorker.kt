@@ -1,42 +1,35 @@
-package com.pronoidsoftware.agenda.data.work
+package com.pronoidsoftware.agenda.network.work
 
 import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.pronoidsoftware.core.data.work.toWorkerResult
 import com.pronoidsoftware.core.database.dao.AgendaPendingSyncDao
-import com.pronoidsoftware.core.database.mappers.toTask
 import com.pronoidsoftware.core.domain.agendaitem.RemoteAgendaDataSource
-import com.pronoidsoftware.core.domain.work.WorkKeys.TASK_ID
+import com.pronoidsoftware.core.domain.work.WorkKeys.EVENT_ID
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
 @HiltWorker
-class CreateTaskWorker @AssistedInject constructor(
+class DeletePendingEventWorker @AssistedInject constructor(
     @Assisted private val appContext: Context,
     @Assisted private val params: WorkerParameters,
     private val agendaPendingSyncDao: AgendaPendingSyncDao,
-    private val remoteAgendaDateSource: RemoteAgendaDataSource,
+    private val remoteAgendaDataSource: RemoteAgendaDataSource,
 ) : CoroutineWorker(appContext, params) {
     override suspend fun doWork(): Result {
         if (runAttemptCount >= 5) {
             return Result.failure()
         }
 
-        val pendingCreateTaskId = params.inputData.getString(TASK_ID)
-            ?: return Result.failure()
-        val pendingCreatedTaskEntity = agendaPendingSyncDao
-            .getCreatedTaskPendingSyncEntity(pendingCreateTaskId)
-            ?: return Result.failure()
-        val task = pendingCreatedTaskEntity.task.toTask()
-        return when (val result = remoteAgendaDateSource.createTask(task)) {
+        val eventId = params.inputData.getString(EVENT_ID) ?: return Result.failure()
+        return when (val result = remoteAgendaDataSource.deleteEvent(eventId)) {
             is com.pronoidsoftware.core.domain.util.Result.Error -> {
                 result.error.toWorkerResult()
             }
 
             is com.pronoidsoftware.core.domain.util.Result.Success -> {
-                agendaPendingSyncDao.deleteCreatedTaskPendingSyncEntity(pendingCreateTaskId)
+                agendaPendingSyncDao.deleteDeletedEventSyncEntity(eventId)
                 Result.success()
             }
         }

@@ -1,4 +1,4 @@
-package com.pronoidsoftware.testutil.jvmtest.core.data
+package com.pronoidsoftware.testutil.jvmtest
 
 import com.pronoidsoftware.core.domain.DispatcherProvider
 import kotlinx.coroutines.CoroutineDispatcher

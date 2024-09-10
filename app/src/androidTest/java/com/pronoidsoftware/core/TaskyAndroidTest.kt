@@ -2,7 +2,11 @@ package com.pronoidsoftware.core
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.hilt.work.HiltWorkerFactory
 import androidx.test.core.app.ApplicationProvider
+import androidx.work.Configuration
+import androidx.work.impl.utils.SynchronousExecutor
+import androidx.work.testing.WorkManagerTestInitHelper
 import com.pronoidsoftware.core.domain.SessionStorage
 import dagger.hilt.android.testing.HiltAndroidRule
 import javax.inject.Inject
@@ -24,10 +28,18 @@ abstract class TaskyAndroidTest {
     @Inject
     lateinit var sessionStorage: SessionStorage
 
+    @Inject
+    lateinit var workerFactory: HiltWorkerFactory
+
     @Before
     open fun setUp() {
         context = ApplicationProvider.getApplicationContext()
         hiltRule.inject()
+        val config = Configuration.Builder()
+            .setWorkerFactory(workerFactory)
+            .setExecutor(SynchronousExecutor())
+            .build()
+        WorkManagerTestInitHelper.initializeTestWorkManager(context, config)
     }
 
     @After
