@@ -6,6 +6,10 @@ Tasky is a lite version of Google Calendar that allows users to create, view, ed
 [![CodeQL](https://github.com/evanadwyer-pronoid-software/Tasky/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/evanadwyer-pronoid-software/Tasky/actions/workflows/github-code-scanning/codeql)
 [![ktlint](https://img.shields.io/badge/ktlint%20code--style-%E2%9D%A4-FF4081)](https://pinterest.github.io/ktlint/)
 
+![Photo mode export (5)](https://github.com/user-attachments/assets/3aa25407-7dbf-4a72-90b2-4bbc12a83726)
+![Photo mode export (4)](https://github.com/user-attachments/assets/06c6973d-1c6c-4d98-8136-36ac660200d2)
+
+
 ## Gradle Module Dependency Graph
 This graph represents the general dependencies between modules of the app.
 [![image](https://github.com/evanadwyer-pronoid-software/Tasky/assets/170752499/b2f0fcf2-7230-4e71-a3fa-732f7ded67d4)](https://miro.com/app/board/uXjVKAumJ6s=/)
@@ -32,10 +36,13 @@ This implementation of Tasky will make use of the following technologies and lib
 * Kotlin Serialization
 * JUnit4 and JUnit5
 * WorkManager
+* AlarmManager
+* NotificationManager
 * Hilt
 * KSP
 * Timber
 * Ktlint
+* kotlinx datetime
 
 ## Contributing
 When cloning this project, please run `./gradlew addKtlintFormatGitPreCommitHook` so that KtLint can automatically format your commits :)
