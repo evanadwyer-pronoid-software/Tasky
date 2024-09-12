@@ -1,5 +1,6 @@
 package com.pronoidsoftware.core.data.agenda
 
+import android.app.NotificationManager
 import android.content.Context
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
@@ -576,6 +577,7 @@ class OfflineFirstAgendaRepository @Inject constructor(
     override suspend fun deleteAllAgendaItems() {
         val agendaItemIds = localAgendaDataSource.getAllAgendaItemsSnapshot().map { it.id }
         alarmScheduler.cancelAll(agendaItemIds)
+        (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancelAll()
         localAgendaDataSource.deleteAllAgendaItems()
     }
 }
