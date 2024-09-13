@@ -1,6 +1,8 @@
 # Tasky
 Tasky is a lite version of Google Calendar that allows users to create, view, edit, and delete events, tasks, and reminders. It works as an offline-first app and allows for collaboratation across users by inviting them to events.
 
+Made as part of Philipp Lackner's [10 week mentorhsip program](https://pl-coding.com/drop-table-mentoring/)
+
 ## Build Status
 [![Build Status](https://app.bitrise.io/app/9d0e7ce1-df31-499b-9a23-7bcfb7c7d688/status.svg?token=qDqFmwjMOhEluPAexsnASw)](https://app.bitrise.io/app/9d0e7ce1-df31-499b-9a23-7bcfb7c7d688)
 [![CodeQL](https://github.com/evanadwyer-pronoid-software/Tasky/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/evanadwyer-pronoid-software/Tasky/actions/workflows/github-code-scanning/codeql)
